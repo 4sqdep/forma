@@ -56,7 +56,8 @@ class Permission(models.Model):
 
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.SET_NULL, related_name="profile", verbose_name="Foydalanuvchi",)
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                related_name="profile", verbose_name="Foydalanuvchi",)
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Bo'lim")
     position = models.ForeignKey(Position, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Lavozim")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
