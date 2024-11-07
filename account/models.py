@@ -39,6 +39,8 @@ class Position(models.Model):
 
 # Ruxsatlar modelini yaratamiz (bu model lavozimga ko'ra metodlarga ruxsat beradi)
 class Permission(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, blank=True, null=True,
+                                related_name="user_permission", verbose_name="Foydalanuvchi", )
     position = models.OneToOneField(Position, on_delete=models.SET_NULL, related_name='permission',
                                     null=True, blank=True, verbose_name="Bo'lim")
     can_get = models.BooleanField(default=False, verbose_name="GET")
@@ -48,7 +50,7 @@ class Permission(models.Model):
     can_delete = models.BooleanField(default=False, verbose_name="DELETE")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
     def __str__(self):
-        return f"Ruxsatnomalar uchun - {self.position.name}"
+        return f"Ruxsatnomalar uchun -{self.user} -- {self.position.name}"
 
     class Meta:
         verbose_name = "Ruxsat"
