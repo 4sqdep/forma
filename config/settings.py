@@ -136,6 +136,12 @@ AUTH_USER_MODEL = 'account.User'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+CSRF_TRUSTED_ORIGINS = ['https://forma-forma.up.railway.app']
+
+CSRF_COOKIE_SECURE = True
+
 # Rest sozlamalari
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
