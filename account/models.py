@@ -16,10 +16,14 @@ class User(AbstractUser):
 
 # Bo'limlar uchun model
 class Department(models.Model):
+    user = models.OneToOneField(User, on_delete=models.SET_NULL, null=True, related_name="department",
+                                      blank=True, verbose_name="Foydalanuvchi")
     name = models.CharField(max_length=50, unique=True, null=False, blank=False, verbose_name="Nomi")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
+
     def __str__(self):
-        return self.name
+        return f"{self.user} -- {self.name}"
+
     class Meta:
         verbose_name = "Bo'lim"
         verbose_name_plural = "Bo'limlar"
