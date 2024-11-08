@@ -22,7 +22,7 @@ SECRET_KEY = 'django-insecure-%w-=iexto!4^tb6fnf0fhnev#r!l8-em7s7+98fm33zg17)ru_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["https://forma-forma.up.railway.app/", "127.0.0.1"]
 
 
 # Application definition
