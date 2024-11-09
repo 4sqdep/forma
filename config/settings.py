@@ -52,6 +52,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'account.middleware.TokenIPAndUserAgentCheckMiddleware'
+    'main.middleware.AllowIframeMiddleware'
 ]
 
 ROOT_URLCONF = 'config.urls'
