@@ -142,6 +142,36 @@ CSRF_TRUSTED_ORIGINS = ['https://forma-forma.up.railway.app']
 
 CSRF_COOKIE_SECURE = True
 
+# Cors sozlamalari
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'X-CSRFToken',
+    'content-type',
+    'authorization',
+    'x-requested-with',
+    'utc-offset',  # Qo'shilgan maxsus sarlavha
+]
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = [
+    "https://forma-forma.up.railway.app",
+]
+CORS_ALLOWED_ORIGINS = [
+    'https://forma-forma.up.railway.app',
+    'http://localhost:8080',  # agar localda test qilayotgan bo'lsangiz
+]
+###################################################################
+# CORS
+###################################################################
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
+
+HOST = "https://forma-forma.up.railway.app"
+
 # Rest sozlamalari
 REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': [
