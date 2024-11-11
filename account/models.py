@@ -46,7 +46,7 @@ class Permission(models.Model):
     user = models.OneToOneField(User, on_delete=models.SET_NULL, blank=True, null=True,
                                 related_name="user_permission", verbose_name="Foydalanuvchi", )
     position = models.OneToOneField(Position, on_delete=models.SET_NULL, related_name='permission',
-                                    null=True, blank=True, verbose_name="Bo'lim")
+                                    null=True, blank=True, verbose_name="Lavozim")
     can_get = models.BooleanField(default=False, verbose_name="GET")
     can_post = models.BooleanField(default=False, verbose_name="POST")
     can_patch = models.BooleanField(default=False, verbose_name="PATCH")

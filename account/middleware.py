@@ -1,3 +1,5 @@
+from http.client import responses
+
 import jwt
 from django.conf import settings
 from rest_framework.exceptions import PermissionDenied
@@ -31,5 +33,4 @@ class TokenIPAndUserAgentCheckMiddleware(MiddlewareMixin):
 
             except jwt.InvalidTokenError:
                 raise PermissionDenied("Yaroqsiz token.")
-
 

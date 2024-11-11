@@ -51,8 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'account.middleware.TokenIPAndUserAgentCheckMiddleware'
-    'main.middleware.AllowIframeMiddleware'
+    'main.middleware.AllowIframeMiddleware',
+    'account.middleware.TokenIPAndUserAgentCheckMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_URL = "postgresql://postgres:uqhnkytEnumvBHGrJLcYKkOpoQzuXjgk@junction.proxy.rlwy.net:47328/railway"
+DATABASE_URL = "postgresql://postgres:YfKNhPfGXpuhEZrHsQUorvXFoRQwSwKj@junction.proxy.rlwy.net:55325/railway"
 
 DATABASES = {
     'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=1000)
@@ -158,6 +158,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [
     "https://forma-forma.up.railway.app",
+    'http://localhost:8080'
 ]
 CORS_ALLOWED_ORIGINS = [
     'https://forma-forma.up.railway.app',
