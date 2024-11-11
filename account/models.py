@@ -31,7 +31,7 @@ class Department(models.Model):
 
 # Lavozim modeli
 class Position(models.Model):
-    name = models.CharField(max_length=50, unique=True, null=False, blank=False, verbose_name="Nomi")
+    name = models.CharField(max_length=50, unique=False, null=False, blank=False, verbose_name="Nomi")
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Bo'lim")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
     def __str__(self):
