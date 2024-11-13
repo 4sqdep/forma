@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.files.storage import FileSystemStorage
+from account.models import User
 
 
 class OriginalNameFileSystemStorage(FileSystemStorage):
@@ -25,6 +26,7 @@ class ObjectName(models.Model):
 
 #     Birlamchi hujjatlar uchun model
 class PrimaryDocuments(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Foydalanuvchi")
     object_name = models.ForeignKey(ObjectName, verbose_name="Obyekt nomi", on_delete=models.SET_NULL, null=True, blank=True)
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Obyekt nomi")
     file_code = models.CharField(max_length=30, verbose_name="Hujjat kodi")
