@@ -3,26 +3,23 @@ from datetime import timedelta
 from pathlib import Path
 from corsheaders.defaults import default_headers
 import environ
-from tutorial.settings import DATABASES
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env(
-    DEBUG=(bool, False)
-)
-environ.Env.read_env()
+env = environ.Env()
+environ.Env.read_env(env_file=("config/.env"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%w-=iexto!4^tb6fnf0fhnev#r!l8-em7s7+98fm33zg17)ru_'
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['http://forma.hccs.uz/', 'forma.hccs.uz', '13.233.123.235', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -79,12 +76,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_URL = "postgresql://postgres:YfKNhPfGXpuhEZrHsQUorvXFoRQwSwKj@junction.proxy.rlwy.net:55325/railway"
-
 DATABASES = {
-    'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=2000)
+    'default': dj_database_url.parse(env("DATABASE_URL"))
 }
-
+print("BAZA=========", DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
