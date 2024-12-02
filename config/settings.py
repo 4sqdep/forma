@@ -19,7 +19,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['http://forma.hccs.uz/', 'forma.hccs.uz', '13.233.123.235', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['https://forma.hccs.uz/', 'forma.hccs.uz', '13.233.123.235', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -79,7 +79,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': dj_database_url.parse(env("DATABASE_URL"))
 }
-print("BAZA=========", DATABASES)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -134,7 +134,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-CSRF_TRUSTED_ORIGINS = ['https://forma-forma.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://forma.hccs.uz']
 
 CSRF_COOKIE_SECURE = True
 
@@ -152,11 +152,13 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = [
-    "https://forma-forma.up.railway.app",
+    "https://forma.hccs.uz",  # Back-end
+    "https://gidroproyekt.vercel.app", # Front-end
     'http://localhost:8080'
 ]
 CORS_ALLOWED_ORIGINS = [
-    'https://forma-forma.up.railway.app',
+    'https://forma.hccs.uz',  # Back-end
+    "https://gidroproyekt.vercel.app", # Front-end
     'http://localhost:8080',  # agar localda test qilayotgan bo'lsangiz
 ]
 ###################################################################
@@ -167,7 +169,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-HOST = "https://forma-forma.up.railway.app"
+HOST = "https://forma.hccs.uz"
 
 # Rest sozlamalari
 REST_FRAMEWORK = {
