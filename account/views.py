@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 
-from .models import UserProfile
+from .models import User
 from .serializers import Registerserializer, LoginSerializer, UserProfileSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 
@@ -42,6 +42,6 @@ class UserProfileAPIView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
     def get(self, request, pk=None):
-        userprofile = UserProfile.objects.get(id=pk)
+        userprofile = User.objects.get(id=pk)
         serializer = UserProfileSerializer(userprofile)
         return Response({'message': "Foydalanuvchi profili....", 'data': serializer.data})
