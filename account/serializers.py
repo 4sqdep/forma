@@ -70,3 +70,9 @@ class LoginSerializer(TokenObtainPairSerializer):
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)  # access token
         return data
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    """Foydalanuvchi profilini to'ldirish va yangilash"""
+    class Meta:
+        model = User
+        fielda = ['id', 'first_name', 'last_name', 'image']

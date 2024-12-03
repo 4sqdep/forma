@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
+    image = models.ImageField(upload_to='profile', default='default.jpg')
     is_download = models.BooleanField(default=False, verbose_name="Yuklash")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Uzgargan vaqti")

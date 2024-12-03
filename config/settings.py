@@ -19,7 +19,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['https://forma.hccs.uz/', 'forma.hccs.uz', '13.233.123.235', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['https://forma.hccs.uz/', 'forma.hccs.uz', '13.233.123.235', '127.0.0.1', '192.168.1.114']
 
 
 # Application definition
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
     'account',
@@ -150,17 +151,22 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
-CSRF_COOKIE_SECURE = True
+#################################
+# Bu sozlama False qiymatga ega bo'lsa http orqatli kirishga ruxsat beradi.
+# Aga True qiymat bo'lsa https bilan kirishga ruxsat beradi
+CSRF_COOKIE_SECURE = False
+#################################
 CSRF_TRUSTED_ORIGINS = [
     "https://forma.hccs.uz",  # Back-end
     "https://gidroproyekt.vercel.app", # Front-end
-    'http://localhost:8080'
+    'http://localhost:8080',
+    'http://localhost:4200', # Front-end Local
 ]
 CORS_ALLOWED_ORIGINS = [
     'https://forma.hccs.uz',  # Back-end
     "https://gidroproyekt.vercel.app", # Front-end
     'http://localhost:8080',  # agar localda test qilayotgan bo'lsangiz
+    'http://localhost:4200',  # Front-end Local
 ]
 ###################################################################
 # CORS

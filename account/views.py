@@ -3,7 +3,10 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import Registerserializer, LoginSerializer
+
+from .models import UserProfile
+from .serializers import Registerserializer, LoginSerializer, UserProfileSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 class RegisterUser(APIView):
@@ -31,3 +34,14 @@ class LoginUser(TokenObtainPairView):
 
 
 user_login_api_view = LoginUser.as_view()
+
+
+class UserProfileAPIView(APIView):
+    """Foydalanuvchi profilini to'ldirish va yangilash"""
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get(self, request, pk=None):
+        userprofile = UserProfile.objects.get(id=pk)
+        serializer = UserProfileSerializer(userprofile)
+        return Response({'message': "Foydalanuvchi profili....", 'data': serializer.data})
