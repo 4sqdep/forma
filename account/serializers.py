@@ -75,4 +75,4 @@ class UserProfileSerializer(serializers.ModelSerializer):
     """Foydalanuvchi profilini to'ldirish va yangilash"""
     class Meta:
         model = User
-        fielda = ['id', 'first_name', 'last_name', 'image']
+        fields = ['id', 'first_name', 'last_name', 'image']
