@@ -136,9 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 
-CSRF_TRUSTED_ORIGINS = ['https://forma.hccs.uz']
-
-CSRF_COOKIE_SECURE = True
 
 # Cors sozlamalari
 CORS_ALLOW_HEADERS = list(default_headers) + [
