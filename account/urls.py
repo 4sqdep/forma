@@ -8,4 +8,5 @@ urlpatterns = [
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LoginUser.as_view(), name='login'),
     path('profile/<int:pk>/', UserProfileAPIView.as_view(), name='profile'),
+    path('post-profile/', UserProfileAPIView.as_view(), name='profile'),
 ]

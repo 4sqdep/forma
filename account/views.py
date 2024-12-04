@@ -49,15 +49,11 @@ class UserProfileAPIView(APIView):
         return Response({'message': "Foydalanuvchi profili....", 'data': serializer.data})
 
     def post(self, request, pk=None):
-        try:
-            profile = User.objects.get(id=pk)
-            serializer = UserProfileSerializer(profile, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response({'message': "Profile to'ldirildi!", 'data': serializer.data}, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except User.DoesNotExist:
-            return Response({'message': "Foydalanuvchi topilmadi"}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': "Profile to'ldirildi!", 'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
     def put(self, request, pk=None):
