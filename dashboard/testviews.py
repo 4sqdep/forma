@@ -11,17 +11,15 @@ class DashboardButtonListView(APIView):
         for button in buttons:
             categories = button.dashboardcategorybutton_set.all()
             categories_data = []
-            button_has_data = False  # DashboardButton darajasida mavjudlik flagi
+            button_has_data = False  # DashboardButton darajasida umumiy flag
 
             for category in categories:
                 subcategories = category.dashboardsubcategorybutton_set.all()
-                category_has_data = subcategories.exists()  # Subkategoriya mavjudligi
+                category_has_data = subcategories.exists()  # Subkategoriya mavjudligini tekshirish
 
-                # Kategoriya darajasida "has_data" ni yangilash
-                if category.name:  # Agar kategoriya nomi mavjud bo‘lsa, uni mavjud deb belgilaymiz
-                    category_has_data = True
-
-                button_has_data = button_has_data or category_has_data  # Umumiy flagni yangilash
+                # Agar subkategoriya mavjud bo'lsa, has_data=True bo'lishi kerak
+                if category_has_data:
+                    button_has_data = True
 
                 categories_data.append({
                     "id": category.id,
@@ -35,6 +33,7 @@ class DashboardButtonListView(APIView):
                     ]
                 })
 
+            # Tugmalar ma'lumotlari
             response_data.append({
                 "id": button.id,
                 "name": button.name,
@@ -43,3 +42,4 @@ class DashboardButtonListView(APIView):
             })
 
         return Response(response_data, status=status.HTTP_200_OK)
+
