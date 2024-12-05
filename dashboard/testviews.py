@@ -2,7 +2,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .models import DashboardButton
-from .testserializers import DashboardButtonSerializer
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
@@ -12,21 +11,26 @@ class DashboardButtonListView(APIView):
         for button in buttons:
             categories = button.dashboardcategorybutton_set.all()
             categories_data = []
-            has_data = False
+            button_has_data = False  # DashboardButton darajasida mavjudlik flagi
 
             for category in categories:
                 subcategories = category.dashboardsubcategorybutton_set.all()
-                has_subcategory_data = subcategories.exists()
-                has_data = has_data or has_subcategory_data
+                category_has_data = subcategories.exists()  # Subkategoriya mavjudligi
+
+                # Kategoriya darajasida "has_data" ni yangilash
+                if category.name:  # Agar kategoriya nomi mavjud bo‘lsa, uni mavjud deb belgilaymiz
+                    category_has_data = True
+
+                button_has_data = button_has_data or category_has_data  # Umumiy flagni yangilash
 
                 categories_data.append({
                     "id": category.id,
                     "name": category.name,
-                    "has_data": has_subcategory_data,
+                    "has_data": category_has_data,
                     "subcategories": [
                         {
                             "id": sub.id,
-                            "name": sub.name,
+                            "name": sub.name
                         } for sub in subcategories
                     ]
                 })
@@ -34,7 +38,7 @@ class DashboardButtonListView(APIView):
             response_data.append({
                 "id": button.id,
                 "name": button.name,
-                "has_data": has_data,
+                "has_data": button_has_data,
                 "categories": categories_data
             })
 
