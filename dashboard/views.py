@@ -12,8 +12,9 @@ class DashboardButtonAPIView(APIView):
 
     def get(self, request):
         btn = DashboardButton.objects.all()
+        has_data = btn.exists()
         serializer = DashboardButtonSerializer(btn, many=True)
-        return Response({'message': "Asosiy buttonlar.....", 'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response({"has_data": has_data, 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
 class DashboardCategoryButtonAPIView(APIView):
@@ -22,8 +23,10 @@ class DashboardCategoryButtonAPIView(APIView):
     def get(self, request, pk=None):
         btn = (DashboardCategoryButton.objects.filter(dashboard_button_id=pk)
                .select_related('dashboard_button'))
+        has_data = btn.exists()
         serializer = DashboardCategoryButtonSerializer(btn, many=True)
-        return Response({'message': "Kategoriya buttonlar.....", 'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response({"has_data": has_data, 'message': "Kategoriya buttonlar.....", 'data': serializer.data},
+                        status=status.HTTP_200_OK)
 
     """Sub kategoriya button kiritish uchun POST method"""
 
@@ -41,7 +44,9 @@ class DashboardSubCategoryButtonAPIView(APIView):
     def get(self, request, pk=None):
         sub_btn = (DashboardSubCategoryButton.objects.filter(dashboard_category_btn_id=pk)
                    .select_related('dashboard_category_btn'))
+        has_data = sub_btn.exists()
         serializer = DashboardSubCategoryButtonSerializer(sub_btn, many=True)
-        return Response({'message': "SubCategory buttonlar.....", 'data': serializer.data}, status=status.HTTP_200_OK)
+        return Response({"has_data": has_data, 'message': "SubCategory buttonlar.....", 'data': serializer.data},
+                        status=status.HTTP_200_OK)
 
 
