@@ -6,24 +6,37 @@ from .models import DashboardButton, DashboardCategoryButton, DashboardSubCatego
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
+        # Annotatsiya subquery orqali subkategoriyalarni tekshirish
+        subcategory_exists = DashboardSubCategoryButton.objects.filter(
+            dashboard_category_btn=OuterRef('pk')
+        )
+
+        # Annotatsiya kategoriyalarda subkategoriya borligini aniqlash uchun
+        categories_with_subcategories = DashboardCategoryButton.objects.annotate(
+            has_data=Exists(subcategory_exists)
+        ).prefetch_related(
+            Prefetch(
+                'dashboardsubcategorybutton_set',
+                queryset=DashboardSubCategoryButton.objects.all(),
+                to_attr='subcategories'
+            )
+        )
+
         response_data = []
 
+        # Har bir asosiy tugma uchun ma'lumotlarni yig'ish
         for button in DashboardButton.objects.prefetch_related('dashboardcategorybutton_set'):
+            categories = categories_with_subcategories.filter(dashboard_button=button)
             categories_data = []
             button_has_data = False
 
-            for category in button.dashboardcategorybutton_set.all():
-                # Har bir kategoriya uchun subkategoriyalarni olish
-                subcategories = category.dashboardsubcategorybutton_set.all()
+            for category in categories:
+                subcategories = category.subcategories
+                category_has_data = category.has_data or len(subcategories) > 0
 
-                # Agar subkategoriyalar bo'lsa, has_data=True bo'ladi
-                category_has_data = len(subcategories) > 0
-
-                # Agar kategoriya bo'lsa va subkategoriyalar mavjud bo'lsa, button_has_data=True bo'ladi
                 if category_has_data:
                     button_has_data = True
 
-                # Kategoriya va subkategoriyalarni response_data ga qo'shish
                 categories_data.append({
                     "id": category.id,
                     "name": category.name,
@@ -33,11 +46,11 @@ class DashboardButtonListView(APIView):
                     ]
                 })
 
-            # Har bir button uchun response_data ni to'ldirish
+            # Asosiy tugma uchun ma'lumot
             response_data.append({
                 "id": button.id,
                 "name": button.name,
-                "has_data": button_has_data,  # Bu yerda button_has_data qiymatini to'g'ri o'rnatish
+                "has_data": button_has_data,
                 "categories": categories_data
             })
 
