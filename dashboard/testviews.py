@@ -10,7 +10,7 @@ class DashboardButtonListView(APIView):
         buttons_with_categories = DashboardButton.objects.prefetch_related(
             'dashboardcategorybutton_set',
             queryset=DashboardCategoryButton.objects.annotate(
-                has_data=Subquery(
+                has_data=Prefetch(
                     DashboardSubCategoryButton.objects.filter(
                         dashboard_category_btn=OuterRef('pk')
                     ).exists()
