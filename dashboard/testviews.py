@@ -6,47 +6,48 @@ from .models import DashboardButton, DashboardCategoryButton, DashboardSubCatego
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
-        # Subkategoriya mavjudligini aniqlash uchun `Exists`dan foydalanamiz
-        subcategory_exists = DashboardSubCategoryButton.objects.filter(
-            dashboard_category_btn=OuterRef('pk')
-        )
-
-        # Har bir kategoriya uchun subkategoriya mavjudligini aniqlash
+        # Kategoriyalarni annotate qilish (has_data bilan)
         categories_with_data = DashboardCategoryButton.objects.annotate(
-            has_data=Exists(subcategory_exists)
+            has_data=Exists(
+                DashboardSubCategoryButton.objects.filter(
+                    dashboard_category_btn=OuterRef('pk')
+                )
+            )
         )
 
-        # Har bir tugma uchun ma'lumotlarni qayta ishlash
         response_data = []
-        for button in DashboardButton.objects.all():
-            button_categories = categories_with_data.filter(dashboard_button=button)
-            # Tugma darajasida subkategoriya mavjudligini aniqlash
-            button_has_data = button_categories.filter(has_data=True).exists()
 
+        # Har bir DashboardButton uchun ma'lumotlarni yig'ish
+        for button in DashboardButton.objects.all():
+            categories = categories_with_data.filter(dashboard_button=button)
             categories_data = []
-            for category in button_categories:
-                subcategories = DashboardSubCategoryButton.objects.filter(
-                    dashboard_category_btn=category
-                )
+            button_has_data = False
+
+            for category in categories:
+                subcategories = DashboardSubCategoryButton.objects.filter(dashboard_category_btn=category)
+                category_has_data = subcategories.exists()
+
+                if category_has_data:
+                    button_has_data = True
 
                 categories_data.append({
                     "id": category.id,
                     "name": category.name,
-                    "has_data": category.has_data,  # Annotated qiymat
+                    "has_data": category.has_data,
                     "subcategories": [
                         {
                             "id": sub.id,
-                            "name": sub.name,
+                            "name": sub.name
                         } for sub in subcategories
                     ]
                 })
 
-            # Tugma ma'lumotlari
+            # Tugma darajasidagi ma'lumotlar
             response_data.append({
                 "id": button.id,
                 "name": button.name,
                 "has_data": button_has_data,
-                "categories": categories_data,
+                "categories": categories_data
             })
 
         return Response(response_data, status=status.HTTP_200_OK)
