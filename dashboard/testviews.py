@@ -6,32 +6,33 @@ from .models import DashboardButton, DashboardCategoryButton, DashboardSubCatego
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
-        # Kategoriyalarga subkategoriyalarni oldindan yuklash
-        categories_with_subcategories = DashboardCategoryButton.objects.prefetch_related(
+        # Annotatsiya subquery orqali subkategoriyalarni tekshirish
+        subcategory_exists = DashboardSubCategoryButton.objects.filter(
+            dashboard_category_btn=OuterRef('pk')
+        )
+
+        # Annotatsiya kategoriyalarda subkategoriya borligini aniqlash uchun
+        categories_with_subcategories = DashboardCategoryButton.objects.annotate(
+            has_data=Exists(subcategory_exists)
+        ).prefetch_related(
             Prefetch(
                 'dashboardsubcategorybutton_set',
                 queryset=DashboardSubCategoryButton.objects.all(),
                 to_attr='subcategories'
             )
-        ).annotate(
-            has_data=Exists(
-                DashboardSubCategoryButton.objects.filter(
-                    dashboard_category_btn=OuterRef('pk')
-                )
-            )
         )
 
         response_data = []
 
-        # Har bir tugma uchun ma'lumotlarni yig'ish
-        for button in DashboardButton.objects.all():
+        # Har bir asosiy tugma uchun ma'lumotlarni yig'ish
+        for button in DashboardButton.objects.prefetch_related('dashboardcategorybutton_set'):
             categories = categories_with_subcategories.filter(dashboard_button=button)
             categories_data = []
             button_has_data = False
 
             for category in categories:
                 subcategories = category.subcategories
-                category_has_data = len(subcategories) > 0
+                category_has_data = category.has_data or len(subcategories) > 0
 
                 if category_has_data:
                     button_has_data = True
@@ -45,7 +46,7 @@ class DashboardButtonListView(APIView):
                     ]
                 })
 
-            # Tugma darajasidagi ma'lumotlar
+            # Asosiy tugma uchun ma'lumot
             response_data.append({
                 "id": button.id,
                 "name": button.name,
