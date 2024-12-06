@@ -6,37 +6,23 @@ from .models import DashboardButton, DashboardCategoryButton, DashboardSubCatego
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
-        # Annotatsiya subquery orqali subkategoriyalarni tekshirish
-        subcategory_exists = DashboardSubCategoryButton.objects.filter(
-            dashboard_category_btn=OuterRef('pk')
-        )
-
-        # Annotatsiya kategoriyalarda subkategoriya borligini aniqlash uchun
-        categories_with_subcategories = DashboardCategoryButton.objects.annotate(
-            has_data=Exists(subcategory_exists)
-        ).prefetch_related(
-            Prefetch(
-                'dashboardsubcategorybutton_set',
-                queryset=DashboardSubCategoryButton.objects.all(),
-                to_attr='subcategories'
-            )
-        )
-
         response_data = []
 
-        # Har bir asosiy tugma uchun ma'lumotlarni yig'ish
+        # Loop through each DashboardButton and gather its related categories and subcategories
         for button in DashboardButton.objects.prefetch_related('dashboardcategorybutton_set'):
-            categories = categories_with_subcategories.filter(dashboard_button=button)
             categories_data = []
             button_has_data = False
 
-            for category in categories:
-                subcategories = category.subcategories
-                category_has_data = category.has_data or len(subcategories) > 0
+            # Loop through categories associated with the current button
+            for category in button.dashboardcategorybutton_set.prefetch_related('dashboardsubcategorybutton_set'):
+                # Subcategories for the current category
+                subcategories = category.dashboardsubcategorybutton_set.all()
+                category_has_data = len(subcategories) > 0
 
                 if category_has_data:
                     button_has_data = True
 
+                # Append the category with its subcategories to the response
                 categories_data.append({
                     "id": category.id,
                     "name": category.name,
@@ -46,7 +32,7 @@ class DashboardButtonListView(APIView):
                     ]
                 })
 
-            # Asosiy tugma uchun ma'lumot
+            # Append the DashboardButton data with its categories
             response_data.append({
                 "id": button.id,
                 "name": button.name,
@@ -55,3 +41,4 @@ class DashboardButtonListView(APIView):
             })
 
         return Response(response_data, status=status.HTTP_200_OK)
+
