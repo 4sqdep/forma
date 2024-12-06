@@ -1,13 +1,19 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Exists, OuterRef
+from django.db.models import Exists, OuterRef, Prefetch
 from rest_framework import status
 from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
 
 class DashboardButtonListView(APIView):
     def get(self, request, *args, **kwargs):
-        # Kategoriyalarni annotate qilish (has_data bilan)
-        categories_with_data = DashboardCategoryButton.objects.annotate(
+        # Kategoriyalarga subkategoriyalarni oldindan yuklash
+        categories_with_subcategories = DashboardCategoryButton.objects.prefetch_related(
+            Prefetch(
+                'dashboardsubcategorybutton_set',
+                queryset=DashboardSubCategoryButton.objects.all(),
+                to_attr='subcategories'
+            )
+        ).annotate(
             has_data=Exists(
                 DashboardSubCategoryButton.objects.filter(
                     dashboard_category_btn=OuterRef('pk')
@@ -17,15 +23,15 @@ class DashboardButtonListView(APIView):
 
         response_data = []
 
-        # Har bir DashboardButton uchun ma'lumotlarni yig'ish
+        # Har bir tugma uchun ma'lumotlarni yig'ish
         for button in DashboardButton.objects.all():
-            categories = categories_with_data.filter(dashboard_button=button)
+            categories = categories_with_subcategories.filter(dashboard_button=button)
             categories_data = []
             button_has_data = False
 
             for category in categories:
-                subcategories = DashboardSubCategoryButton.objects.filter(dashboard_category_btn=category)
-                category_has_data = subcategories.exists()
+                subcategories = category.subcategories
+                category_has_data = len(subcategories) > 0
 
                 if category_has_data:
                     button_has_data = True
@@ -33,12 +39,9 @@ class DashboardButtonListView(APIView):
                 categories_data.append({
                     "id": category.id,
                     "name": category.name,
-                    "has_data": category.has_data,
+                    "has_data": category_has_data,
                     "subcategories": [
-                        {
-                            "id": sub.id,
-                            "name": sub.name
-                        } for sub in subcategories
+                        {"id": sub.id, "name": sub.name} for sub in subcategories
                     ]
                 })
 
