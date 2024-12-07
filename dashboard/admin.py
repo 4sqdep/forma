@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton, ProjectDocumentation
+from .models import (DashboardButton, DashboardCategoryButton, NextStageDocuments,
+                     DashboardSubCategoryButton, ProjectDocumentation)
 
 
 class DashboardButtonAdmin(admin.ModelAdmin):
@@ -35,3 +36,11 @@ class ProjectDocumentationAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 admin.site.register(ProjectDocumentation, ProjectDocumentationAdmin)
+
+class NextStageDocumentsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'user', 'subcategories_btn', 'project_document', 'name', 'created_at']
+    list_display_links = ['project_document', 'name']
+    search_fields = ['name', 'project_document']
+
+
+admin.site.register(NextStageDocuments, NextStageDocumentsAdmin)
