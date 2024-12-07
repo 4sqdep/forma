@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
-from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
+from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton, ProjectDocumentation
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
                           DashboardSubCategoryButtonSerializer)
 
@@ -55,7 +55,8 @@ class ProjectDocumentAPIView(APIView):
     """Subkategoriya buttonga tegishli lo'yiha bo'limlarin olish"""
     permissions_classes = [IsAuthenticated]
     def get(self, request, pk=None):
-        sub_btn = DashboardSubCategoryButton.objects.filter(dashboard_category_btn_id=pk)
+        sub_btn = ProjectDocumentation.objects.filter(subcategories_btn=pk)
+        print("EEEEEEE====", sub_btn)
         serializer = ProjectDocumentationSerializer(sub_btn, many=True)
         return Response({'message': "Lo'yiha bo'limlari...", 'data': serializer.data}, status=status.HTTP_200_OK)
 

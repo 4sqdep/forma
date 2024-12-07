@@ -36,7 +36,9 @@ class DashboardSubCategoryButtonSerializerName(serializers.ModelSerializer):
 
 
 class ProjectDocumentationSerializer(serializers.ModelSerializer):
-    subcategories_btn = DashboardSubCategoryButtonSerializerName
+    subcategories_btn = DashboardSubCategoryButtonSerializerName()
     class Meta:
         model = ProjectDocumentation
+
         fields = ['id', 'user', 'subcategories_btn', 'name', 'created_at']
+
