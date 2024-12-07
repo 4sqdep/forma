@@ -1,10 +1,13 @@
+from tkinter.messagebox import RETRY
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
-from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton, ProjectDocumentation
+from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
+                     ProjectDocumentation, NextStageDocuments)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
-                          DashboardSubCategoryButtonSerializer)
+                          DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer)
 
 
 class DashboardButtonAPIView(APIView):
@@ -60,3 +63,12 @@ class ProjectDocumentAPIView(APIView):
         serializer = ProjectDocumentationSerializer(sub_btn, many=True)
         return Response({'message': "Lo'yiha bo'limlari...", 'data': serializer.data}, status=status.HTTP_200_OK)
 
+
+class NextStageDocumentsAPIView(APIView):
+    """ProjectDocument ga tegishli loyiha asosiy bo'limlarini olish uchun"""
+    permissions_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        projects = NextStageDocuments.objects.filter(project_document_id=pk)
+        serializer = NextStageDocumentsSerializer(projects, many=True)
+        return Response({'message': "SuccessFull....", 'data': serializer.data}, status=status.HTTP_200_OK)
