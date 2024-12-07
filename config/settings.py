@@ -51,7 +51,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'main.middleware.AllowIframeMiddleware',
-    'account.middleware.TokenIPAndUserAgentCheckMiddleware',
+    # 'account.middleware.TokenIPAndUserAgentCheckMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -177,7 +177,6 @@ HOST = "https://forma.hccs.uz"
 
 # Rest sozlamalari
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'account.utils.custom_exception_handler',
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
