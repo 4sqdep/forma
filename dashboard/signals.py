@@ -1,10 +1,10 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import DashboardSubCategoryButton, ProjectDocumentation, NextStageDocuments
-from account.models import User
+from django.contrib.auth.models import User
 
 
-@receiver(post_save, sender=DashboardSubCategoryButton)
+# 1. ProjectDocumentation yaratish uchun funksiya
 def create_project_documentations(instance):
     """ProjectDocumentation uchun ma'lumotlarni qo'shish"""
     document_names = ["Loyiha hujjatlari", "Qurilish montaj ishlari", "Uskunalar"]
@@ -58,3 +58,6 @@ def create_project_and_next_stage(sender, instance, created, **kwargs):
         # 2. NextStageDocuments yaratish
         for project_doc in project_docs:
             create_next_stage_documents(project_doc, instance)
+
+
+
