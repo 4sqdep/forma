@@ -5,36 +5,56 @@ from account.models import User
 
 
 @receiver(post_save, sender=DashboardSubCategoryButton)
-def create_project_documentation(sender, instance, created, **kwargs):
-    """DashboardSubCategoryButton yaratilganda ProjectDocumentation va NextStageDocuments qo'shish"""
-    if created:  # Faqat yangi ma'lumot qo'shilganda ishlaydi
-        # 3 ta ProjectDocumentation nomini yaratamiz
-        project_documents = {
-            "Loyiha hujjatlari": ["Erkin", "Abror", "Rustam"],  # Loyiha hujjatlari uchun foydalanuvchilar
-            "Qurilish montaj ishlari": ["Sardor", "Ilhom"],  # Qurilish montaj ishlari uchun foydalanuvchilar
-            "Uskunalar": ["Dilshod", "Otabek", "Jasur"]  # Uskunalar uchun foydalanuvchilar
-        }
+def create_project_documentations(instance):
+    """ProjectDocumentation uchun ma'lumotlarni qo'shish"""
+    document_names = ["Loyiha hujjatlari", "Qurilish montaj ishlari", "Uskunalar"]
+    project_docs = []
+    for name in document_names:
+        project_doc = ProjectDocumentation.objects.create(
+            subcategories_btn=instance,  # DashboardSubCategoryButton bilan bog'lash
+            user=instance.user,  # Foydalanuvchi
+            name=name,  # Hujjat nomi
+        )
+        project_docs.append(project_doc)  # Keyingi bosqichda foydalanish uchun saqlaymiz
+    return project_docs
 
-        # Har bir ProjectDocumentation uchun NextStageDocuments yaratamiz
-        for doc_name, users in project_documents.items():
-            # ProjectDocumentation yaratish
-            project_doc = ProjectDocumentation.objects.create(
-                subcategories_btn=instance,  # DashboardSubCategoryButton ga bog'lash
-                user=instance.user,  # Foydalanuvchi
-                name=doc_name,  # Hujjat nomi
-            )
 
-            # NextStageDocuments uchun foydalanuvchilarni qo'shish
-            for user_name in users:
-                try:
-                    user = User.objects.get(username=user_name)  # Foydalanuvchini olish
-                except User.DoesNotExist:
-                    continue  # Agar foydalanuvchi topilmasa, davom etish
+# 2. NextStageDocuments yaratish uchun funksiya
+def create_next_stage_documents(project_doc, instance):
+    """NextStageDocuments uchun ma'lumotlarni qo'shish"""
+    # Hujjat nomlari bo'yicha foydalanuvchi ismlarini aniqlash
+    user_names_by_document = {
+        "Loyiha hujjatlari": ["Erkin", "Abror", "Rustam"],
+        "Qurilish montaj ishlari": ["Sardor", "Ilhom"],
+        "Uskunalar": ["Dilshod", "Otabek", "Jasur"],
+    }
 
-                # NextStageDocuments yaratish
-                NextStageDocuments.objects.create(
-                    project_document=project_doc,  # ProjectDocumentation ga bog'lash
-                    subcategories_btn=instance,  # DashboardSubCategoryButton ga bog'lash
-                    user=user,  # Foydalanuvchi
-                    name=f"{user_name} hujjati",  # Hujjat nomi (foydalanuvchi nomi bilan)
-                )
+    # Hujjat nomiga qarab foydalanuvchi ismlarini topamiz
+    user_names = user_names_by_document.get(project_doc.name, [])
+    for user_name in user_names:
+        try:
+            user = User.objects.get(username=user_name)  # Foydalanuvchini topamiz
+        except User.DoesNotExist:
+            print(f"Foydalanuvchi topilmadi: {user_name}")  # Debug uchun log yozish
+            continue  # Agar foydalanuvchi topilmasa, keyingisiga o'tamiz
+
+        # NextStageDocuments ma'lumotini yaratamiz
+        NextStageDocuments.objects.create(
+            project_document=project_doc,  # ProjectDocumentation bilan bog'lash
+            subcategories_btn=instance,  # DashboardSubCategoryButton bilan bog'lash
+            user=user,  # Foydalanuvchi
+            name=f"{project_doc.name} - {user_name}",  # Hujjat nomiga foydalanuvchi nomini qo'shish
+        )
+
+
+# 3. Signal - asosiy mantiq
+@receiver(post_save, sender=DashboardSubCategoryButton)
+def create_project_and_next_stage(sender, instance, created, **kwargs):
+    """DashboardSubCategoryButton yaratilganda ProjectDocumentation va NextStageDocuments yaratish"""
+    if created:  # Faqat yangi yaratilganda ishlaydi
+        # 1. ProjectDocumentation yaratish
+        project_docs = create_project_documentations(instance)
+
+        # 2. NextStageDocuments yaratish
+        for project_doc in project_docs:
+            create_next_stage_documents(project_doc, instance)
