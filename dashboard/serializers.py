@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
+from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
+                     ProjectDocumentation)
 
 
 class DashboardButtonSerializer(serializers.ModelSerializer):
@@ -25,3 +26,17 @@ class DashboardSubCategoryButtonSerializer(serializers.ModelSerializer):
     class Meta:
         model = DashboardSubCategoryButton
         fields = ['id', 'dashboard_category_btn', 'name']
+
+
+class DashboardSubCategoryButtonSerializerName(serializers.ModelSerializer):
+    """Faqan name fildni olish"""
+    class Meta:
+        model = DashboardSubCategoryButton
+        fields = ['id', 'name']
+
+
+class ProjectDocumentationSerializer(serializers.ModelSerializer):
+    subcategories_btn = DashboardSubCategoryButtonSerializerName
+    class Meta:
+        model = ProjectDocumentation
+        fields = ['id', 'user', 'subcategories_btn', 'name', 'created_at']
