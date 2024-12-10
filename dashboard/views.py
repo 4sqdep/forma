@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
                      ProjectDocumentation, NextStageDocuments)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
-                          DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer)
+                          DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer,
+                          NextStageDocumentsCreateSerializer)
 
 
 class DashboardButtonAPIView(APIView):
@@ -70,3 +71,10 @@ class NextStageDocumentsAPIView(APIView):
         projects = NextStageDocuments.objects.filter(project_document_id=pk)
         serializer = NextStageDocumentsSerializer(projects, many=True)
         return Response({'message': "SuccessFull....", 'data': serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request, pk=None):
+        serializer = NextStageDocumentsCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response({'message': "Kerakli papkalar yaratildi....", 'data': serializer.data},
+                            status=status.HTTP_201_CREATED)
