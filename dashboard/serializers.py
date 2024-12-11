@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
-                     ProjectDocumentation, NextStageDocuments)
+                     ProjectDocumentation, NextStageDocuments, Files)
 
 
 class DashboardButtonSerializer(serializers.ModelSerializer):
@@ -54,3 +54,10 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextStageDocuments
         fields = ['id', 'project_document', 'subcategories_btn', 'name']
+
+
+class FilesSerializer(serializers.ModelSerializer):
+    """Fayllarni yuklash uchun serializer"""
+    class Meta:
+        model = Files
+        fields = ['document', 'user', 'files']

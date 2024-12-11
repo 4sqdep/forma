@@ -75,3 +75,18 @@ class NextStageDocuments(models.Model):
     class Meta:
         verbose_name = "Keyingi hujjat"
         verbose_name_plural = "Keyingi hujjatlari"
+
+
+class Files(models.Model):
+    document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, verbose_name="Loyiha hujjatlar",
+                                 blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi", blank=True, null=True)
+    files = models.FileField(verbose_name="files/%Y/%m/%d", blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
+
+    def __str__(self):
+        return f"{self.document}"
+
+    class Meta:
+        verbose_name = "Fayl"
+        verbose_name_plural = "Fayllar"

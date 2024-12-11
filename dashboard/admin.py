@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (DashboardButton, DashboardCategoryButton, NextStageDocuments,
-                     DashboardSubCategoryButton, ProjectDocumentation)
+                     DashboardSubCategoryButton, ProjectDocumentation, Files)
 
 
 class DashboardButtonAdmin(admin.ModelAdmin):
@@ -44,3 +44,12 @@ class NextStageDocumentsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(NextStageDocuments, NextStageDocumentsAdmin)
+
+
+class FilesAdmin(admin.ModelAdmin):
+    list_display = ['id', 'document', 'user', 'files', 'created_at']
+    list_display_links = ['document', 'files']
+    search_fields = ['created_at', 'files']
+
+
+admin.site.register(Files, FilesAdmin)
