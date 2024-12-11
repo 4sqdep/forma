@@ -7,7 +7,7 @@ from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCateg
                      ProjectDocumentation, NextStageDocuments, Files)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
                           DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer,
-                          NextStageDocumentsCreateSerializer, FilesSerializer)
+                          NextStageDocumentsCreateSerializer, FilesSerializer, MultipleFileUploadSerializer)
 
 
 class DashboardButtonAPIView(APIView):
@@ -81,34 +81,11 @@ class NextStageDocumentsAPIView(APIView):
                             status=status.HTTP_201_CREATED)
 
 
-class FilesCreateAPIView(APIView):
-    """Keyingi hujjatlar modeliga fayllarni yuklash uchun """
-    permissions_classes = [IsAuthenticated]
-    parser_classes = (MultiPartParser, FormParser)
-
+class MultipleFileUploadView(APIView):
     def post(self, request, *args, **kwargs):
-        document_id = request.data.get('document_id')
-        # Tekshiramiz: NextStageDocuments modeli mavjudmi?
-        try:
-            document = NextStageDocuments.objects.get(id=document_id)
-        except NextStageDocuments.DoesNotExist:
-            return Response({"error": "NextStageDocuments topilmadi."}, status=status.HTTP_404_NOT_FOUND)
-
-
-        # Fayllarni yuklash uchun
-        files = request.FILES.getlist('files')
-        if not files:
-            return Response({"error": "Hech qanday fayl taqdim etilmaydi."}, status=status.HTTP_400_BAD_REQUEST)
-
-        uploaded_files = []
-        for file in files:
-            file_instance = Files.objects.bulk_create(
-                document=document,
-                user=request.user,  # Hozirgi foydalanuvchini biriktiramiz
-                files=file
-            )
-            uploaded_files.append(file_instance)
-
-        # Serializatsiya qilingan ma'lumotlarni qaytarish
-        serializer = FilesSerializer(uploaded_files, many=True)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        serializer = MultipleFileUploadSerializer(data=request.data, context={"request": request})
+        if serializer.is_valid():
+            uploaded_files = serializer.save()  # Fayllarni saqlash
+            response_serializer = FilesSerializer(uploaded_files, many=True)  # Javobni formatlash
+            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

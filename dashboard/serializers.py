@@ -60,4 +60,38 @@ class FilesSerializer(serializers.ModelSerializer):
     """Fayllarni yuklash uchun serializer"""
     class Meta:
         model = Files
-        fields = ['document', 'user', 'files']
+        fields = '__all__'
+
+
+class MultipleFileUploadSerializer(serializers.Serializer):
+    document_id = serializers.IntegerField()  # NextStageDocuments modelining IDsi
+    files = serializers.ListField(
+        child=serializers.FileField(),
+        allow_empty=False,
+        write_only=True
+    )
+
+    def create(self, validated_data):
+        document_id = validated_data.get('document_id')
+        files = validated_data.get('files')
+
+        # NextStageDocuments mavjudligini tekshirish
+        try:
+            document = NextStageDocuments.objects.get(id=document_id)
+        except NextStageDocuments.DoesNotExist:
+            raise serializers.ValidationError({"document_id": "NextStageDocuments not found."})
+
+        # Fayllar ro'yxatini yaratish
+        file_instances = [
+            Files(
+                document=document,
+                user=self.context['request'].user,  # Foydalanuvchini olish
+                files=file
+            )
+            for file in files
+        ]
+
+        # Fayllarni bir vaqtda bazaga qo'shish
+        Files.objects.bulk_create(file_instances)
+
+        return file_instances
