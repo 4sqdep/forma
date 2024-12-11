@@ -102,7 +102,7 @@ class FilesCreateAPIView(APIView):
 
         uploaded_files = []
         for file in files:
-            file_instance = Files.objects.create(
+            file_instance = Files.objects.bulk_create(
                 document=document,
                 user=request.user,  # Hozirgi foydalanuvchini biriktiramiz
                 files=file
