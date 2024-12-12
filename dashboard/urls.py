@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (DashboardButtonAPIView, DashboardCategoryButtonAPIView, ProjectDocumentAPIView,
-                    DashboardSubCategoryButtonAPIView, NextStageDocumentsAPIView, FilesCreateAPIView)
+                    DashboardSubCategoryButtonAPIView, NextStageDocumentsAPIView, MultipleFileUploadView)
 
 app_name = "dashboard"
 
@@ -12,6 +12,6 @@ urlpatterns = [
     path('project-btn/<int:pk>/', ProjectDocumentAPIView.as_view(), name='project-btn'),
     path('next-project/<int:pk>/', NextStageDocumentsAPIView.as_view(), name='next-project-btn'),
     path('add-next-project/', NextStageDocumentsAPIView.as_view(), name='add-next-project-btn'),
-    path('files-create/', FilesCreateAPIView.as_view(), name='files-create'),
+    path('files-create/', MultipleFileUploadView.as_view(), name='files-create'),
 
 ]
