@@ -82,6 +82,8 @@ class NextStageDocumentsAPIView(APIView):
 
 
 class MultipleFileUploadView(APIView):
+    permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
     def post(self, request, *args, **kwargs):
         serializer = MultipleFileUploadSerializer(data=request.data, context={"request": request})
         if serializer.is_valid():
