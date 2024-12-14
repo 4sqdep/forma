@@ -11,6 +11,7 @@ urlpatterns = [
     path('sub-btn-post/', DashboardCategoryButtonAPIView.as_view(), name='sub-btn-post'),
     path('project-btn/<int:pk>/', ProjectDocumentAPIView.as_view(), name='project-btn'),
     path('next-project/<int:pk>/', NextStageDocumentsAPIView.as_view(), name='next-project-btn'),
+    path('next-patch-project-name/<int:pk>/', NextStageDocumentsAPIView.as_view(), name='next-patch-project-name'),
     path('add-next-project/', NextStageDocumentsAPIView.as_view(), name='add-next-project-btn'),
     path('files-create/', MultipleFileUploadView.as_view(), name='files-create'),
 

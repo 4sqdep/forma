@@ -80,6 +80,18 @@ class NextStageDocumentsAPIView(APIView):
             return Response({'message': "Kerakli papkalar yaratildi....", 'data': serializer.data},
                             status=status.HTTP_201_CREATED)
 
+    def patch(self, request, pk=None):
+        try:
+            document = NextStageDocuments.objects.get(pk=pk)
+        except NextStageDocuments.DoesNotExist:
+            return Response({'error': "Bu idda dokument nomi topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+        new_name = request.data.get('name')
+        if not new_name:
+            return Response({'message': "Name maydonini kiritish shart"}, status=status.HTTP_400_BAD_REQUEST)
+        document.name = new_name
+        document.save()
+        return Response({"message": "Name muvaffaqiyatli yangilandi", "data": document.name}, status=status.HTTP_200_OK)
+
 
 class MultipleFileUploadView(APIView):
     permission_classes = [IsAuthenticated]
