@@ -12,7 +12,7 @@ class DashboardButton(models.Model):
 
     class Meta:
         verbose_name = "Dashboard Button"
-        verbose_name_plural = "Dashboard Knopkalar"
+        verbose_name_plural = "Asosiy Knopkalar"
 
 
 class DashboardCategoryButton(models.Model):
@@ -26,7 +26,7 @@ class DashboardCategoryButton(models.Model):
 
     class Meta:
         verbose_name = "Dashboard Category Button"
-        verbose_name_plural = "Dashboard Kategoriya Knopkalar"
+        verbose_name_plural = "Kategoriya Knopkalar"
 
 
 class DashboardSubCategoryButton(models.Model):
@@ -41,7 +41,7 @@ class DashboardSubCategoryButton(models.Model):
 
     class Meta:
         verbose_name = "Dashboard Sub Category Button"
-        verbose_name_plural = "Dashboard Pastki Kategoriya Knopkalar"
+        verbose_name_plural = "Obyekt nomlari"
 
 
 class ProjectDocumentation(models.Model):
@@ -56,7 +56,7 @@ class ProjectDocumentation(models.Model):
 
     class Meta:
         verbose_name = "Loyiha hujjati"
-        verbose_name_plural = "Loyiha hujjatlari"
+        verbose_name_plural = "Loyiha Bo'limlari"
 
 
 class NextStageDocuments(models.Model):
@@ -74,7 +74,7 @@ class NextStageDocuments(models.Model):
 
     class Meta:
         verbose_name = "Keyingi hujjat"
-        verbose_name_plural = "Keyingi hujjatlari"
+        verbose_name_plural = "Loyiha hujjatlari"
 
 
 class Files(models.Model):
