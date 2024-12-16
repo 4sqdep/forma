@@ -10,6 +10,7 @@ urlpatterns = [
         path('', include('account.urls')),
         path('main/', include('main.urls')),
         path('dashboard/', include('dashboard.urls')),
+        path('reestr/', include('reestr.urls')),
     ]))
 ]
 
