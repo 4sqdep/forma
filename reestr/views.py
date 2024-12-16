@@ -18,6 +18,7 @@ class NocapitelniExcelToJsonView(APIView):
 
             # Excel faylni JSON formatga o‘tkazish
             df = pd.read_excel(file_path)  # Excel faylni o‘qish
+            df = df.fillna("")
             data = df.to_dict(orient='records')  # JSON formatga aylantirish
 
             return Response(data, status=status.HTTP_200_OK)
