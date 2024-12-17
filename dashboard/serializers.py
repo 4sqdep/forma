@@ -95,3 +95,9 @@ class MultipleFileUploadSerializer(serializers.Serializer):
         Files.objects.bulk_create(file_instances)
 
         return file_instances
+
+
+class GetFilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Files
+        fields = ['id', 'files']

@@ -7,7 +7,8 @@ from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCateg
                      ProjectDocumentation, NextStageDocuments, Files)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
                           DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer,
-                          NextStageDocumentsCreateSerializer, FilesSerializer, MultipleFileUploadSerializer)
+                          NextStageDocumentsCreateSerializer, FilesSerializer, MultipleFileUploadSerializer,
+                          GetFilesSerializer)
 
 
 class DashboardButtonAPIView(APIView):
@@ -103,3 +104,17 @@ class MultipleFileUploadView(APIView):
             response_serializer = FilesSerializer(uploaded_files, many=True)  # Javobni formatlash
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetFilesAPIView(APIView):
+    permissions_classes = [IsAuthenticated]
+    multipart_parser_classes = [MultiPartParser, FormParser]
+    def get(self, request, pk=None):
+        try:
+            files = Files.objects.filter(document_id=pk)
+            if not files.exists():
+                return Response({'message': "Tegishli fayllar topilmadi"}, status=status.HTTP_404_NOT_FOUND)
+            serializer = FilesSerializer(files, many=True)
+            return Response({'message': "Barcha fayllar", 'data': serializer.data}, status=status.HTTP_200_OK)
+        except Files.DoesNotExist as e:
+            return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
