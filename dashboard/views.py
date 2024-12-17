@@ -114,7 +114,7 @@ class GetFilesAPIView(APIView):
             files = Files.objects.filter(document_id=pk)
             if not files.exists():
                 return Response({'message': "Tegishli fayllar topilmadi"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = FilesSerializer(files, many=True)
+            serializer = GetFilesSerializer(files, many=True)
             return Response({'message': "Barcha fayllar", 'data': serializer.data}, status=status.HTTP_200_OK)
         except Files.DoesNotExist as e:
             return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
