@@ -1,0 +1,142 @@
+[
+    {
+        "id": 1,
+        "country_id": 1,
+        "name": {
+            "uz": "Qoraqalpog‘iston Respublikasi",
+            "ru": "Республика Каракалпакстан",
+            "en": "Republic of Karakalpakstan",
+            "krl": "Қорақалпоғистон Республикаси"
+        }
+    },
+    {
+        "id": 2,
+        "country_id": 1,
+        "name": {
+            "uz": "Andijon viloyati",
+            "ru": "Андижанская область",
+            "en": "Andijan Region",
+            "krl": "Андижон вилояти"
+        }
+    },
+    {
+        "id": 3,
+        "country_id": 1,
+        "name": {
+            "uz": "Buxoro viloyati",
+            "ru": "Бухарская область",
+            "en": "Bukhara Region",
+            "krl": "Бухоро вилояти"
+        }
+    },
+    {
+        "id": 4,
+        "country_id": 1,
+        "name": {
+            "uz": "Jizzax viloyati",
+            "ru": "Джизакская область",
+            "en": "Jizzakh Region",
+            "krl": "Жиззах вилояти"
+        }
+    },
+    {
+        "id": 5,
+        "country_id": 1,
+        "name": {
+            "uz": "Qashqadaryo viloyati",
+            "ru": "Кашкадарьинская область",
+            "en": "Kashkadarya Region",
+            "krl": "Қашқадарё вилояти"
+        }
+    },
+    {
+        "id": 6,
+        "country_id": 1,
+        "name": {
+            "uz": "Navoiy viloyati",
+            "ru": "Навоийская область",
+            "en": "Navoi Region",
+            "krl": "Навоий вилояти"
+        }
+    },
+    {
+        "id": 7,
+        "country_id": 1,
+        "name": {
+            "uz": "Namangan viloyati",
+            "ru": "Наманганская область",
+            "en": "Namangan Region",
+            "krl": "Наманган вилояти"
+        }
+    },
+    {
+        "id": 8,
+        "country_id": 1,
+        "name": {
+            "uz": "Samarqand viloyati",
+            "ru": "Самаркандская область",
+            "en": "Samarkand Region",
+            "krl": "Самарқанд вилояти"
+        }
+    },
+    {
+        "id": 9,
+        "country_id": 1,
+        "name": {
+            "uz": "Surxandaryo viloyati",
+            "ru": "Сурхандарьинская область",
+            "en": "Surkhandarya Region",
+            "krl": "Сурхандарё вилояти"
+        }
+    },
+    {
+        "id": 10,
+        "country_id": 1,
+        "name": {
+            "uz": "Sirdaryo viloyati",
+            "ru": "Сырдарьинская область",
+            "en": "Syrdarya Region",
+            "krl": "Сирдарё вилояти"
+        }
+    },
+    {
+        "id": 11,
+        "country_id": 1,
+        "name": {
+            "uz": "Toshkent viloyati",
+            "ru": "Ташкентская область",
+            "en": "Tashkent Region",
+            "krl": "Тошкент вилояти"
+        }
+    },
+    {
+        "id": 12,
+        "country_id": 1,
+        "name": {
+            "uz": "Farg‘ona viloyati",
+            "ru": "Ферганская область",
+            "en": "Fergana Region",
+            "krl": "Фарғона вилояти"
+        }
+    },
+    {
+        "id": 13,
+        "country_id": 1,
+        "name": {
+            "uz": "Xorazm viloyati",
+            "ru": "Хорезмская область",
+            "en": "Khorezm Region",
+            "krl": "Хоразм вилояти"
+        }
+    },
+    {
+        "id": 14,
+        "country_id": 1,
+        "name": {
+            "uz": "Toshkent shahri",
+            "ru": "город Ташкент",
+            "en": "Tashkent City",
+            "krl": "Тошкент шаҳри"
+        }
+    }
+]

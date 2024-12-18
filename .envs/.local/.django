@@ -1,0 +1,4 @@
+PROJECT_NAME=Proclear
+DJANGO_SETTINGS_MODULE=config.settings.local
+SECRET_KEY=3=9=l=yx3b7t9d!p%g_q_b+)0i(fii$#($j&q*68$3cl2(&#vz
+DEBUG=True
