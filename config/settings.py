@@ -161,10 +161,12 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4200', # Front-end Local
 ]
 CORS_ALLOWED_ORIGINS = [
-    'https://forma.hccs.uz',  # Back-end
-    "https://gidroproyekt.vercel.app", # Front-end
-    'http://localhost:8080',  # agar localda test qilayotgan bo'lsangiz
+    # 'https://forma.hccs.uz',  # Back-end
     'http://localhost:4200',  # Front-end Local
+    "https://gidroproyekt.vercel.app", # Front-end
+
+    # 'http://localhost:8080',  # agar localda test qilayotgan bo'lsangiz
+
 ]
 ###################################################################
 # CORS
