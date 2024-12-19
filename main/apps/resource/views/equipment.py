@@ -4,7 +4,8 @@ from ..models.equipment import Equipment, EquipmentCategory
 from ..serializers import equipment as equipment_serializer
 from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -30,6 +31,14 @@ class EquipmentCategoryListAPIView(generics.ListAPIView):
     serializer_class =  equipment_serializer.EquipmentCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
     
     def get_queryset(self):
         queryset = EquipmentCategory.objects.all()
@@ -125,6 +134,17 @@ class EquipmentListAPIView(generics.ListAPIView):
     serializer_class =  equipment_serializer.EquipmentListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Equipment.objects.all()

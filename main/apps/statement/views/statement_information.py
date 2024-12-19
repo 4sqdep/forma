@@ -4,6 +4,8 @@ from rest_framework_simplejwt import authentication
 from ..models.statement_information import StatementInformation
 from ..serializers import statement_information as statement_information_serializer
 from ...common.pagination import CustomPagination
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -31,10 +33,20 @@ class StatementInformationListAPIView(generics.ListAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
             return self.queryset.all()
         
-
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
         if p:

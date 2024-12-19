@@ -8,7 +8,8 @@ from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
 from . import serializers as checklist_serializer
 from decimal import Decimal, InvalidOperation
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -86,6 +87,16 @@ class CheckListListAPIView(generics.ListAPIView):
     serializer_class = checklist_serializer.CheckListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = CheckList.objects.all()

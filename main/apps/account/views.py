@@ -21,6 +21,9 @@ from main.apps.common.response import (
     PostResponse, 
     PutResponse
 )
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 User = get_user_model()
 
@@ -346,12 +349,24 @@ class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
 user_retrieve_update_api_view = UserRetrieveUpdateAPIView.as_view()
 
 
+
 class UserListAPIView(generics.ListAPIView):
     serializer_class = user_serializer.UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.JWTAuthentication]
     pagination_class = CustomPagination
     search_fields = ["phone_number",]  
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = User.objects.exclude(is_moderator=True).exclude(is_superuser=True)

@@ -4,7 +4,8 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from . import serializers as contract_serializer
 from ..common.pagination import CustomPagination
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 class ContractCreateAPIView(generics.CreateAPIView):
@@ -25,14 +26,36 @@ contract_create_api_view = ContractCreateAPIView.as_view()
 
 
 class ContractListAPIView(generics.ListAPIView):
-    queryset = Contract.objects.all()
     serializer_class = contract_serializer.ContractListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'client_name', openapi.IN_QUERY, description='Client Name', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'inn', openapi.IN_QUERY, description='Client INN (Tax Identification Number)', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'date', openapi.IN_QUERY, description='Contract Date (YYYY-MM-DD)', type=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'phone_number', openapi.IN_QUERY, description='Client Phone Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
-        queryset = self.queryset.all()
+        queryset = queryset = Contract.objects.all()
         client_name = self.request.query_params.get('client_name')
         inn = self.request.query_params.get('inn')
         date = self.request.query_params.get('date')

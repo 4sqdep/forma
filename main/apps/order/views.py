@@ -4,6 +4,9 @@ from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
 from . import serializers as order_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 
 
@@ -27,6 +30,32 @@ class OrderListAPIView(generics.ListAPIView):
     serializer_class = order_serializer.OrderListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'employee_name', openapi.IN_QUERY, description='Employee Name', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'order_id', openapi.IN_QUERY, description='Order Id', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'client_type', openapi.IN_QUERY, description='Client Type', type=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'phone_number', openapi.IN_QUERY, description='Client Phone Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'contract_number', openapi.IN_QUERY, description='Contract Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Order.objects.all()

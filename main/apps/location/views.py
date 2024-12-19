@@ -5,12 +5,27 @@ from .serializer import CountrySerializer, RegionSerializer, DistrictSerializer
 from ..common.pagination import CustomPagination
 from rest_framework import permissions
 from rest_framework_simplejwt import authentication
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
 
 
 class CountryListAPIView(generics.ListAPIView):
     serializer_class = CountrySerializer
-    # authentication_classes = [authentication.JWTAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = Country.objects.all()
@@ -45,8 +60,8 @@ country_list_api_view = CountryListAPIView.as_view()
 class CountryDetailAPIView(generics.RetrieveAPIView):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
-    # authentication_classes = [authentication.JWTAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -62,8 +77,16 @@ country_retrieve_api_view = CountryDetailAPIView.as_view()
 
 class RegionListAPIView(generics.ListAPIView):
     serializer_class = RegionSerializer
-    # authentication_classes = [authentication.JWTAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
 
     def get_queryset(self):
         queryset = Region.objects.all()
@@ -98,8 +121,8 @@ region_list_api_view = RegionListAPIView.as_view()
 class RegionDetailAPIView(generics.RetrieveAPIView):
     queryset = Region.objects.all()
     serializer_class = RegionSerializer
-    # authentication_classes = [authentication.JWTAuthentication]
-    # permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -115,6 +138,16 @@ region_retrieve_api_view = RegionDetailAPIView.as_view()
 
 class DistrictListAPIView(generics.ListAPIView):
     serializer_class = DistrictSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
 
     def get_queryset(self):
         queryset = District.objects.all()
@@ -149,6 +182,8 @@ district_list_api_view = DistrictListAPIView.as_view()
 class DistrictDetailAPIView(generics.RetrieveAPIView):
     queryset = District.objects.all()
     serializer_class = DistrictSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()

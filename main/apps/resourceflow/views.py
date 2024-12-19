@@ -6,6 +6,9 @@ from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
 from . import serializers as resourceflow_serializer
 from django.utils import timezone
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
 
 
 class ResourceRequestCreateAPIView(generics.CreateAPIView):
@@ -32,6 +35,26 @@ class ResourceRequestListAPIView(generics.ListAPIView):
     serializer_class = resourceflow_serializer.ResourceRequestListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'status', openapi.IN_QUERY, description='Status', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'created_at', openapi.IN_QUERY, description='Created at Date (YYYY-MM-DD)', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'sender', openapi.IN_QUERY, description='Sender', type=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'receiver', openapi.IN_QUERY, description='Receiver', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
     
     def get_queryset(self):
         queryset = ResourceRequest.objects.all()
@@ -170,6 +193,17 @@ class ResourceReturnListAPIView(generics.ListAPIView):
     serializer_class = resourceflow_serializer.ResourceReturnListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = ResourceReturn.objects.all()

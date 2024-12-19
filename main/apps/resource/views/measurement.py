@@ -4,6 +4,8 @@ from rest_framework_simplejwt import authentication
 from ..serializers import measurement as measurement_serializer
 from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -29,6 +31,17 @@ class MeasurementListAPIView(generics.ListAPIView):
     serializer_class =  measurement_serializer.MeasurementSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Measurement.objects.all()

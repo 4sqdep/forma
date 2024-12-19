@@ -5,6 +5,8 @@ from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
 from ..models.statement import Statement
 from ..serializers import statement as statement_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -28,6 +30,38 @@ class StatementListAPIView(generics.ListAPIView):
     serializer_class = statement_serializer.StatementListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'address', openapi.IN_QUERY, description='Address', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'full_name', openapi.IN_QUERY, description='Client Full Name', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'client_type', openapi.IN_QUERY, description='Client Type', type=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'inn', openapi.IN_QUERY, description='INN', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'phone_number', openapi.IN_QUERY, description='Client Phone Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'contact_phone_number', openapi.IN_QUERY, description='Contact Phone Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'status', openapi.IN_QUERY, description='Status', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Statement.objects.all()

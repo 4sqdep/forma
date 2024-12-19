@@ -4,6 +4,8 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from ..serializers import material_warehouse as material_warehouse_serializer
 from ...common.pagination import CustomPagination
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -30,6 +32,26 @@ class MaterialWarehouseListAPIView(generics.ListAPIView):
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'equipment_category', openapi.IN_QUERY, description='Equipment Category', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'equipment', openapi.IN_QUERY, description='Equipment', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'measurement', openapi.IN_QUERY, description='Measurement', type=openapi.FORMAT_DATE
+            ),
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = self.queryset.all()

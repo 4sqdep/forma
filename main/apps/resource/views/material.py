@@ -4,7 +4,8 @@ from ..models.material import MaterialCategory, Material
 from ..serializers import material as material_serializer
 from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -30,6 +31,14 @@ class MaterialCategoryListAPIView(generics.ListAPIView):
     serializer_class =  material_serializer.MaterialCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
     
     def get_queryset(self):
         queryset = MaterialCategory.objects.all()
@@ -124,6 +133,17 @@ material_create_api_view = MaterialCreateAPIView.as_view()
 class MaterialListAPIView(generics.ListAPIView):
     serializer_class =  material_serializer.MaterialListSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Material.objects.all()

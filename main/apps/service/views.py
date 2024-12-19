@@ -4,6 +4,8 @@ from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.common.response import DestroyResponse, ListResponse, PostResponse, PutResponse
 from . import serializers as service_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -27,6 +29,14 @@ class ServiceCategoryListAPIView(generics.ListAPIView):
     serializer_class = service_serializer.ServiceCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
     
     def get_queryset(self):
         queryset = ServiceCategory.objects.all()
@@ -120,6 +130,17 @@ class ServiceListAPIView(generics.ListAPIView):
     serializer_class = service_serializer.ServiceListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+            ),
+        ]
+    )
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
         queryset = Service.objects.all()
