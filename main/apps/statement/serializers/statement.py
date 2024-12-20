@@ -1,3 +1,4 @@
+from main.apps.account.serializer import UserDetailSerializer
 from main.apps.location.serializer import DistrictSerializer, RegionSerializer
 from main.apps.statement.models.statement import Statement
 from rest_framework import serializers 
@@ -40,6 +41,7 @@ class StatementSerializer(serializers.ModelSerializer):
 
 
 class StatementListSerializer(serializers.ModelSerializer):
+    employee = UserDetailSerializer()
     region = RegionSerializer()
     district = DistrictSerializer()
     class Meta:

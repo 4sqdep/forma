@@ -1,6 +1,8 @@
 from main.apps.account.serializer import UserDetailSerializer
 from main.apps.statement.models.statement_information import StatementInformation
+from main.apps.statement.serializers.statement import StatementListSerializer
 from rest_framework import serializers 
+
 
 
 
@@ -19,6 +21,7 @@ class StatementInformationSerializer(serializers.ModelSerializer):
 
 
 class StatementInformationListSerializer(serializers.ModelSerializer):
+    statement = StatementListSerializer()
     class Meta:
         model = StatementInformation
         fields = (

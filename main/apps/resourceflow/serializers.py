@@ -1,3 +1,7 @@
+from main.apps.account.serializer import UserDetailSerializer
+from main.apps.resource.serializers.equipment import EquipmentCategorySerializer, EquipmentListSerializer
+from main.apps.resource.serializers.material import MaterialCategorySerializer, MaterialListSerializer
+from main.apps.resource.serializers.measurement import MeasurementSerializer
 from rest_framework import serializers 
 from django.utils.translation import gettext_lazy as _
 from .models import ResourceRequest, ResourceReturn
@@ -34,6 +38,13 @@ def validate_resource(attrs):
 
 
 class ResourceRequestListSerializer(serializers.ModelSerializer):
+    sender = UserDetailSerializer()
+    receiver = UserDetailSerializer()
+    equipment_category = EquipmentCategorySerializer()
+    equipment = EquipmentListSerializer()
+    material_category = MaterialCategorySerializer()
+    material = MaterialListSerializer()
+    measurement = MeasurementSerializer()
     class Meta:
         model = ResourceRequest
         fields = (
@@ -80,6 +91,13 @@ class ResourceRequestCreateSerializer(serializers.ModelSerializer):
 
 
 class ResourceReturnListSerializer(serializers.ModelSerializer):
+    sender = UserDetailSerializer()
+    receiver = UserDetailSerializer()
+    equipment_category = EquipmentCategorySerializer()
+    equipment = EquipmentListSerializer()
+    material_category = MaterialCategorySerializer()
+    material = MaterialListSerializer()
+    measurement = MeasurementSerializer()
     class Meta:
         model = ResourceReturn
         fields = (

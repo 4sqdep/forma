@@ -1,3 +1,5 @@
+from main.apps.resource.serializers.equipment import EquipmentCategorySerializer, EquipmentListSerializer
+from main.apps.resource.serializers.material import MaterialListSerializer
 from rest_framework import serializers 
 from .models import ServiceCategory, Service
 from django.utils.translation import gettext_lazy as _
@@ -57,6 +59,11 @@ class ServiceCreateSerializer(serializers.ModelSerializer):
 
 
 class ServiceListSerializer(serializers.ModelSerializer):
+    service_category = ServiceCategorySerializer()
+    equipment_category = EquipmentCategorySerializer()
+    material_category = EquipmentCategorySerializer()
+    equipment = EquipmentListSerializer()
+    material = MaterialListSerializer()
     class Meta:
         model = Service
         fields = (

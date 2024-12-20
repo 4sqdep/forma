@@ -104,6 +104,11 @@ class EquipmentWarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return equipment_warehouse_serializer.EquipmentWarehouseListSerializer
+        return equipment_warehouse_serializer.EquipmentWarehouseCreateSerializer
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)

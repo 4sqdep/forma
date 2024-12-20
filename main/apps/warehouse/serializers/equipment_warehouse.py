@@ -1,5 +1,6 @@
 from main.apps.resource.serializers.equipment import EquipmentCategorySerializer, EquipmentListSerializer
 from main.apps.resource.serializers.measurement import MeasurementSerializer
+from main.apps.resource.serializers.time_measurement import TimeMeasurementSerializer
 from main.apps.warehouse.models.equipment_warehouse import EquipmentWarehouse
 from rest_framework import serializers 
 
@@ -25,6 +26,7 @@ class EquipmentWarehouseListSerializer(serializers.ModelSerializer):
     equipment_category = EquipmentCategorySerializer()
     equipment = EquipmentListSerializer()
     measurement = MeasurementSerializer()
+    time_measurement = TimeMeasurementSerializer()
     class Meta:
         model = EquipmentWarehouse
         fields = (
