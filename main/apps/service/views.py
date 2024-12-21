@@ -143,7 +143,13 @@ class ServiceListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Service.objects.all()
+        queryset = Service.objects.select_related(
+            'service_category', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
         return queryset
 
     def get_pagination_class(self):
@@ -173,7 +179,13 @@ service_list_api_view = ServiceListAPIView.as_view()
 
 
 class ServiceDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Service.objects.all()
+    queryset = Service.objects.select_related(
+            'service_category', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
     serializer_class = service_serializer.ServiceListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

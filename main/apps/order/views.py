@@ -58,7 +58,7 @@ class OrderListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Order.objects.all()
+        queryset = Order.objects.select_related('checklist').all()
         employee_name = self.request.query_params.get('employee_name')
         order_id = self.request.query_params.get('order_id')
         client_type = self.request.query_params.get('client_type')
@@ -108,7 +108,7 @@ order_list_api_view = OrderListAPIView.as_view()
 
 
 class OrderDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Order.objects.all()
+    queryset = Order.objects.select_related('checklist').all()
     serializer_class = order_serializer.OrderListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

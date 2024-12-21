@@ -146,7 +146,10 @@ class MaterialListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Material.objects.all()
+        queryset = Material.objects.select_related(
+            'material_category', 
+            'measurement' 
+            ).all()
         return queryset
 
     def get_pagination_class(self):
@@ -176,7 +179,10 @@ material_list_api_view = MaterialListAPIView.as_view()
 
 
 class MaterialDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Material.objects.all()
+    queryset = Material.objects.select_related(
+            'material_category', 
+            'measurement' 
+            ).all()
     serializer_class =  material_serializer.MaterialListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

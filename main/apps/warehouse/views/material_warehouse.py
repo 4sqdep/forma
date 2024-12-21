@@ -27,7 +27,7 @@ material_warehouse_create_api_view = MaterialWarehouseCreateAPIView.as_view()
 
 
 class MaterialWarehouseListAPIView(generics.ListAPIView):
-    queryset = MaterialWarehouse.objects.all()
+    queryset = MaterialWarehouse.objects.select_related('material_category', 'material').all()
     serializer_class = material_warehouse_serializer.MaterialWarehouseListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
@@ -98,7 +98,7 @@ material_warehouse_list_api_view = MaterialWarehouseListAPIView.as_view()
 
 
 class MaterialWarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = MaterialWarehouse.objects.all()
+    queryset = MaterialWarehouse.objects.select_related('material_category', 'material').all()
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

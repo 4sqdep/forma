@@ -1,5 +1,5 @@
 from main.apps.account.serializer import UserDetailSerializer
-from main.apps.location.serializer import DistrictSerializer, RegionSerializer
+from main.apps.location.serializer import CountrySerializer, DistrictSerializer, RegionSerializer
 from main.apps.statement.models.statement import Statement
 from rest_framework import serializers 
 
@@ -15,6 +15,7 @@ class StatementSerializer(serializers.ModelSerializer):
             "client_type",
             'full_name',
             'phone_number',
+            'country',
             'region',
             'district',
             'street',
@@ -42,6 +43,7 @@ class StatementSerializer(serializers.ModelSerializer):
 
 class StatementListSerializer(serializers.ModelSerializer):
     employee = UserDetailSerializer()
+    country = CountrySerializer()
     region = RegionSerializer()
     district = DistrictSerializer()
     class Meta:
@@ -53,6 +55,7 @@ class StatementListSerializer(serializers.ModelSerializer):
             "client_type",
             'full_name',
             'phone_number',
+            'country',
             'region',
             'district',
             'street',
@@ -86,6 +89,7 @@ class StatementCreateSerializer(serializers.ModelSerializer):
             'client_type',
             'full_name',
             'phone_number',
+            'country',
             'region',
             'district',
             'street',

@@ -59,7 +59,7 @@ class Statement(BaseModel):
     client_type = models.CharField(max_length=255, choices=ClientTypeChoices.choices)
     full_name = models.CharField(max_length=255, null=True, blank=True)
     phone_number = models.CharField(max_length=255, null=True, blank=True)
-    # country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
     region = models.ForeignKey(Region, on_delete=models.CASCADE)
     district = models.ForeignKey(District, on_delete=models.CASCADE)
     street = models.CharField(max_length=255, null=True, blank=True)

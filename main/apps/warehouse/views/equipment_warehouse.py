@@ -27,7 +27,7 @@ equipment_warehouse_create_api_view = EquipmentWarehouseCreateAPIView.as_view()
 
 
 class EquipmentWarehouseListAPIView(generics.ListAPIView):
-    queryset = EquipmentWarehouse.objects.all()
+    queryset = EquipmentWarehouse.objects.select_related('equipment_category', 'equipment').all()
     serializer_class = equipment_warehouse_serializer.EquipmentWarehouseListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
@@ -98,7 +98,7 @@ equipment_warehouse_list_api_view = EquipmentWarehouseListAPIView.as_view()
 
 
 class EquipmentWarehouseDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = EquipmentWarehouse.objects.all()
+    queryset = EquipmentWarehouse.objects.select_related('equipment_category', 'equipment').all()
     serializer_class = equipment_warehouse_serializer.EquipmentWarehouseCreateSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]

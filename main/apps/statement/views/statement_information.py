@@ -27,7 +27,7 @@ statement_information_create_api_view = StatementInformationCreateAPIView.as_vie
 
 
 class StatementInformationListAPIView(generics.ListAPIView):
-    queryset = StatementInformation.objects.all()
+    queryset = StatementInformation.objects.select_related('statement').all()
     serializer_class = statement_information_serializer.StatementInformationListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
@@ -75,7 +75,7 @@ statement_information_list_api_view = StatementInformationListAPIView.as_view()
 
 
 class StatementInformationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = StatementInformation.objects.all()
+    queryset = StatementInformation.objects.select_related('statement').all()
     serializer_class = statement_information_serializer.StatementInformationCreateSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]

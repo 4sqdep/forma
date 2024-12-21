@@ -64,7 +64,7 @@ class StatementListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Statement.objects.all()
+        queryset = Statement.objects.select_related('employee', 'country', 'region', 'district').all()
         address = self.request.query_params.get('address')
         full_name = self.request.query_params.get('full_name')
         client_type = self.request.query_params.get('client_type')
@@ -124,7 +124,7 @@ statement_list_api_view = StatementListAPIView.as_view()
 
 
 class StatementDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Statement.objects.all()
+    queryset = Statement.objects.select_related('employee', 'country', 'region', 'district').all()
     serializer_class = statement_serializer.StatementSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

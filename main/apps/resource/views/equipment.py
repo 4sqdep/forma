@@ -147,7 +147,11 @@ class EquipmentListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Equipment.objects.all()
+        queryset = Equipment.objects.select_related(
+            'equipment_category', 
+            'measurement', 
+            'time_measurement' 
+            ).all()
         return queryset
 
     def get_pagination_class(self):
@@ -177,7 +181,11 @@ equipment_list_api_view = EquipmentListAPIView.as_view()
 
 
 class EquipmentDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Equipment.objects.all()
+    queryset = Equipment.objects.select_related(
+            'equipment_category', 
+            'measurement', 
+            'time_measurement' 
+            ).all()
     serializer_class =  equipment_serializer.EquipmentListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

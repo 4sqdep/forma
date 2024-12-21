@@ -1,3 +1,4 @@
+from main.apps.resource.serializers.measurement import MeasurementSerializer
 from ...resource.models.material import Material, MaterialCategory
 from rest_framework import serializers 
 
@@ -23,8 +24,9 @@ class MaterialCreateSerializer(serializers.ModelSerializer):
         )
 
 
-
 class MaterialListSerializer(serializers.ModelSerializer):
+    material_category = MaterialCategorySerializer()
+    measurement = MeasurementSerializer()
     class Meta:
         model = Material
         fields = (

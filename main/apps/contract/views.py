@@ -55,7 +55,7 @@ class ContractListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-        queryset = queryset = Contract.objects.all()
+        queryset = queryset = Contract.objects.select_related('checklist').all()
         client_name = self.request.query_params.get('client_name')
         inn = self.request.query_params.get('inn')
         date = self.request.query_params.get('date')
@@ -103,7 +103,7 @@ contract_list_api_view = ContractListAPIView.as_view()
 
 
 class ContractDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Contract.objects.all()
+    queryset = Contract.objects.select_related('checklist').all()
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

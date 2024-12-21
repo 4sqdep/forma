@@ -57,7 +57,14 @@ class ResourceRequestListAPIView(generics.ListAPIView):
     )
     
     def get_queryset(self):
-        queryset = ResourceRequest.objects.all()
+        queryset = ResourceRequest.objects.select_related(
+            'sender',
+            'receiver', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
         status = self.request.query_params.get('status')
         created_at = self.request.query_params.get('created_at')
         sender = self.request.query_params.get('sender')
@@ -103,7 +110,14 @@ resource_request_list_api_view = ResourceRequestListAPIView.as_view()
 
 
 class ResourceRequestDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ResourceRequest.objects.all()
+    queryset = ResourceRequest.objects.select_related(
+            'sender',
+            'receiver', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
     serializer_class = resourceflow_serializer.ResourceRequestListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -206,7 +220,14 @@ class ResourceReturnListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = ResourceReturn.objects.all()
+        queryset = ResourceReturn.objects.select_related(
+            'sender',
+            'receiver', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
         return queryset
 
     def get_pagination_class(self):
@@ -236,7 +257,14 @@ resource_return_list_api_view = ResourceReturnListAPIView.as_view()
 
 
 class ResourceReturnDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ResourceReturn.objects.all()
+    queryset = ResourceReturn.objects.select_related(
+            'sender',
+            'receiver', 
+            'equipment_category', 
+            'equipment', 
+            'material_category', 
+            'material'
+            ).all()
     serializer_class = resourceflow_serializer.ResourceReturnListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

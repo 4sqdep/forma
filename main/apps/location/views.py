@@ -119,7 +119,7 @@ region_list_api_view = RegionListAPIView.as_view()
 
 
 class RegionDetailAPIView(generics.RetrieveAPIView):
-    queryset = Region.objects.all()
+    queryset = Region.objects.select_related('country').all()
     serializer_class = RegionSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
@@ -150,7 +150,7 @@ class DistrictListAPIView(generics.ListAPIView):
     )
 
     def get_queryset(self):
-        queryset = District.objects.all()
+        queryset = District.objects.select_related('region').all()
         return queryset
 
     def get_pagination_class(self):
