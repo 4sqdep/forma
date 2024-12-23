@@ -32,9 +32,7 @@ admin.site.register(DashboardSubCategoryButton, DashboardSubCategoryButtonAdmin)
 
 @admin.register(ProjectDocumentation)
 class ProjectDocumentationAdmin(SortableAdminMixin, admin.ModelAdmin):
-    list_display = ['id', 'subcategories_btn', 'user', 'name', 'order', 'created_at']
-    list_editable = ('order',)  # Tartibni admin panelda to'g'ridan-to'g'ri o'zgartirish imkoniyati
-    ordering = ['order']  # Ma'lumotlar tartibini avtomatik boshqaradi
+    list_display = ('id', 'name', 'order', 'created_at')
 
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):
