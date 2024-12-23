@@ -44,6 +44,7 @@ class CheckListSerializer(serializers.ModelSerializer):
             'service_category',
             'service',
             'service_total_price',
+            'equipment_category',
             'equipment',
             'measurement',
             'equipment_total_price',

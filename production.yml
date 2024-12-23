@@ -50,7 +50,8 @@ services:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     ports:
-      - 81:80
-      - 444:443
+      - "7777:7777"
+      # - 81:80
+      # - 444:443
     depends_on:
       - django
