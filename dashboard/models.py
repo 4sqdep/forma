@@ -50,19 +50,21 @@ class ProjectDocumentation(models.Model):
                                           verbose_name="Loyiha nomi", blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
+    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
     def __str__(self):
         return f"{self.subcategories_btn} -- {self.name}"
 
     class Meta:
+        ordering = ["order"]
         verbose_name = "Loyiha hujjati"
         verbose_name_plural = "Loyiha Bo'limlari"
 
 
 class NextStageDocuments(models.Model):
     """Keyingi bosqich uchun qabul qilinadigan hujjatlar uchun model"""
-    project_document = models.ForeignKey(ProjectDocumentation, on_delete=models.SET_NULL, verbose_name="Loyiha hujjatlar"
-                                         , blank=True, null=True)
+    project_document = models.ForeignKey(ProjectDocumentation, on_delete=models.SET_NULL,
+                                         verbose_name="Loyiha hujjatlar", blank=True, null=True)
     subcategories_btn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL,
                                           verbose_name="Loyiha nomi", blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi", blank=True, null=True)

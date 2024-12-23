@@ -1,4 +1,5 @@
 from django.contrib import admin
+from adminsortable2.admin import SortableAdminMixin
 from .models import (DashboardButton, DashboardCategoryButton, NextStageDocuments,
                      DashboardSubCategoryButton, ProjectDocumentation, Files)
 
@@ -29,13 +30,12 @@ class DashboardSubCategoryButtonAdmin(admin.ModelAdmin):
 
 admin.site.register(DashboardSubCategoryButton, DashboardSubCategoryButtonAdmin)
 
-
+@admin.register(ProjectDocumentation)
 class ProjectDocumentationAdmin(admin.ModelAdmin):
-    list_display = ['id', 'subcategories_btn', 'user', 'name', 'created_at']
-    list_display_links = ['subcategories_btn', 'name']
-    search_fields = ['name']
+    list_display = ['id', 'subcategories_btn', 'user', 'name', 'order', 'created_at']
+    list_editable = ('order',)  # Tartibni admin panelda to'g'ridan-to'g'ri o'zgartirish imkoniyati
+    ordering = ['order']  # Ma'lumotlar tartibini avtomatik boshqaradi
 
-admin.site.register(ProjectDocumentation, ProjectDocumentationAdmin)
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'subcategories_btn', 'project_document', 'name', 'created_at']
