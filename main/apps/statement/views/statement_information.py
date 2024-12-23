@@ -4,6 +4,7 @@ from rest_framework_simplejwt import authentication
 from ..models.statement_information import StatementInformation
 from ..serializers import statement_information as statement_information_serializer
 from ...common.pagination import CustomPagination
+from rest_framework import exceptions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
@@ -36,7 +37,7 @@ class StatementInformationListAPIView(generics.ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
     )
@@ -52,7 +53,6 @@ class StatementInformationListAPIView(generics.ListAPIView):
         if p:
             return CustomPagination
         return None
-
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
@@ -80,6 +80,12 @@ class StatementInformationDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    # def get_queryset(self):
+    #     statement_id = self.kwargs.get('statement_id')
+    #     if statement_id is None:
+    #         raise exceptions.NotFound(detail="Statement ID is required.")        
+    #     return StatementInformation.objects.filter(statement__id=statement_id).select_related('statement')
 
     def get_serializer_class(self):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':

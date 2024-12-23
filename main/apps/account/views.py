@@ -316,11 +316,15 @@ password_reset_confirm_view = PasswordResetConfirmView.as_view()
 
 
 class UserRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-    queryset = User.objects.all()
     serializer_class = user_serializer.UserDetailSerializer
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [authentication.JWTAuthentication]
     partial = True  
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return User.objects.all()
+        return User.objects.filter(id=self.request.user.id)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -360,7 +364,7 @@ class UserListAPIView(generics.ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
     )

@@ -35,7 +35,7 @@ class MeasurementListAPIView(generics.ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
     )

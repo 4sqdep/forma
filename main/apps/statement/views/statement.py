@@ -55,7 +55,7 @@ class StatementListAPIView(generics.ListAPIView):
                 'status', openapi.IN_QUERY, description='Status', type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
     )
@@ -64,7 +64,16 @@ class StatementListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Statement.objects.select_related('employee', 'country', 'region', 'district').all()
+        user = self.request.user
+        queryset = Statement.objects.select_related(
+            'employee', 
+            'country', 
+            'region', 
+            'district'
+        )
+        if not user.is_superuser:
+            queryset = queryset.filter(employee=user.id)
+        
         address = self.request.query_params.get('address')
         full_name = self.request.query_params.get('full_name')
         client_type = self.request.query_params.get('client_type')
@@ -124,10 +133,22 @@ statement_list_api_view = StatementListAPIView.as_view()
 
 
 class StatementDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Statement.objects.select_related('employee', 'country', 'region', 'district').all()
     serializer_class = statement_serializer.StatementSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Statement.objects.select_related(
+            'employee', 
+            'country', 
+            'region', 
+            'district'
+        )
+        if not user.is_superuser:
+            queryset = queryset.filter(employee=user.id)
+        return queryset
+
 
     def get_serializer_class(self):
         if self.request.method == 'PUT' or self.request.method == 'PATCH':

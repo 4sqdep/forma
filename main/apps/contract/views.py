@@ -46,7 +46,7 @@ class ContractListAPIView(generics.ListAPIView):
                 'phone_number', openapi.IN_QUERY, description='Client Phone Number', type=openapi.TYPE_STRING
             ),
             openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_INTEGER
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
     )
