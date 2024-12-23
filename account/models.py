@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     image = models.ImageField(upload_to='profile/%Y/%m/%d', verbose_name="Profile Image", blank=True)
+    phone = models.CharField(max_length=11, verbose_name="Telfon raqami", blank=True)
     is_download = models.BooleanField(default=False, verbose_name="Yuklash")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Uzgargan vaqti")
