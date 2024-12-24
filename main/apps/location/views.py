@@ -7,6 +7,7 @@ from rest_framework import permissions
 from rest_framework_simplejwt import authentication
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework import exceptions
 
 
 
@@ -85,11 +86,26 @@ class RegionListAPIView(generics.ListAPIView):
             openapi.Parameter(
                 'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
+            openapi.Parameter(
+                'country', openapi.IN_QUERY, description='Country Parameter', type=openapi.TYPE_INTEGER
+            ),
         ]
     )
 
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
-        queryset = Region.objects.all()
+        country = self.request.query_params.get('country')
+        if not country:
+            raise exceptions.ValidationError({"detail": "country_id parameter is required."})        
+        try:
+            queryset = Region.objects.filter(country_id=country)
+        except ValueError:
+            raise exceptions.ValidationError({"detail": "Invalid country_id."})
+        
+        if not queryset.exists():
+            raise exceptions.NotFound({"detail": f"No regions found for country_id {country}."})
         return queryset
 
     def get_pagination_class(self):
@@ -146,11 +162,26 @@ class DistrictListAPIView(generics.ListAPIView):
             openapi.Parameter(
                 'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
+            openapi.Parameter(
+                'region', openapi.IN_QUERY, description='Region', type=openapi.TYPE_INTEGER
+            ),
         ]
     )
 
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
     def get_queryset(self):
-        queryset = District.objects.select_related('region').all()
+        region = self.request.query_params.get('region')
+        if not region:
+            raise exceptions.ValidationError({"detail": "region_id parameter is required."})        
+        try:
+            queryset = District.objects.filter(region_id=region)
+        except ValueError:
+            raise exceptions.ValidationError({"detail": "Invalid region_id."})
+        
+        if not queryset.exists():
+            raise exceptions.NotFound({"detail": f"No regions found for region_id {region}."})
         return queryset
 
     def get_pagination_class(self):

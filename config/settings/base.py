@@ -76,6 +76,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 
 ]
 
@@ -195,6 +196,8 @@ USE_L10N = True
 USE_TZ = True
 
 
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
@@ -204,6 +207,9 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, "main", "media/")
 STATIC_ROOT = os.path.join(BASE_DIR, "main", "static/")
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -215,7 +221,9 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with",
-]
+    'referer'
+] 
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -225,17 +233,18 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:5174',
-    "http://127.0.0.1:8000",
-    "http://192.168.0.178:5174"
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     'http://localhost:5174',
+#     "http://127.0.0.1:8000",
+#     "http://192.168.0.178:5174"
+# ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:5174',
-    "http://127.0.0.1:8000",
-    "http://192.168.0.178:5174"
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'http://localhost:5174',
+#     "http://127.0.0.1:8000",
+#     "http://192.168.0.178:5174"
+# ]
+
 
 SMS_EXPIRE_SECONDS = 60
 SMS_AUTH_TOKEN = os.environ.get("SMS_AUTH_TOKEN")
