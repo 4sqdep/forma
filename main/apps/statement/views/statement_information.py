@@ -28,7 +28,7 @@ statement_information_create_api_view = StatementInformationCreateAPIView.as_vie
 
 
 class StatementInformationListAPIView(generics.ListAPIView):
-    queryset = StatementInformation.objects.select_related('statement').all()
+    # queryset = StatementInformation.objects.select_related('statement').all()
     serializer_class = statement_information_serializer.StatementInformationListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
@@ -46,7 +46,8 @@ class StatementInformationListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
 
     def get_queryset(self):
-            return self.queryset.all()
+            qs =  StatementInformation.objects.select_related('statement').filter(statement__id=self.kwargs['pk'])
+            return qs
         
     def get_pagination_class(self):
         p = self.request.query_params.get('p')

@@ -9,7 +9,7 @@ urlpatterns = [
         name='statement_information_create'
     ),
     # path(
-    #     "list/", 
+    #     "list/<int:pk>/", 
     #     statement_information.statement_information_list_api_view,
     #     name='statement_information_list'
     # ),

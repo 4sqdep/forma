@@ -5,10 +5,10 @@ from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
-
 from main.apps.account.managers import UserManager
 from main.apps.account.utils import otp_expire_time
 from ..common.models import BaseModel, BaseMeta
+
 
 
 def upload_profile_images(instance, filename):
