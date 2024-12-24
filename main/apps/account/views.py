@@ -62,7 +62,8 @@ class UserLoginView(TokenObtainPairView):
             return PostResponse(
                 data=token_data,
                 status_code=status.HTTP_200_OK,
-                message="Login"
+                message="Login Success",
+                add_suffix=False
             )
         except (InvalidToken, TokenError) as e:
             return ListResponse(
@@ -78,42 +79,48 @@ class UserLoginView(TokenObtainPairView):
 user_login_api_view = UserLoginView().as_view()
 
 
-class OTPSendAPIView(generics.GenericAPIView):
-    serializer_class = user_serializer.ActivationCodeSerializer
-    queryset = ActivationSMSCode.objects.all()
-    permission_classes = (permissions.AllowAny,)
+# class OTPSendAPIView(generics.GenericAPIView):
+#     serializer_class = user_serializer.ActivationCodeSerializer
+#     queryset = ActivationSMSCode.objects.all()
+#     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        valid = serializer.is_valid(raise_exception=True)
-        otp = generate_random_otp()
-        phone_number = serializer.validated_data["phone_number"]
+#     def post(self, request):
+#         serializer = self.serializer_class(data=request.data)
+#         valid = serializer.is_valid(raise_exception=True)
+#         otp = generate_random_otp()
+#         phone_number = serializer.validated_data["phone_number"]
 
-        ActivationSMSCode.objects.create(
-            otp=otp,
-            phone_number=phone_number
-        )
+#         if User.objects.filter(phone_number=phone_number).exists():
+#             return ListResponse(
+#                 status_code=status.HTTP_400_BAD_REQUEST,
+#                 data={"error": "This phone number is already associated with an existing user."},
+#                 success=False
+#             )
+#         ActivationSMSCode.objects.create(
+#             otp=otp,
+#             phone_number=phone_number
+#         )
 
-        phone_number = serializer.data["phone_number"]
-        chat_id = "-4592340981"  
-        bot_token = "7446593811:AAE5TCQTGjAznTW2lfI9BNDbB9S_nPLNoRc"
-        # otp = serializer.data["otp"]
-        # if User.objects.filter(phone_number=phone_number).exists(): 
-        #     return ListResponse(
-        #         status_code=status.HTTP_400_BAD_REQUEST,
-        #         data="This phone number already exists in the database",
-        #         # data={"user": serializer.data}
-        #     )
+#         phone_number = serializer.data["phone_number"]
+#         chat_id = "-4592340981"  
+#         bot_token = "7446593811:AAE5TCQTGjAznTW2lfI9BNDbB9S_nPLNoRc"
+#         # otp = serializer.data["otp"]
+#         # if User.objects.filter(phone_number=phone_number).exists(): 
+#         #     return ListResponse(
+#         #         status_code=status.HTTP_400_BAD_REQUEST,
+#         #         data="This phone number already exists in the database",
+#         #         # data={"user": serializer.data}
+#         #     )
         
-        send_otp_to_telegram_group(otp, phone_number, chat_id, bot_token)
-        return PostResponse(
-            status_code=status.HTTP_201_CREATED,
-            message="OTP sent successfully!",
-            data={"user": serializer.data},
-            add_suffix=False
-        )
+#         send_otp_to_telegram_group(otp, phone_number, chat_id, bot_token)
+#         return PostResponse(
+#             status_code=status.HTTP_201_CREATED,
+#             message="OTP sent successfully!",
+#             data={"user": serializer.data},
+#             add_suffix=False
+#         )
 
-otp_sent_api_view = OTPSendAPIView.as_view()
+# otp_sent_api_view = OTPSendAPIView.as_view()
 
 
 class VerifyPhoneOTP(generics.GenericAPIView):
@@ -202,73 +209,107 @@ user_resend_otp_api_view = ResendOtpToPhoneNumberAPIView.as_view()
 
 
 class PasswordResetAPIView(generics.GenericAPIView):
-    serializer_class = user_serializer.PasswordResetSerializer
+    serializer_class = user_serializer.ActivationCodeSerializer
+    queryset = ActivationSMSCode.objects.all()
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request):
         serializer = self.serializer_class(data=request.data)
         valid = serializer.is_valid(raise_exception=True)
-        data = request.data
-        phone_number = data['phone_number']
-        if valid:
-            serializer.save()
-            try:
-                user = User.objects.get(phone_number=phone_number)
-                # resetting_otp(phone_number)
-                status_code = status.HTTP_201_CREATED
-                return PostResponse(
-                    status_code=status.HTTP_201_CREATED,
-                    message="Code successfully sent",
-                    data={'user': serializer.data},
-                    add_suffix=False
-                )
-            except User.DoesNotExist:
-                return ListResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    message="User does not exist",
-                    data={'error': "No user found with this phone number"}
-                )
+        otp = generate_random_otp()
+        phone_number = serializer.validated_data["phone_number"]
+
+        ActivationSMSCode.objects.create(
+            otp=otp,
+            phone_number=phone_number
+        )
+
+        phone_number = serializer.data["phone_number"]
+        chat_id = "-4592340981"  
+        bot_token = "7446593811:AAE5TCQTGjAznTW2lfI9BNDbB9S_nPLNoRc"
+        # otp = serializer.data["otp"]
+        # if User.objects.filter(phone_number=phone_number).exists(): 
+        #     return ListResponse(
+        #         status_code=status.HTTP_400_BAD_REQUEST,
+        #         data="This phone number already exists in the database",
+        #         # data={"user": serializer.data}
+        #     )
+        
+        send_otp_to_telegram_group(otp, phone_number, chat_id, bot_token)
+        return PostResponse(
+            status_code=status.HTTP_201_CREATED,
+            message="OTP sent successfully!",
+            data={"user": serializer.data},
+            add_suffix=False
+        )
+    
+    # serializer_class = user_serializer.PasswordResetSerializer
+    # permission_classes = (permissions.AllowAny,)
+
+    # def post(self, request):
+    #     serializer = self.serializer_class(data=request.data)
+    #     valid = serializer.is_valid(raise_exception=True)
+    #     data = request.data
+    #     phone_number = data['phone_number']
+    #     if valid:
+    #         serializer.save()
+    #         try:
+    #             user = User.objects.get(phone_number=phone_number)
+    #             # resetting_otp(phone_number)
+    #             status_code = status.HTTP_201_CREATED
+    #             return PostResponse(
+    #                 status_code=status.HTTP_201_CREATED,
+    #                 message="Code successfully sent",
+    #                 data={'user': serializer.data},
+    #                 add_suffix=False
+    #             )
+    #         except User.DoesNotExist:
+    #             return ListResponse(
+    #                 status_code=status.HTTP_400_BAD_REQUEST,
+    #                 message="User does not exist",
+    #                 data={'error': "No user found with this phone number"}
+    #             )
 
 password_reset_api_view = PasswordResetAPIView.as_view()
 
 
-class PasswordResetCodeCheckView(generics.GenericAPIView):
-    serializer_class = user_serializer.PasswordResetCodeCheckSerializer
-    permission_classes = (permissions.AllowAny,)
+# class PasswordResetCodeCheckView(generics.GenericAPIView):
+#     serializer_class = user_serializer.PasswordResetCodeCheckSerializer
+#     permission_classes = (permissions.AllowAny,)
 
-    def post(self, request, *args, **kwargs):
-        dates = str(datetime.now().strftime('%H:%M:%S'))
-        serializer = self.get_serializer(data=request.data)                                                     
-        valid = serializer.is_valid(raise_exception=False)
-        if valid:
-            try:
-                user = User.objects.get(activating_code=serializer.data['confirm_code'])
-                # Uncomment if you need to check expiration time of the OTP
-                # if user.user_sms.otp_sent_time_reset < dates:
-                #     return ListResponse(
-                #         status_code=status.HTTP_400_BAD_REQUEST,
-                #         message="Code vaqti tugagan, qayta code jo'nating!",
-                #         data={}
-                #     )
-                return PostResponse(
-                    status_code=status.HTTP_200_OK,
-                    message="Code tastiqlandi!", 
-                    data={'user': user.id},
-                    add_suffix=False  
-                )
-            except User.DoesNotExist:
-                return ListResponse(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    message="Sizga xozir jo'natilgan code ni kiriting!",
-                    data={}
-                )
-        return ListResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            message="Serializer not valid!",
-            data={}
-        )
+#     def post(self, request, *args, **kwargs):
+#         dates = str(datetime.now().strftime('%H:%M:%S'))
+#         serializer = self.get_serializer(data=request.data)                                                     
+#         valid = serializer.is_valid(raise_exception=False)
+#         if valid:
+#             try:
+#                 user = User.objects.get(activating_code=serializer.data['confirm_code'])
+#                 # Uncomment if you need to check expiration time of the OTP
+#                 # if user.user_sms.otp_sent_time_reset < dates:
+#                 #     return ListResponse(
+#                 #         status_code=status.HTTP_400_BAD_REQUEST,
+#                 #         message="Code vaqti tugagan, qayta code jo'nating!",
+#                 #         data={}
+#                 #     )
+#                 return PostResponse(
+#                     status_code=status.HTTP_200_OK,
+#                     message="Code tastiqlandi!", 
+#                     data={'user': user.id},
+#                     add_suffix=False  
+#                 )
+#             except User.DoesNotExist:
+#                 return ListResponse(
+#                     status_code=status.HTTP_400_BAD_REQUEST,
+#                     message="Sizga xozir jo'natilgan code ni kiriting!",
+#                     data={}
+#                 )
+#         return ListResponse(
+#             status_code=status.HTTP_400_BAD_REQUEST,
+#             message="Serializer not valid!",
+#             data={}
+#         )
 
-password_reset_check_view = PasswordResetCodeCheckView.as_view()
+# password_reset_check_view = PasswordResetCodeCheckView.as_view()
 
 
 class PasswordResetConfirmView(generics.GenericAPIView):

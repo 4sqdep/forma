@@ -9,15 +9,15 @@ urlpatterns = [
         name='register'
     ),
     path(
-        'send-otp/', 
-        views.otp_sent_api_view, 
-        name='sned-otp'
-    ),
-    path(
         'login/', 
         views.user_login_api_view, 
         name='login'
     ),
+    # path(
+    #     'send-otp/', 
+    #     views.otp_sent_api_view, 
+    #     name='sned-otp'
+    # ),
     path(
         'verify/', 
         views.user_otp_verify_api_view, 
@@ -33,11 +33,11 @@ urlpatterns = [
         views.password_reset_api_view, 
         name='password-reset'
     ),
-    path(
-        'password-reset-check/', 
-        views.password_reset_check_view, 
-        name='password-reset-check'
-    ),
+    # path(
+    #     'password-reset-check/', 
+    #     views.password_reset_check_view, 
+    #     name='password-reset-check'
+    # ),
     path(
         'password-reset-confirm/', 
         views.password_reset_confirm_view, 

@@ -3,7 +3,7 @@ from .models import ActivationSMSCode, User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .utils import generate_random_password, send_password_to_telegram_group
-
+from django.conf import settings
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):   
@@ -60,6 +60,13 @@ class UserLoginSerializer(TokenObtainPairSerializer):
         data['id'] = self.user.id
         data['first_name'] = self.user.first_name
         data['last_name'] = self.user.last_name
+
+        if self.user.profile_picture:
+            data['profile_picture'] = settings.MEDIA_URL + str(self.user.profile_picture)
+            data['profile_picture'] = self.context['request'].build_absolute_uri(data['profile_picture'])
+        else:
+            data['profile_picture'] = None
+        data['position'] = self.user.position
         return data
     
 
