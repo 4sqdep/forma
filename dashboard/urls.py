@@ -18,3 +18,5 @@ urlpatterns = [
     path('get-files/<int:pk>/', GetFilesAPIView.as_view(), name='get-files'),
 
 ]
+
+

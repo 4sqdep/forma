@@ -2,6 +2,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
+from django.db.models import Case, When
 from rest_framework.permissions import IsAuthenticated
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
                      ProjectDocumentation, NextStageDocuments, Files)
@@ -59,8 +60,16 @@ class ProjectDocumentAPIView(APIView):
     """Subkategoriya buttonga tegishli lo'yiha bo'limlarin olish"""
     permissions_classes = [IsAuthenticated]
     def get(self, request, pk=None):
-        sub_btn = ProjectDocumentation.objects.filter(subcategories_btn=pk)
-        print("EEEEEEE====", sub_btn)
+        order = [
+            "Obyekt pasporti",
+            "Loyiha hujjatlari",
+            "Qurilish montaj ishlari hujjatlari",
+            "Uskunalar hujjatlari",
+        ]
+        order_case = Case(*[
+            When(name=name, then=index) for index, name in enumerate(order)
+        ])
+        sub_btn = ProjectDocumentation.objects.filter(subcategories_btn=pk).order_by(order_case)
         serializer = ProjectDocumentationSerializer(sub_btn, many=True)
         return Response({'message': "Lo'yiha bo'limlari...", 'data': serializer.data}, status=status.HTTP_200_OK)
 
