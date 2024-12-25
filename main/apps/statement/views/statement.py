@@ -28,6 +28,7 @@ statement_create_api_view = StatementCreateAPIView.as_view()
 
 class StatementListAPIView(generics.ListAPIView):
     serializer_class = statement_serializer.StatementListSerializer
+    # pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 

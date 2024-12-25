@@ -28,7 +28,6 @@ statement_information_create_api_view = StatementInformationCreateAPIView.as_vie
 
 
 class StatementInformationListAPIView(generics.ListAPIView):
-    # queryset = StatementInformation.objects.select_related('statement').all()
     serializer_class = statement_information_serializer.StatementInformationListSerializer
     pagination_class = CustomPagination
     authentication_classes = [authentication.JWTAuthentication]

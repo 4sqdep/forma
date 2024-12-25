@@ -243,33 +243,6 @@ class PasswordResetAPIView(generics.GenericAPIView):
             add_suffix=False
         )
     
-    # serializer_class = user_serializer.PasswordResetSerializer
-    # permission_classes = (permissions.AllowAny,)
-
-    # def post(self, request):
-    #     serializer = self.serializer_class(data=request.data)
-    #     valid = serializer.is_valid(raise_exception=True)
-    #     data = request.data
-    #     phone_number = data['phone_number']
-    #     if valid:
-    #         serializer.save()
-    #         try:
-    #             user = User.objects.get(phone_number=phone_number)
-    #             # resetting_otp(phone_number)
-    #             status_code = status.HTTP_201_CREATED
-    #             return PostResponse(
-    #                 status_code=status.HTTP_201_CREATED,
-    #                 message="Code successfully sent",
-    #                 data={'user': serializer.data},
-    #                 add_suffix=False
-    #             )
-    #         except User.DoesNotExist:
-    #             return ListResponse(
-    #                 status_code=status.HTTP_400_BAD_REQUEST,
-    #                 message="User does not exist",
-    #                 data={'error': "No user found with this phone number"}
-    #             )
-
 password_reset_api_view = PasswordResetAPIView.as_view()
 
 
