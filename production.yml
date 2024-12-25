@@ -27,17 +27,17 @@ services:
     command: /start
 
 
-  postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: proclear_postgres_prod
-    container_name: postgres_prod
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data:cached
-      - production_postgres_data_backups:/backups:cached
-    env_file:
-      - ./.envs/.production/.postgres
+  # postgres:
+  #   build:
+  #     context: .
+  #     dockerfile: ./compose/production/postgres/Dockerfile
+  #   image: proclear_postgres_prod
+  #   container_name: postgres_prod
+  #   volumes:
+  #     - production_postgres_data:/var/lib/postgresql/data:cached
+  #     - production_postgres_data_backups:/backups:cached
+  #   env_file:
+  #     - ./.envs/.production/.postgres
 
 
   nginx:
@@ -50,7 +50,7 @@ services:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     ports:
-      - "7777:80"
+      - 7777:80
       # - 81:80
       # - 444:443
     depends_on:
