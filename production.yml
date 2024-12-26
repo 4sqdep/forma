@@ -13,32 +13,15 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: proclear_django_prod
     container_name: django_prod
-    # depends_on:
-    #   - postgres
     volumes:
       - .:/app:cached
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     env_file:
       - ./.envs/.production/.django
-      # - ./.envs/.production/.postgres
     ports:
       - "8000:8000"
     command: /start
-
-
-  # postgres:
-  #   build:
-  #     context: .
-  #     dockerfile: ./compose/production/postgres/Dockerfile
-  #   image: proclear_postgres_prod
-  #   container_name: postgres_prod
-  #   volumes:
-  #     - production_postgres_data:/var/lib/postgresql/data:cached
-  #     - production_postgres_data_backups:/backups:cached
-  #   env_file:
-  #     - ./.envs/.production/.postgres
-
 
   nginx:
     build:
@@ -50,6 +33,6 @@ services:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     ports:
-      - 7777:80
+      - "7777:80"
     depends_on:
       - django
