@@ -13,6 +13,11 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: proclear_django_prod
     container_name: django_prod
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - django_network
     volumes:
@@ -43,3 +48,4 @@ services:
 
 networks:
   django_network:
+    driver: bridge
