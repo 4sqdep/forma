@@ -13,6 +13,8 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: proclear_django_prod
     container_name: django_prod
+    networks:
+      - django_network
     volumes:
       - .:/app:cached
       - static_volume:/home/app/web/main/static
@@ -29,6 +31,8 @@ services:
       dockerfile: ./compose/production/nginx/Dockerfile
     image: proclear_nginx_prod
     container_name: nginx_prod
+    networks:
+      - django_network
     volumes:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
@@ -36,3 +40,6 @@ services:
       - "7777:80"
     depends_on:
       - django
+
+networks:
+  django_network:
