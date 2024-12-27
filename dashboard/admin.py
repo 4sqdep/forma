@@ -1,7 +1,7 @@
 from django.contrib import admin
 from adminsortable2.admin import SortableAdminMixin
 from .models import (DashboardButton, DashboardCategoryButton, NextStageDocuments,
-                     DashboardSubCategoryButton, ProjectDocumentation, Files)
+                     DashboardSubCategoryButton, ProjectDocumentation, Files, ProjectSections)
 
 
 class DashboardButtonAdmin(admin.ModelAdmin):
@@ -51,3 +51,11 @@ class FilesAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Files, FilesAdmin)
+
+
+class ProjectSectionsAdmin(admin.ModelAdmin):
+    list_display = ['id', 'subcategories_btn', 'user', 'name', 'created_at', 'updated_at']
+    list_display_links = ['name']
+    search_fields = ['name']
+
+admin.site.register(ProjectSections, ProjectSectionsAdmin)

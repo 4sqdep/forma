@@ -53,7 +53,7 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun papakalar yaratish uchun serializer"""
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'project_document', 'subcategories_btn', 'name']
+        fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section']
 
 
 class FilesSerializer(serializers.ModelSerializer):

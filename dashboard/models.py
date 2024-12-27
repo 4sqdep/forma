@@ -69,7 +69,10 @@ class NextStageDocuments(models.Model):
                                           verbose_name="Loyiha nomi", blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
+    is_forma = models.BooleanField(default=False, verbose_name="Forma")
+    is_section = models.BooleanField(default=False, verbose_name="Bo'lim")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="O'zgartirilgan vaqti")
 
     def __str__(self):
         return f"{self.project_document} -- {self.name}"
@@ -79,15 +82,37 @@ class NextStageDocuments(models.Model):
         verbose_name_plural = "Loyiha hujjatlari"
 
 
+class ProjectSections(models.Model):
+    next_stage_documents = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL,
+                                             verbose_name="Keyingi hujjat", blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi",
+                             blank=True, null=True)
+    name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="O'zgartirigan vaqti")
+
+    def __str__(self):
+        return f"{self.next_stage_documents} -- {self.name}"
+    class Meta:
+        verbose_name = "Loyiha bo'limi"
+        verbose_name_plural = "Loyiha bo'limlari"
+
+
 class Files(models.Model):
     document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, verbose_name="Loyiha hujjatlar",
                                  blank=True, null=True)
+    project_section = models.ForeignKey(ProjectSections, on_delete=models.SET_NULL, verbose_name="Loyiha bo'limi",
+                                        blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, verbose_name="Foydalanuvchi", blank=True, null=True)
+    name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
+    full_name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Nomi", db_index=True)
+    calendar = models.CharField(max_length=30, blank=True, null=True, verbose_name="Hujjat sanasi")
+    file_code = models.CharField(max_length=20, blank=True, null=True, verbose_name="Hujjat Kodi")
     files = models.FileField(verbose_name="files/%Y/%m/%d", blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
 
     def __str__(self):
-        return f"{self.document}"
+        return f"{self.document} -- {self.name}"
 
     class Meta:
         verbose_name = "Fayl"
