@@ -58,7 +58,7 @@ class ProjectDocumentation(models.Model):
     class Meta:
         ordering = ["order"]
         verbose_name = "Loyiha hujjati"
-        verbose_name_plural = "Loyiha Bo'limlari"
+        verbose_name_plural = "Loyiha Bo'limlar 1"
 
 
 class NextStageDocuments(models.Model):
@@ -95,7 +95,7 @@ class ProjectSections(models.Model):
         return f"{self.next_stage_documents} -- {self.name}"
     class Meta:
         verbose_name = "Loyiha bo'limi"
-        verbose_name_plural = "Bo'limlar 2"
+        verbose_name_plural = "Loyiha Bo'limlar 2"
 
 
 class Files(models.Model):
