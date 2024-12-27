@@ -10,7 +10,6 @@ class StatementSerializer(serializers.ModelSerializer):
         model = Statement
         fields = (
             'id',
-            'guid',
             'employee',
             "client_type",
             'full_name',
@@ -50,7 +49,6 @@ class StatementListSerializer(serializers.ModelSerializer):
         model = Statement
         fields = (
             'id',
-            'guid',
             'employee',
             "client_type",
             'full_name',
@@ -85,6 +83,7 @@ class StatementCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Statement
         fields = (
+            'id',
             'employee',
             'client_type',
             'full_name',

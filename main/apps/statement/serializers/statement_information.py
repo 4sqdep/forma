@@ -21,7 +21,6 @@ class StatementInformationSerializer(serializers.ModelSerializer):
 
 
 class StatementInformationListSerializer(serializers.ModelSerializer):
-    statement = StatementListSerializer()
     class Meta:
         model = StatementInformation
         fields = (

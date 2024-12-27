@@ -130,7 +130,6 @@ SIMPLE_JWT = {
 }
 
 
-# Swagger settings
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'basic': {
@@ -233,17 +232,21 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://localhost:5174',
-#     "http://127.0.0.1:8000",
-#     "http://192.168.0.178:5174"
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:5174',
+    "http://127.0.0.1:8000",
+    "http://192.168.0.178:5174",
+    "http://192.168.0.184:5173",
+    "https://proclear-api.gettest.uz"
+]
 
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:5174',
-#     "http://127.0.0.1:8000",
-#     "http://192.168.0.178:5174"
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5174',
+    "http://127.0.0.1:8000",
+    "http://192.168.0.178:5174",
+    "http://192.168.0.184:5173",
+    "https://proclear-api.gettest.uz"
+]
 
 
 SMS_EXPIRE_SECONDS = 60

@@ -99,7 +99,7 @@ class CheckListListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = CheckList.objects.select_related('statement', 'time_measurement').all()
+        queryset = CheckList.objects.select_related('statement').all()
         return queryset
 
     def get_pagination_class(self):
@@ -129,7 +129,7 @@ checklist_list_api_view = CheckListListAPIView.as_view()
 
 
 class CheckListDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = CheckList.objects.select_related('statement', 'time_measurement').all()
+    queryset = CheckList.objects.select_related('statement').all()
     serializer_class = checklist_serializer.CheckListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]

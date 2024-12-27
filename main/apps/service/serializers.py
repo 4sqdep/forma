@@ -3,7 +3,7 @@ from main.apps.resource.serializers.material import MaterialListSerializer
 from rest_framework import serializers 
 from .models import ServiceCategory, Service
 from django.utils.translation import gettext_lazy as _
-
+from main.apps.checklist.models import CheckList
 
 
 class ServiceCategorySerializer(serializers.ModelSerializer):
@@ -26,7 +26,8 @@ class ServiceCreateSerializer(serializers.ModelSerializer):
             'equipment',
             'material',
             'service_price',
-            'lead_time'
+            'lead_time',
+            'service_data'
         )
 
     def validate(self, attrs):
@@ -75,6 +76,7 @@ class ServiceListSerializer(serializers.ModelSerializer):
             'equipment',
             'material',
             'service_price',
-            'lead_time'
+            'lead_time',
+            'service_data'
         )
-
+        
