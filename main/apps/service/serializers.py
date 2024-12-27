@@ -26,8 +26,7 @@ class ServiceCreateSerializer(serializers.ModelSerializer):
             'equipment',
             'material',
             'service_price',
-            'lead_time',
-            'service_data'
+            'lead_time'
         )
 
     def validate(self, attrs):
@@ -76,7 +75,6 @@ class ServiceListSerializer(serializers.ModelSerializer):
             'equipment',
             'material',
             'service_price',
-            'lead_time',
-            'service_data'
+            'lead_time'
         )
         
