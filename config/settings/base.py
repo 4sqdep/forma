@@ -237,7 +237,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8000",
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
-    "https://proclear-api.gettest.uz"
+    "https://proclear-api.gettest.uz",
+    "http://proclear-api.gettest.uz"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -246,6 +247,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
     "https://proclear-api.gettest.uz"
+    "http://proclear-api.gettest.uz"
 ]
 
 

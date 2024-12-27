@@ -25,7 +25,8 @@ class CheckListCreateSerializer(serializers.ModelSerializer):
             'payment_for_employment',
             'payment_from_client',
             'discount_percent',
-            'discount_sum'
+            'discount_sum',
+            'service_data'
         )
         
 
@@ -63,7 +64,8 @@ class CheckListSerializer(serializers.ModelSerializer):
             'discount_sum',
             'created_by',
             'equipment_price',
-            'equipment_count'
+            'equipment_count',
+            'service_data'
         )
     
     def get_equipment_price(self, obj):
