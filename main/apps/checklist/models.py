@@ -32,7 +32,8 @@ class CheckList(BaseModel):
     payment_from_client = models.DecimalField(max_digits=25, decimal_places=2, default='0.00')
     discount_percent = models.DecimalField(max_digits=25, decimal_places=2)
     discount_sum = models.DecimalField(max_digits=25, decimal_places=2)
-   
+    service_data = models.JSONField(default=dict)
+
 
     class Meta(BaseMeta):
         verbose_name = 'CheckList'
