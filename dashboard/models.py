@@ -95,7 +95,7 @@ class ProjectSections(models.Model):
         return f"{self.next_stage_documents} -- {self.name}"
     class Meta:
         verbose_name = "Loyiha bo'limi"
-        verbose_name_plural = "Loyiha bo'limlari"
+        verbose_name_plural = "Bo'limlar 2"
 
 
 class Files(models.Model):

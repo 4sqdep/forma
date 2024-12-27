@@ -54,7 +54,7 @@ admin.site.register(Files, FilesAdmin)
 
 
 class ProjectSectionsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'subcategories_btn', 'user', 'name', 'created_at', 'updated_at']
+    list_display = ['id', 'next_stage_documents', 'user', 'name', 'created_at', 'updated_at']
     list_display_links = ['name']
     search_fields = ['name']
 
