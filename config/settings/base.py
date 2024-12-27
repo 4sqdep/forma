@@ -24,6 +24,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '3=9=l=yx3b7t9d!p%g_q_b+)0i(fii$#($j&q*68$3cl2(&#vz'
 
 # SECURITY WARNING: don't run with debug turned on in production!
+
+ALLOWED_HOSTS = ['*']
 DEBUG = True
 
 # Application definition
@@ -207,8 +209,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "main", "media/")
 STATIC_ROOT = os.path.join(BASE_DIR, "main", "static/")
 
 CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -231,6 +231,7 @@ CORS_ALLOW_METHODS = [
     "POST",
     "PUT",
 ]
+
 
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:5174',
