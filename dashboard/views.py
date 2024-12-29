@@ -5,11 +5,11 @@ from rest_framework import permissions, status
 from django.db.models import Case, When
 from rest_framework.permissions import IsAuthenticated
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
-                     ProjectDocumentation, NextStageDocuments, Files)
+                     ProjectDocumentation, NextStageDocuments, Files, ProjectSections)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
                           DashboardSubCategoryButtonSerializer, NextStageDocumentsSerializer,
                           NextStageDocumentsCreateSerializer, FilesSerializer, MultipleFileUploadSerializer,
-                          GetFilesSerializer)
+                          GetFilesSerializer, ProjectSectionsSerializer, CreateProjectSectionsSerializer)
 
 
 class DashboardButtonAPIView(APIView):
@@ -101,6 +101,31 @@ class NextStageDocumentsAPIView(APIView):
         document.name = new_name
         document.save()
         return Response({"message": "Name muvaffaqiyatli yangilandi", "data": document.name}, status=status.HTTP_200_OK)
+
+
+class ProjectSectionsAPIView(APIView):
+    """Qo'shimcha bo'limlar yaratish uchun APIView"""
+    permissions_classes = [IsAuthenticated]
+    def get(self, request, pk=None):
+        """Bo'limlarni olish"""
+        try:
+            sections = ProjectSections.objects.filter(next_stage_documents_id=pk)
+            if not sections.exists():
+                return Response({"message": "Bo'limlar topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+            serializer = ProjectSectionsSerializer(sections, many=True)
+            return Response({"message": "Barcha bo'limlar.......", 'data': serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    def post(self, request, pk=None):
+        """Yangi bo'lim yaratish"""
+        serializer = CreateProjectSectionsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response({"message": "Bo'lim muvaffaqiyatli yaratildi.", 'data': serializer.data},
+                            status=status.HTTP_201_CREATED)
+        return Response({"message": "Xatolik yuz berdi.", 'errors': serializer.errors},
+                            status=status.HTTP_400_BAD_REQUEST)
 
 
 class MultipleFileUploadView(APIView):

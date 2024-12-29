@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
-                     ProjectDocumentation, NextStageDocuments, Files)
+                     ProjectDocumentation, NextStageDocuments, Files, ProjectSections)
 
 
 class DashboardButtonSerializer(serializers.ModelSerializer):
@@ -101,3 +101,16 @@ class GetFilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Files
         fields = ['id', 'files']
+
+
+class ProjectSectionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectSections
+        fields = ['id', 'name', 'created_at']
+
+
+class CreateProjectSectionsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProjectSections
+        fields = ['id', 'next_stage_documents', 'user', 'name', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']
