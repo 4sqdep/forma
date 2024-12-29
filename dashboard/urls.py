@@ -16,8 +16,9 @@ urlpatterns = [
     path('add-next-project/', NextStageDocumentsAPIView.as_view(), name='add-next-project-btn'),
     path('files-create/', MultipleFileUploadView.as_view(), name='files-create'),
     path('get-files/<int:pk>/', GetFilesAPIView.as_view(), name='get-files'),
-    path('get-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='project-sections'),
-    path('post-sections/', ProjectSectionsAPIView.as_view(), name='project-sections'),
+    path('get-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='get-sections'),
+    path('post-sections/', ProjectSectionsAPIView.as_view(), name='post-sections'),
+    path('patch-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='patch-sections'),
 ]
 
 

@@ -117,7 +117,7 @@ class ProjectSectionsAPIView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, pk=None):
+    def post(self, request):
         """Yangi bo'lim yaratish"""
         serializer = CreateProjectSectionsSerializer(data=request.data)
         if serializer.is_valid():
@@ -126,6 +126,19 @@ class ProjectSectionsAPIView(APIView):
                             status=status.HTTP_201_CREATED)
         return Response({"message": "Xatolik yuz berdi.", 'errors': serializer.errors},
                             status=status.HTTP_400_BAD_REQUEST)
+    def patch(self, request, pk=None):
+        """Bo'lim nomini o'zgartirish"""
+        try:
+            sections = ProjectSections.objects.get(id=pk)
+        except ProjectSections.DoesNotExist:
+            return Response({"message": "Bo'limlar topilmadi."}, status=status.HTTP_404_NOT_FOUND)
+        new_name = request.data.get('name')
+        if not new_name:
+            return Response({'nessage': "Name maydonini kiritilishi shart"}, status=status.HTTP_400_BAD_REQUEST)
+        sections.name = new_name
+        sections.save()
+        return Response({"message": "Name muvaffaqiyatli yangilandi", 'data': sections.name}, status=status.HTTP_200_OK)
+
 
 
 class MultipleFileUploadView(APIView):
