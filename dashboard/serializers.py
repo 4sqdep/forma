@@ -120,7 +120,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
 class GetFilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Files
-        fields = ['id', 'files']
+        fields = ['id', 'files', 'name', 'file_code', 'calendar', 'created_at']
 
 
 class ProjectSectionsSerializer(serializers.ModelSerializer):
