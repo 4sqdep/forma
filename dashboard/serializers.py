@@ -64,30 +64,48 @@ class FilesSerializer(serializers.ModelSerializer):
 
 
 class MultipleFileUploadSerializer(serializers.Serializer):
-    document_id = serializers.IntegerField()  # NextStageDocuments modelining IDsi
-    files = serializers.ListField(
-        child=serializers.FileField(),
-        allow_empty=False,
-        write_only=True
-    )
+    document_id = serializers.IntegerField(required=False)  # NextStageDocuments modelining IDsi
+    project_section_id = serializers.IntegerField(required=False)  # ProjectSections IDsi
+    name = serializers.CharField(max_length=1000, required=False)  # Fayl nomi
+    calendar = serializers.CharField(max_length=30, required=False)  # Hujjat sanasi
+    files = serializers.ListField(child=serializers.FileField(), allow_empty=False, write_only=True)
+
+    def validate(self, attrs):
+        document_id = attrs.get('document_id')
+        project_section_id = attrs.get('project_section_id')
+        # Faqat bitta maydon to'ldirilganligini tekshirish
+        if not document_id and not project_section_id:
+            raise serializers.ValidationError("Document id yoki project_section idni kiritishingiz kerak.")
+        if document_id and project_section_id:
+            raise serializers.ValidationError("Siz faqat document_id yoki project_section_id dan birini taqdim etishingiz mumkin.")
+        return attrs
 
     def create(self, validated_data):
         document_id = validated_data.get('document_id')
+        project_section_id = validated_data.get('project_section_id')
         files = validated_data.get('files')
+        name = validated_data.get('name')
+        calendar = validated_data.get('calendar')
 
-        # NextStageDocuments mavjudligini tekshirish
-        try:
-            document = NextStageDocuments.objects.get(id=document_id)
-        except NextStageDocuments.DoesNotExist:
-            raise serializers.ValidationError({"document_id": "NextStageDocuments not found."})
+        document = None
+        project_section = None
+
+        # `document` yoki `project_section`ni olish
+        if document_id:
+            try:
+                document = NextStageDocuments.objects.get(id=document_id)
+            except NextStageDocuments.DoesNotExist:
+                raise serializers.ValidationError({"document_id": "NextStageDocuments topilmadi."})
+        if project_section_id:
+            try:
+                project_section = ProjectSections.objects.get(id=project_section_id)
+            except ProjectSections.DoesNotExist:
+                raise serializers.ValidationError({"project_section_id": "ProjectSections topilmadi."})
 
         # Fayllar ro'yxatini yaratish
         file_instances = [
-            Files(
-                document=document,
-                user=self.context['request'].user,  # Foydalanuvchini olish
-                files=file
-            )
+            Files(document=document, project_section=project_section, user=self.context['request'].user,  # Foydalanuvchini olish
+                name=name, calendar=calendar, files=file)
             for file in files
         ]
 
@@ -95,6 +113,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
         Files.objects.bulk_create(file_instances)
 
         return file_instances
+
 
 
 class GetFilesSerializer(serializers.ModelSerializer):
