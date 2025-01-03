@@ -85,6 +85,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
         project_section_id = validated_data.get('project_section_id')
         files = validated_data.get('files')
         name = validated_data.get('name')
+        file_code = validated_data.get('file_code')
         calendar = validated_data.get('calendar')
 
         document = None
@@ -105,7 +106,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
         # Fayllar ro'yxatini yaratish
         file_instances = [
             Files(document=document, project_section=project_section, user=self.context['request'].user,  # Foydalanuvchini olish
-                name=name, calendar=calendar, files=file)
+                name=name, calendar=calendar, file_code=file_code, files=file)
             for file in files
         ]
 
