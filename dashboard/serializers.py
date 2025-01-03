@@ -68,6 +68,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
     project_section_id = serializers.IntegerField(required=False)  # ProjectSections IDsi
     name = serializers.CharField(max_length=1000, required=False)  # Fayl nomi
     calendar = serializers.CharField(max_length=30, required=False)  # Hujjat sanasi
+    file_code = serializers.CharField(max_length=30, required=False)
     files = serializers.ListField(child=serializers.FileField(), allow_empty=False, write_only=True)
 
     def validate(self, attrs):
