@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from django.db.models import Case, When
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Q
 from .models import (DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton,
                      ProjectDocumentation, NextStageDocuments, Files, ProjectSections)
 from .serializers import (DashboardButtonSerializer, DashboardCategoryButtonSerializer, ProjectDocumentationSerializer,
@@ -140,7 +141,6 @@ class ProjectSectionsAPIView(APIView):
         return Response({"message": "Name muvaffaqiyatli yangilandi", 'data': sections.name}, status=status.HTTP_200_OK)
 
 
-
 class MultipleFileUploadView(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = (MultiPartParser, FormParser)
@@ -165,3 +165,37 @@ class GetFilesAPIView(APIView):
             return Response({'message': "Barcha fayllar", 'data': serializer.data}, status=status.HTTP_200_OK)
         except Files.DoesNotExist as e:
             return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
+
+
+class FilesSearchAPIView(APIView):
+    """
+    `Files` modelidan `name`, `calendar`, va `file_code` maydonlarini qidirish.
+    Prioritet: document_id > project_section_id.
+    """
+
+    def get(self, request, *args, **kwargs):
+        document_id = request.query_params.get('document_id')  # ?document_id=1
+        project_section_id = request.query_params.get('project_section_id')  # ?project_section_id=2
+        search_query = request.query_params.get('query')  # Qidiruv so'zi (?q=example)
+
+        if not search_query:
+            return Response({"error": "Qidiruv so'rovi (query) parametri talab qilinadi."},
+                status=status.HTTP_400_BAD_REQUEST)
+
+        # Filtrlashni tashkil qilish
+        if document_id:
+            files = Files.objects.filter(Q(document_id=document_id) & (Q(name__icontains=search_query) |
+                 Q(calendar__icontains=search_query) | Q(file_code__icontains=search_query)))
+        elif project_section_id:
+            files = Files.objects.filter(Q(project_section_id=project_section_id) & (Q(name__icontains=search_query) |
+                 Q(calendar__icontains=search_query) | Q(file_code__icontains=search_query)))
+        else:
+            return Response({"error": "Document_id yoki project_section_idni kiritishingiz kerak."},
+                status=status.HTTP_400_BAD_REQUEST)
+        # Ma'lumotlar mavjudligini tekshirish
+        if not files.exists():
+            return Response({"message": "No matching files found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Faqat kerakli maydonlarni qaytarish
+        result = files.values('name', 'calendar', 'file_code', 'user__first_name', 'user__last_name')
+        return Response(result, status=status.HTTP_200_OK)
