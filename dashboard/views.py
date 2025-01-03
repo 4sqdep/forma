@@ -156,9 +156,16 @@ class MultipleFileUploadView(APIView):
 class GetFilesAPIView(APIView):
     permissions_classes = [IsAuthenticated]
     multipart_parser_classes = [MultiPartParser, FormParser]
-    def get(self, request, pk=None):
+    def get(self, request, pk=None, section=None):
         try:
-            files = Files.objects.filter(document_id=pk)
+            if pk and section:
+                files = Files.objects.filter(document_id=pk, project_section_id=section)
+            elif pk:
+                files = Files.objects.filter(document_id=pk)
+            elif section:
+                files = Files.objects.filter(project_section_id=section)
+            else:
+                return Response({'message': "Hech qanday ID ko'rsatilmagan"}, status=status.HTTP_400_BAD_REQUEST)
             if not files.exists():
                 return Response({'message': "Tegishli fayllar topilmadi"}, status=status.HTTP_404_NOT_FOUND)
             serializer = GetFilesSerializer(files, many=True)
