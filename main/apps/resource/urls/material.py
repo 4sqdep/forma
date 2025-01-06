@@ -18,14 +18,13 @@ urlpatterns = [
         material.material_category_detail_api_view, 
         name="material_detail"
     ),
-
     path(
         "create/", 
         material.material_create_api_view,
         name='material_create'
     ),
     path(
-        "list/", 
+        "list/<int:material_category>/", 
         material.material_list_api_view,
         name='material_list'
     ),

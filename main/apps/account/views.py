@@ -378,6 +378,21 @@ class UserListAPIView(generics.ListAPIView):
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
+                'first_name', openapi.IN_QUERY, description='First Name', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'last_name', openapi.IN_QUERY, description='Last Name', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'passport_series', openapi.IN_QUERY, description='Passport Series', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'phone_number', openapi.IN_QUERY, description='Phone Number', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
+                'position', openapi.IN_QUERY, description='Position', type=openapi.TYPE_STRING
+            ),
+            openapi.Parameter(
                 'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
             ),
         ]
@@ -388,6 +403,26 @@ class UserListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = User.objects.exclude(is_moderator=True).exclude(is_superuser=True)
+        first_name = self.request.query_params.get('first_name')
+        last_name = self.request.query_params.get('last_name')
+        passport_series = self.request.query_params.get('passport_series')
+        phone_number = self.request.query_params.get('phone_number')
+        position = self.request.query_params.get('position')
+
+        if first_name:
+            queryset = queryset.filter(first_name__icontains=first_name)
+        
+        if last_name:
+            queryset = queryset.filter(last_name__icontains=last_name)
+        
+        if passport_series:
+            queryset = queryset.filter(passport_series__icontains=passport_series)
+        
+        if phone_number:
+            queryset = queryset.filter(phone_number=phone_number)
+        
+        if position:
+            queryset = queryset.filter(position__icontains=position)
         return queryset
 
     def get_pagination_class(self):

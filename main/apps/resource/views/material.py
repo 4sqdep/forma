@@ -146,10 +146,11 @@ class MaterialListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
+        material_category = self.kwargs.get("material_category")
         queryset = Material.objects.select_related(
             'material_category', 
             'measurement' 
-            ).all()
+            ).filter(material_category=material_category)
         return queryset
 
     def get_pagination_class(self):

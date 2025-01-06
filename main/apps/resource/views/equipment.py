@@ -147,11 +147,12 @@ class EquipmentListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
+        equipment_category = self.kwargs.get("equipment_category")
         queryset = Equipment.objects.select_related(
             'equipment_category', 
             'measurement', 
-            'time_measurement' 
-            ).all()
+            'time_measurement'
+        ).filter(equipment_category=equipment_category)
         return queryset
 
     def get_pagination_class(self):

@@ -9,9 +9,15 @@ from django.conf import settings
 class UserRegistrationSerializer(serializers.ModelSerializer):   
     confirm_password = serializers.CharField(
         write_only = True,
-        required = True,
+        required = False,
         help_text = 'Enter confirm password',
         style = {'input_type': 'password'}
+    )
+    password = serializers.CharField(
+        write_only=True,
+        required=False,  
+        help_text='Enter password',
+        style={'input_type': 'password'}
     )
 
     class Meta:

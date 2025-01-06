@@ -24,7 +24,7 @@ urlpatterns = [
         name='equipment_create'
     ),
     path(
-        "list/", 
+        "list/<int:equipment_category>/", 
         equipment.equipment_list_api_view,
         name='equipment_list'
     ),

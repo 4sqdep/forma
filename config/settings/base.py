@@ -219,8 +219,7 @@ CORS_ALLOW_HEADERS = [
     "origin",
     "user-agent",
     "x-csrftoken",
-    "x-requested-with",
-    'referer'
+    "x-requested-with"
 ] 
 
 CORS_ALLOW_METHODS = [
@@ -239,7 +238,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
     "https://proclear-api.gettest.uz",
-    "http://proclear-api.gettest.uz"
+    "http://proclear-api.gettest.uz",
+    "http://185.100.55.144"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -248,7 +248,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
     "https://proclear-api.gettest.uz",
-    "http://proclear-api.gettest.uz"
+    "http://proclear-api.gettest.uz",
+    "http://185.100.55.144"
 ]
 
 

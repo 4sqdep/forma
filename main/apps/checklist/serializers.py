@@ -94,8 +94,11 @@ class CheckListSerializer(serializers.ModelSerializer):
     
 
     def get_service_total_price(self, obj):
-        service_total_price = obj.service.aggregate(total_price=Sum('service_price'))['total_price']
-        return service_total_price if service_total_price else 0
-
-
+        total_price = 0
+        service_data = obj.service_data
+        for service_id, quantity in service_data.items():
+            service = obj.service.filter(id=service_id).first()
+            if service:
+                total_price += service.service_price * quantity
+        return total_price
 

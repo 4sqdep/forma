@@ -20,10 +20,7 @@ class ResourceRequestCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            resource_request = serializer.save()
-            # current_time = timezone.now()
-            # if resource_request.created_at != resource_request.pickup_time:
-                
+            resource_request = serializer.save(sender=self.request.user)                
             return PostResponse(status_code=status.HTTP_201_CREATED, message=resource_request.id, data=serializer.data, status=status.HTTP_201_CREATED)
         return ListResponse(status_code=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
@@ -195,7 +192,7 @@ class ResourceReturnCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            resource_return = serializer.save()
+            resource_return = serializer.save(sender=self.request.user)
             return PostResponse(status_code=status.HTTP_201_CREATED, message=resource_return.id, data=serializer.data, status=status.HTTP_201_CREATED)
         return ListResponse(status_code=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 

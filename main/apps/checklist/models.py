@@ -1,4 +1,5 @@
 from django.db import models
+from main.apps.resource.models.measurement import Measurement
 from main.apps.resource.models.time_measurement import TimeMeasurement
 from main.apps.service.models import Service, ServiceCategory
 from main.apps.statement.models.statement import Statement
@@ -26,7 +27,7 @@ class CheckList(BaseModel):
     service_total_price = models.DecimalField(max_digits=25, decimal_places=2, default='0.00')
     equipment_category = models.ManyToManyField(EquipmentCategory, null=True)
     equipment = models.ManyToManyField(Equipment, null=True)
-    measurement = models.ForeignKey(TimeMeasurement, on_delete=models.SET_NULL, null=True)
+    measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True)
     equipment_total_price = models.DecimalField(max_digits=25, decimal_places=2, default='0.00') 
     payment_for_employment = models.DecimalField(max_digits=25, decimal_places=2, default='0.00')
     payment_from_client = models.DecimalField(max_digits=25, decimal_places=2, default='0.00')

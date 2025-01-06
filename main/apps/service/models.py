@@ -30,6 +30,7 @@ class Service(BaseModel):
     service_category = models.ForeignKey(ServiceCategory, on_delete=models.SET_NULL, null=True)
     picture = models.ImageField(upload_to=upload_service_images, null=True, blank=True)
     title = models.CharField(max_length=255)
+    # measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=True)
     equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True, blank=True)
     material_category = models.ForeignKey(MaterialCategory, on_delete=models.SET_NULL, null=True, blank=True)
     equipment = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True, blank=True)
