@@ -1,6 +1,7 @@
 from django.db import models
 from main.apps.common.models import BaseMeta
 from main.apps.resource.models.equipment import Equipment, EquipmentCategory
+from main.apps.resource.models.measurement import Measurement
 from main.apps.resource.models.time_measurement import TimeMeasurement
 from .base import WarehouseBaseModel
 
@@ -19,7 +20,7 @@ class EquipmentWarehouse(WarehouseBaseModel):
     equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
     equipment = models.ForeignKey(Equipment, on_delete=models.SET_NULL, null=True)
     status = models.CharField(max_length=255, choices=StatusChoices.choices)
-    time_measurement = models.ManyToManyField(TimeMeasurement)
+    measurement = models.ManyToManyField(Measurement)
     measurement_data = models.JSONField(default=dict)
 
 

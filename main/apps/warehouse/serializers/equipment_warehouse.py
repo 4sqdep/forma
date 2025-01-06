@@ -16,7 +16,7 @@ class EquipmentWarehouseCreateSerializer(serializers.ModelSerializer):
             'status',
             'quantity',
             'measurement',
-            'time_measurement',
+            'measurement',
             'measurement_data'
         )
 
@@ -26,7 +26,6 @@ class EquipmentWarehouseListSerializer(serializers.ModelSerializer):
     equipment_category = EquipmentCategorySerializer()
     equipment = EquipmentListSerializer()
     measurement = MeasurementSerializer()
-    time_measurement = TimeMeasurementSerializer()
     class Meta:
         model = EquipmentWarehouse
         fields = (
@@ -36,7 +35,6 @@ class EquipmentWarehouseListSerializer(serializers.ModelSerializer):
             'status',
             'quantity',
             'measurement',
-            'time_measurement',
             'measurement_data'
         )
     
