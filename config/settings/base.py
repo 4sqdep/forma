@@ -21,12 +21,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '3=9=l=yx3b7t9d!p%g_q_b+)0i(fii$#($j&q*68$3cl2(&#vz'
+SECRET_KEY = 'django-insecure-%w-=iexto!4^tb6fnf0fhnev#r!l8-em7s7+98fm33zg17)ru_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-ALLOWED_HOSTS = ['*']
-DEBUG = True
 
 # Application definition
 
@@ -48,22 +46,14 @@ THIRD_PARTY_APPS = [
     'debug_toolbar',
     'drf_spectacular',
     'django_filters',
-    # 'channels'
 ]
 
 LOCAL_APPS = [
     "main.apps.common.apps.CommonConfig",
     "main.apps.account.apps.AccountConfig",
-    "main.apps.location.apps.LocationConfig",
-    "main.apps.statement.apps.StatementConfig",
-    "main.apps.resource.apps.ResourceConfig",
-    "main.apps.service.apps.ServiceConfig",
-    "main.apps.resourceflow.apps.ResourceFlowConfig",
-    "main.apps.warehouse.apps.WarehouseConfig",
-    "main.apps.checklist.apps.CheckListConfig",
-    "main.apps.order.apps.OrderConfig",
-    "main.apps.contract.apps.ContractConfig",
-    "main.apps.notification.apps.NotificationConfig",
+    "main.apps.dashboard.apps.DashboardConfig",
+    "main.apps.main.apps.MainConfig",
+    
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + LOCAL_APPS + DJANGO_APPS
@@ -108,9 +98,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    #    "rest_framework.authentication.SessionAuthentication",
        "rest_framework.authentication.BasicAuthentication",
-    #    "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
 }
@@ -252,18 +240,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://185.100.55.144"
 ]
 
-
-SMS_EXPIRE_SECONDS = 60
-SMS_AUTH_TOKEN = os.environ.get("SMS_AUTH_TOKEN")
-
-OTP_HASH_CODE = os.environ.get("OTP_HASH_CODE")
-
-
-# CHANNEL_LAYERS = {
-#     "default": {
-#         "BACKEND": "channels_redis.core.RedisChannelLayer",
-#         "CONFIG": {
-#             "hosts": [("127.0.0.1", 6379)],
-#         },
-#     },
-# }

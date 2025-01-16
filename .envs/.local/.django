@@ -1,4 +1,6 @@
-PROJECT_NAME=Proclear
+PROJECT_NAME=Hydroconstruction
 DJANGO_SETTINGS_MODULE=config.settings.local
-SECRET_KEY=3=9=l=yx3b7t9d!p%g_q_b+)0i(fii$#($j&q*68$3cl2(&#vz
 DEBUG=True
+
+SECRET_KEY=django-insecure-%w-=iexto!4^tb6fnf0fhnev#r!l8-em7s7+98fm33zg17)ru_
+DATABASE_URL=postgres://gidroqurilish:gidroformadbgbx@13.233.123.235:5432/gidroforma

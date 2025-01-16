@@ -9,8 +9,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/Dockerfile
-    image: local_proclear_django
-    container_name: local_proclear_django
+    image: local_hydroconstruction_django
+    container_name: local_hydroconstruction_django
     depends_on:
       - postgres
     volumes:
@@ -27,8 +27,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: local_proclear_postgres
-    container_name: local_proclear_postgres
+    image: local_hydroconstruction_postgres
+    container_name: local_hydroconstruction_postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:cached
       - local_postgres_data_backups:/backups:cached

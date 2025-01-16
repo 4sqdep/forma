@@ -10,7 +10,7 @@ import debug_toolbar
 
 schema_view = get_schema_view(
     openapi.Info(
-    title="Swagger Doc for Proclear",
+    title="Swagger Doc for Hydroconstruction",
     default_version='v1',
     description="This is Proclear project API",
     terms_of_service="example.uz",
@@ -19,7 +19,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
     public=True,
     
-    authentication_classes=[],  # Optional
+    authentication_classes=[],  
 )
 
 
