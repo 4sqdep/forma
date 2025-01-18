@@ -1,8 +1,14 @@
 from main.apps.dashboard.models.dashboard import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
-from main.apps.dashboard.models.document import Files, ProjectDocumentation
+from main.apps.dashboard.models.document import Files, ProjectDocumentation, NextStageDocuments
 from main.apps.main.models import ObjectsPassword
+from main.apps.account.models.user import User
 from rest_framework import serializers
 
+class UserSerializer(serializers.ModelSerializer):
+    """Foydalanuvchi malumotlarini olish uchun serializers"""
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name']
 
 class DashboardButtonNameSerializer(serializers.ModelSerializer):
     """"Asosiy button name olish uchun serializer"""
@@ -34,9 +40,11 @@ class ProjectDocumentationNameSerializer(serializers.ModelSerializer):
 
 class GetObjectsPasswordSerializer(serializers.ModelSerializer):
     """Obyekt pasportiga tegishlim malumotlarni olish uchun serializer"""
+    user = UserSerializer(read_only=True)
+    object_name = DashboardSubCategoryButtonNameSerializer(source='subcategory_btn', read_only=True)
     class Meta:
         model = ObjectsPassword
-        fields = ['id', 'smr_price', 'equipment_price', 'investment_price', 'uge_price',
+        fields = ['id', 'user', 'object_name', 'smr_price', 'equipment_price', 'investment_price', 'uge_price',
                   'total_price', 'total_power', 'created_at']
 
 
@@ -60,3 +68,12 @@ class GetFilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Files
         fields = ['id', 'obj_password', 'file']
+
+
+class NextStageDocumentsSerializer(serializers.ModelSerializer):
+    """Keyingi hujjatlar uchun serializer"""
+    object_name = DashboardSubCategoryButtonNameSerializer(source='subcategories_btn', read_only=True)
+    user = UserSerializer(read_only=True)
+    class Meta:
+        model = NextStageDocuments
+        fields = ['id', 'user', 'object_name', 'name']
