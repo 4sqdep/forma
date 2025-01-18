@@ -6,11 +6,13 @@ from main.apps.dashboard.models.dashboard import (
     DashboardSubCategoryButton
 )
 from main.apps.dashboard.models.document import ProjectDocumentation
+from main.apps.account.models.user import User
 
 
 
 class ObjectsPassword(BaseModel):
     """Obyektlar uchun paspord modeli"""
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="Foydalanuvchi")
     main_btn = models.ForeignKey(DashboardButton, on_delete=models.SET_NULL, null=True, blank=True,
                                     verbose_name="Asosiy knopkalar")
     category_btn = models.ForeignKey(DashboardCategoryButton, on_delete=models.SET_NULL, null=True, blank=True,
