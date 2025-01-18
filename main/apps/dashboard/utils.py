@@ -8,6 +8,9 @@ from django.db.models import Q
 from .utils_serializers import ProjectDocumentationSerializer
 from collections import defaultdict
 from django.db.models import Count, Case, When, Value, IntegerField
+from main.apps.main.models import ObjectsPassword
+from main.apps.main.serializers import GetObjectsPasswordSerializer, NextStageDocumentsSerializer
+from main.apps.dashboard.models.document import  NextStageDocuments
 
 
 class NestedDataAPIView(APIView):
@@ -16,44 +19,20 @@ class NestedDataAPIView(APIView):
     def get(self, request):
         query_params = request.query_params.get("query")
         try:
-            project_docs = None
             if query_params == '1':
-                project_docs = ProjectDocumentation.objects.filter(is_obj_password=True)
+                project_docs = ObjectsPassword.objects.filter(project_documentation__is_obj_password=True)
+                serialializer = GetObjectsPasswordSerializer(project_docs, many=True)
+                return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '2':
-                project_docs = ProjectDocumentation.objects.filter(is_project_doc=True)
+                project_docs = NextStageDocuments.objects.filter(project_document__is_project_doc=True)
+                serialializer = NextStageDocumentsSerializer(project_docs, many=True)
+                return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '3':
-                project_docs = ProjectDocumentation.objects.filter(is_work_smr=True)
-            elif query_params == '4':
-                project_docs = ProjectDocumentation.objects.filter(is_equipment=True)
+                project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
+                serialializer = NextStageDocumentsSerializer(project_docs, many=True)
+                return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             else:
-                return Response({"message": "Parametr noto‘g‘ri yoki ma’lumotlar topilmadi"},
-                                       status=status.HTTP_400_BAD_REQUEST)
-            next_stage_documents = (NextStageDocuments.objects.filter(project_document__in=project_docs).
-                                    select_related('subcategories_btn')).annotate( file_count=Count('files'),  # Fayllarni sanash
-                                    has_file=Case(
-                                        When(file_count__gt=0, then=Value(1)),
-                                        default=Value(0),
-                                        output_field=IntegerField()
-                                    ))
-
-            # Ma'lumotlarni subcategories_btn.name bo‘yicha guruhlash
-            grouped_data = defaultdict(list)
-            for document in next_stage_documents:
-                grouped_data[document.subcategories_btn.name].append({
-                    "id": document.id,
-                    "name": document.name,
-                    "is_section": document.is_section,
-                    "has_file": bool(document.has_file),
-                    "file_count": document.file_count
-                })
-
-            # Ma'lumotlarni qayta formatlash
-            result = [
-                {"name": key, "documents": value}
-                for key, value in grouped_data.items()
-            ]
-
-            return Response({"data": result}, status=status.HTTP_200_OK)
+                return Response({"data": "XATO"}, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
