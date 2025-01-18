@@ -24,5 +24,12 @@ urlpatterns = [
             namespace="main",
         ),
     ),
+    path(
+        "reestr/",
+        include(
+            ("main.apps.reestr.reestr", "main.apps.reestr.reestr"),
+            namespace="reestr",
+        ),
+    ),
 ]
 
