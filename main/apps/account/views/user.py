@@ -1,13 +1,13 @@
 from main.apps.account.models.user import User
-from main.apps.account.serializers.user import LoginSerializer, Registerserializer, UserProfileSerializer
+from main.apps.account.serializers.user import LoginSerializer, Registerserializer, UserProfileSerializer, UserAllSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
-
-
+from main.apps.common.pagination import CustomPagination
+from rest_framework import generics
 
 class RegisterUser(APIView):
     """
@@ -88,3 +88,11 @@ class UserProfileAPIView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response({'message': "Foydalanuvchi topilmadi"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class AllUsersListAPIView(generics.ListAPIView):
+    """Barcha foydalanuvchilarni olish faqat is_superuser=False qiymatga ega bo'lganlarini"""
+    queryset = User.objects.filter(is_superuser=False)
+    serializer_class = UserAllSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = CustomPagination

@@ -9,6 +9,7 @@ from rest_framework import permissions, status
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
+from main.apps.common.pagination import CustomPagination
 
 
 class ProjectDocumentAPIView(APIView):
@@ -42,7 +43,9 @@ class NextStageDocumentsAPIView(APIView):
 
     def get(self, request, pk=None):
         projects = NextStageDocuments.objects.filter(project_document_id=pk)
-        serializer = NextStageDocumentsSerializer(projects, many=True)
+        paginator = CustomPagination()
+        paginated_queryset = paginator.paginate_queryset(projects, request)
+        serializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
         return Response({'message': "SuccessFull....", 'data': serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request, pk=None):
@@ -74,7 +77,9 @@ class ProjectSectionsAPIView(APIView):
             sections = ProjectSections.objects.filter(next_stage_documents_id=pk)
             if not sections.exists():
                 return Response({"message": "Bo'limlar topilmadi."}, status=status.HTTP_404_NOT_FOUND)
-            serializer = document_serializer.ProjectSectionsSerializer(sections, many=True)
+            paginator = CustomPagination()
+            paginated_queryset = paginator.paginate_queryset(sections, request)
+            serializer = document_serializer.ProjectSectionsSerializer(paginated_queryset, many=True)
             return Response({"message": "Barcha bo'limlar.......", 'data': serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -122,7 +127,9 @@ class GetFilesAPIView(APIView):
             files = Files.objects.filter(document_id=pk)
             if not files.exists():
                 return Response({'message': "Tegishli fayllar topilmadi"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = document_serializer.GetFilesSerializer(files, many=True)
+            paginator = CustomPagination()
+            paginated_queryset = paginator.paginate_queryset(files, request)
+            serializer = document_serializer.GetFilesSerializer(paginated_queryset, many=True)
             return Response({'message': "Barcha fayllar", 'data': serializer.data}, status=status.HTTP_200_OK)
         except Files.DoesNotExist as e:
             return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
@@ -136,7 +143,9 @@ class GetFilesSectionAPIView(APIView):
             files = Files.objects.filter(project_section_id=pk)
             if not files.exists():
                 return Response({'message': "Tegishli fayllar topilmadi"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = document_serializer.GetFilesSerializer(files, many=True)
+            paginator = CustomPagination()
+            paginated_queryset = paginator.paginate_queryset(files, request)
+            serializer = document_serializer.GetFilesSerializer(paginated_queryset, many=True)
             return Response({'message': "Barcha fayllar", 'data': serializer.data}, status=status.HTTP_200_OK)
         except Files.DoesNotExist as e:
             return Response({'message': str(e)}, status=status.HTTP_404_NOT_FOUND)
