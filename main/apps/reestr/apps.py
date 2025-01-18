@@ -3,4 +3,4 @@ from django.apps import AppConfig
 
 class ReestrConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'reestr'
+    name = 'main.apps.reestr'
