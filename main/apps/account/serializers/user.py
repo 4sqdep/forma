@@ -71,3 +71,10 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'phone', 
             'image'
         )
+
+
+
+class UserAllSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
