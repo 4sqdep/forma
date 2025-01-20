@@ -29,7 +29,13 @@ class GetObjectsPasswordView(APIView):
         else:
             return Response({'message': "Malumot qo'shilmadi .. . .", "data": serializer.errors},
                             status=status.HTTP_400_BAD_REQUEST)
-
+    def patch(self, request, pk=None):
+        obj_password = ObjectsPassword.objects.get(id=pk)
+        serializer = CreateObjectsPasswordSerializer(obj_password, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': "Malumot yangilandi.....", "data": serializer.data},
+            status=status.HTTP_200_OK)
 
 class UploadFilesAPIView(APIView):
     """Opyekt pasporti uchun fayl yuklash"""
