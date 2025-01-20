@@ -23,7 +23,7 @@ class GetObjectsPasswordView(APIView):
         """Obyekt pasportini qo'shish"""
         serializer = CreateObjectsPasswordSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(user=self.request.user)
             return Response({'message': "Malumot qo'shildi......", "data": serializer.data},
                             status=status.HTTP_201_CREATED)
         else:
