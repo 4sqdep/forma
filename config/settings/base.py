@@ -141,9 +141,10 @@ SWAGGER_SETTINGS = {
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
+import dj_database_url
 
 DATABASES = {
-    'default': "postgres://gidroqurilish:gidroformadbgbx@13.233.123.235:5432/gidroforma"
+    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
 # DATABASES = {
