@@ -9,10 +9,7 @@ class YearSerializer(serializers.ModelSerializer):
         model = Year 
         fields = (
             'id',
-            'employee',
-            'currency',
-            'title',
-            'total_cost'
+            'title'
         )
 
 

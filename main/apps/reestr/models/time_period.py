@@ -6,7 +6,7 @@ from main.apps.common.models import BaseMeta, BaseModel
 
 
 class Year(BaseModel):
-    year = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
 
 
     def __str__(self):

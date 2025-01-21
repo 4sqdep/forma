@@ -11,7 +11,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: testproj_django
+    image: gidro_django
     container_name: django
     depends_on:
       - postgres
@@ -31,7 +31,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: testproj_postgres
+    image: gidro_postgres
     container_name: postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data:cached
@@ -43,7 +43,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
-    image: testproj_nginx
+    image: gidro_nginx
     container_name: nginx
     volumes:
       - static_volume:/home/app/web/main/static

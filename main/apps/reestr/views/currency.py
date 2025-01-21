@@ -66,7 +66,7 @@ class CurrencyListAPIView(generics.ListAPIView):
             response_data.data["data"] = response_data.data.pop("results", None)
         else:
             serializer = self.get_serializer(queryset, many=True)
-            response_data = Response(status=status.HTTP_200_OK, data=serializer.data)
+            response_data = Response({'data': serializer.data}, status=status.HTTP_200_OK)
         return response_data
 
 currency_list_api_view = CurrencyListAPIView.as_view()
