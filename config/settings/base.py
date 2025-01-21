@@ -141,22 +141,17 @@ SWAGGER_SETTINGS = {
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-import dj_database_url
 
 DATABASES = {
-    'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))
+       "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "HOST": os.environ.get("POSTGRES_HOST"),
+        "NAME": os.environ.get("POSTGRES_DB"),
+        "PORT": os.environ.get("POSTGRES_PORT"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+    }
 }
-
-# DATABASES = {
-#        "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "HOST": os.environ.get("POSTGRES_HOST"),
-#         "NAME": os.environ.get("POSTGRES_DB"),
-#         "PORT": os.environ.get("POSTGRES_PORT"),
-#         "USER": os.environ.get("POSTGRES_USER"),
-#         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
-#     }
-# }
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
