@@ -41,12 +41,10 @@ RUN chown -R django:django $APP_HOME/static
 RUN mkdir -p $APP_HOME/media
 RUN chown -R django:django $APP_HOME/media
 
-# Create the '/var/www/static/' directory and set permissions
 RUN mkdir -p /var/www/static
 RUN chown -R django:django /var/www/static
 RUN chmod -R 777 /var/www/static
 
-# Create the '/var/www/media/' directory and set permissions
 RUN mkdir -p /var/www/media
 RUN chown -R django:django /var/www/media
 RUN chmod -R 777 /var/www/media
