@@ -3,7 +3,7 @@ from main.apps.account.models.user import User
 from main.apps.common.models import BaseMeta, BaseModel
 from main.apps.reestr.models.currency import Currency
 from main.apps.reestr.models.time_period import Month, Year
-
+from django.db.models import Sum
 
 
 class ConstructionTask(BaseModel):
@@ -16,8 +16,8 @@ class ConstructionTask(BaseModel):
         return f"{self.title}"
 
     class Meta(BaseMeta):
-        verbose_name = "Qurilish ishlari"
-        verbose_name_plural = "Qurilish ishlari"
+        verbose_name = "Construction Task"
+        verbose_name_plural = "Construction Tasks"
 
 
 
@@ -45,7 +45,6 @@ class MonthlyExpense(BaseModel):
         null=True
     )
     spent_amount = models.DecimalField(max_digits=32, decimal_places=2, default=0, verbose_name="Sarflangan summa")
-
     amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Miqdori")
     total_year = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami yil summa")
     total_fact = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami fakt summa")
@@ -54,8 +53,12 @@ class MonthlyExpense(BaseModel):
     total_difference_amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami Farq summa")
 
     def __str__(self):
-        return f"{self.construction_task.title}"
+        return f"{self.month.title}, {self.construction_task.title}"
 
     class Meta(BaseMeta):
-        verbose_name = "Qurilish ishlari"
-        verbose_name_plural = "Qurilish ishlari"
+        verbose_name = "Monthly Expense"
+        verbose_name_plural = "Monthly Expenses"
+    
+
+
+    

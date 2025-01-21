@@ -22,7 +22,7 @@ class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
             'year',
             'month',
             'construction_task',
-            'spen_amount'
+            'spent_amount'
         )
 
 
@@ -34,12 +34,12 @@ class MonthlyExpenseListSerializer(serializers.ModelSerializer):
             'year',
             'month',
             'construction_task',
-            'spen_amount',
+            'spent_amount',
             'amount',
-            'total_year_amount',
-            'total_fact',
-            'total_fact_amount',
-            'amount_differece',
-            'total_amount_difference'
+            # 'total_year',
+            # 'total_fact',
+            # 'total_fact_amount',
+            # 'difference_amount',
+            # 'total_difference_amount'
         )
 
