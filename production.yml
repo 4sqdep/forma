@@ -3,8 +3,8 @@ version: '3.8'
 volumes:
   static_volume:
   media_volume:
-  production_postgres_data: { }
-  production_postgres_data_backups: { }
+  production_postgres_data: {}
+  production_postgres_data_backups: {}
 
 services:
   django:
@@ -28,7 +28,6 @@ services:
       - "8000:8000"
     command: /start
 
-
   postgres:
     build:
       context: .
@@ -37,7 +36,6 @@ services:
     container_name: postgres
     networks:
       - gidro_network
-
     volumes:
       - production_postgres_data:/var/lib/postgresql/data:cached
       - production_postgres_data_backups:/backups:cached
@@ -56,11 +54,13 @@ services:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     ports:
-      - 8080:80
-      - 777:777
+      - "8080:80"
+      - "777:777"
     depends_on:
       - django
 
 networks:
   gidro_network:
     driver: bridge
+    # Uncomment the following if you want it to be external
+    # external: true
