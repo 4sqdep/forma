@@ -1,5 +1,5 @@
 from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
-from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectSections
+from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectSections, ProjectDocumentation
 from main.apps.dashboard.serializers import document as document_serializer
 from main.apps.dashboard.utils_serializers import NextStageDocumentsSerializer, ProjectDocumentationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
+from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas
 
 
 class ProjectDocumentAPIView(APIView):
@@ -25,7 +26,7 @@ class ProjectDocumentAPIView(APIView):
         order_case = Case(*[
             When(name=name, then=index) for index, name in enumerate(order)
         ])
-        subcategory = DashboardSubCategoryButton.objects.get(pk=pk)
+        subcategory = DashboardSubCategoryButton.objects.get(id=pk)
         sub_btn = subcategory.projectdocumentation.all().order_by(order_case).annotate(
                 has_data=Case(
                     When(name__isnull=False, then=Value(True)),  # Agar 'name' maydoni mavjud bo'lsa
@@ -33,7 +34,7 @@ class ProjectDocumentAPIView(APIView):
                     output_field=BooleanField()
                 )
             )
-        serializer = ProjectDocumentationSerializer(sub_btn, many=True)
+        serializer = ProjectDocumentationSerializerHas(sub_btn, many=True)
         return Response({'message': "Lo'yiha bo'limlari...", 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
