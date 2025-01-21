@@ -4,7 +4,7 @@ from rest_framework import serializers
 
 
 
-class ProjectDocumentationSerializer(serializers.ModelSerializer):
+class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
     subcategories_btn = DashboardSubCategoryButtonSerializerName()
     project_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
