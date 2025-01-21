@@ -37,4 +37,3 @@ django-debug-toolbar==3.8.1
 drf-spectacular==0.24.1
 django-filter==23.2
 
-dj-database-url==2.3.0
