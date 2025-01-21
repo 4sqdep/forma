@@ -19,7 +19,6 @@ services:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
     env_file:
-      - ./.env
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
     ports:
