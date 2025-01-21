@@ -62,5 +62,3 @@ services:
 networks:
   gidro_network:
     driver: bridge
-    # Uncomment the following if you want it to be external
-    # external: true

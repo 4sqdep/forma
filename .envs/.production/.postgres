@@ -3,3 +3,5 @@ POSTGRES_PORT=5432
 POSTGRES_DB=gidro_production_database
 POSTGRES_USER=gidro_production_user
 POSTGRES_PASSWORD=gidro24Oa56>xCCkl
+
+DATABASE_URL=postgres://gidroqurilish:gidroformadbgbx@13.233.123.235:5432/gidroforma
