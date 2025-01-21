@@ -3,8 +3,4 @@ DJANGO_SETTINGS_MODULE=config.settings.production
 SECRET_KEY=3=9=l=yx3b7t9d!p%g_q_b+)0i(fii$#($j&q*68$3cl2(&#vz
 DEBUG=True
 
-POSTGRES_USER=proclear
-POSTGRES_PASSWORD=eiJo3ieyah0oopheiNg7Eixuhoo9ae
-POSTGRES_DB=proclear
-POSTGRES_HOST=185.100.55.144
-POSTGRES_PORT=5432
+j=some_value
