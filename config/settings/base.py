@@ -143,7 +143,7 @@ SWAGGER_SETTINGS = {
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': os.environ.get("POSTGRES_HOST")
+    'default': os.environ.get("DATABASE_URL")
 }
 
 # DATABASES = {
