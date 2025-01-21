@@ -1,3 +1,4 @@
+version: '3.8'
 
 volumes:
   static_volume:
@@ -12,6 +13,8 @@ services:
       dockerfile: ./compose/production/django/Dockerfile
     image: gidro_django
     container_name: django
+    networks:
+      - django_network
     depends_on:
       - postgres
     volumes:
@@ -32,6 +35,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: gidro_postgres
     container_name: postgres
+    networks:
+      - django_network
     volumes:
       - production_postgres_data:/var/lib/postgresql/data:cached
       - production_postgres_data_backups:/backups:cached
@@ -44,6 +49,8 @@ services:
       dockerfile: ./compose/production/nginx/Dockerfile
     image: gidro_nginx
     container_name: nginx
+    networks:
+      - django_network
     volumes:
       - static_volume:/home/app/web/main/static
       - media_volume:/home/app/web/main/media
@@ -52,3 +59,7 @@ services:
       - 777:777
     depends_on:
       - django
+
+networks:
+  django_network:
+    driver: bridge
