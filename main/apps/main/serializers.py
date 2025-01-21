@@ -45,7 +45,7 @@ class GetObjectsPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ObjectsPassword
         fields = ['id', 'user', 'object_name', 'smr_price', 'equipment_price', 'investment_price', 'uge_price',
-                  'total_price', 'total_power', 'created_at']
+                  'total_price', 'total_power', 'start_date', 'end_date', 'created_at']
 
 
 class CreateObjectsPasswordSerializer(serializers.ModelSerializer):
@@ -53,7 +53,8 @@ class CreateObjectsPasswordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ObjectsPassword
         fields = ['main_btn', 'category_btn', 'subcategory_btn', 'project_documentation',
-                  'smr_price', 'equipment_price', 'investment_price', 'uge_price', 'total_price', 'total_power']
+                  'smr_price', 'equipment_price', 'investment_price',
+                  'uge_price', 'total_price', 'total_power', 'start_date', 'end_date',]
 
 
 class FilesCreateSerializer(serializers.ModelSerializer):

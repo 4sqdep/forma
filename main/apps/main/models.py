@@ -27,6 +27,8 @@ class ObjectsPassword(BaseModel):
     uge_price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="UZBEKGIDRO summasi")
     total_price = models.DecimalField(max_digits=15, decimal_places=2, verbose_name="Obyekt umumiy summasi")
     total_power = models.CharField(max_length=200, null=True, blank=True, verbose_name="Umumiy quvvat")
+    start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
+    end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 
     def __str__(self):
         return self.project_documentation.name

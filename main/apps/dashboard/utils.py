@@ -11,7 +11,7 @@ from django.db.models import Count, Case, When, Value, IntegerField
 from main.apps.main.models import ObjectsPassword
 from main.apps.main.serializers import GetObjectsPasswordSerializer, NextStageDocumentsSerializer
 from main.apps.dashboard.models.document import  NextStageDocuments
-
+from main.apps.common.pagination import CustomPagination
 
 class NestedDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -21,15 +21,21 @@ class NestedDataAPIView(APIView):
         try:
             if query_params == '1':
                 project_docs = ObjectsPassword.objects.filter(project_documentation__is_obj_password=True)
-                serialializer = GetObjectsPasswordSerializer(project_docs, many=True)
+                paginator = CustomPagination()
+                paginated_queryset = paginator.paginate_queryset(project_docs, request)
+                serialializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '2':
                 project_docs = NextStageDocuments.objects.filter(project_document__is_project_doc=True)
-                serialializer = NextStageDocumentsSerializer(project_docs, many=True)
+                paginator = CustomPagination()
+                paginated_queryset = paginator.paginate_queryset(project_docs, request)
+                serialializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '3':
                 project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
-                serialializer = NextStageDocumentsSerializer(project_docs, many=True)
+                paginator = CustomPagination()
+                paginated_queryset = paginator.paginate_queryset(project_docs, request)
+                serialializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({"data": "XATO"}, status=status.HTTP_200_OK)
