@@ -1,5 +1,6 @@
 from main.apps.dashboard.models.dashboard import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
-from main.apps.dashboard.models.document import Files, ProjectDocumentation, NextStageDocuments
+from main.apps.dashboard.models.document import ProjectDocumentation, NextStageDocuments
+from main.apps.main.models import Files
 from main.apps.main.models import ObjectsPassword
 from main.apps.account.models.user import User
 from rest_framework import serializers
@@ -52,7 +53,7 @@ class CreateObjectsPasswordSerializer(serializers.ModelSerializer):
     """Obyekt pasportini kiritish uchun serializer"""
     class Meta:
         model = ObjectsPassword
-        fields = ['main_btn', 'category_btn', 'subcategory_btn', 'project_documentation',
+        fields = ['id', 'main_btn', 'category_btn', 'subcategory_btn', 'project_documentation',
                   'smr_price', 'equipment_price', 'investment_price',
                   'uge_price', 'total_price', 'total_power', 'start_date', 'end_date',]
 
