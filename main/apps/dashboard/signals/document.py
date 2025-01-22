@@ -20,7 +20,7 @@ def create_project_documentation(sender, instance, created, **kwargs):
             is_equipment = True if name == "Uskunalar hujjatlari" else False
             ProjectDocumentation.objects.create(
                 subcategories_btn=instance,  # Bog'laymiz
-                user=instance.user,  # Foydalanuvchi
+                created_by=instance.created_by, # Foydalanuvchi
                 name=name,  # Hujjat nomi
                 is_obj_password=is_obj_password, #Obyekt pasporti
                 is_project_doc=is_project_doc, #Loyiha hujjatlari

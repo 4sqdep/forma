@@ -56,9 +56,9 @@ class DashboardCategoryButtonAPIView(APIView):
     """Sub kategoriya button kiritish uchun POST method"""
 
     def post(self, request):
-        serializer = DashboardSubCategoryButtonSerializer(data=request.data)
+        serializer = DashboardSubCategoryButtonSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(created_by=request.user)
             return Response({'message': "SubCategory o'zgartirildi....", 'data': serializer.data},
                                 status=status.HTTP_200_OK)
 
