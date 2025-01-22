@@ -1,12 +1,14 @@
 from django.db import models
 from main.apps.account.models.user import User
 from main.apps.common.models import BaseMeta, BaseModel
+from main.apps.dashboard.models.document import NextStageDocuments
 from main.apps.reestr.models.currency import Currency
 from main.apps.reestr.models.time_period import Month, Year
-from django.db.models import Sum
+
 
 
 class ConstructionTask(BaseModel):
+    next_stage_document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, null=True)
     employee = models.ManyToManyField(User, verbose_name='Xodimlar', blank=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, verbose_name="Ish nomi")

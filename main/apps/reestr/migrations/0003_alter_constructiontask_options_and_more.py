@@ -8,6 +8,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('dashboard', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('reestr', '0002_rename_year_year_title'),
     ]
@@ -21,6 +22,10 @@ class Migration(migrations.Migration):
             name='monthlyexpense',
             options={'ordering': ('-id',), 'verbose_name': 'Monthly Expense', 'verbose_name_plural': 'Monthly Expenses'},
         ),
+        migrations.AddField(
+            model_name='constructiontask',
+            name='next_stage_document',
+            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='dashboard.nextstagedocuments'),),
         migrations.AlterField(
             model_name='constructiontask',
             name='created_by',
