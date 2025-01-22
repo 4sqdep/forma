@@ -1,6 +1,7 @@
 from django.db.models import Sum
 from main.apps.reestr.models.construction import ConstructionTask
-
+from django.db.models.functions import Coalesce
+from django.db.models import Sum, DecimalField
 
 
 
@@ -72,8 +73,6 @@ def total_year_calculation_horizontally(queryset):
             }
     return list(year_totals.values())
 
-from django.db.models.functions import Coalesce
-from django.db.models import Sum, DecimalField
 
 def get_fact_sum(queryset):
     grouped_data = (
@@ -92,7 +91,7 @@ def get_fact_sum(queryset):
         {
             'construction_task_id': task['id'],
             'construction_task_title': task['title'],
-            'total_spent': task['total_spent'] or 0  # Default to 0 if no spent amount
+            'total_spent': task['total_spent'] or 0 
         }
         for task in grouped_data
     ]
