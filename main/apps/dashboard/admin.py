@@ -36,16 +36,22 @@ class ProjectDocumentationAdmin(admin.ModelAdmin):
 
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_by', 'subcategories_btn', 'project_document', 'name']
+    list_display = ['id', 'created_by_full_name', 'subcategories_btn', 'project_document', 'name', 'is_forma', 'is_section']
     list_display_links = ['project_document', 'name']
     search_fields = ['name', 'project_document']
+
+
+    def created_by_full_name(self, obj):
+        if obj.created_by:  # created_by mavjudligini tekshiramiz
+            return f"{obj.created_by.first_name} {obj.created_by.last_name}"
+        return "No user assigned"
 
 
 admin.site.register(NextStageDocuments, NextStageDocumentsAdmin)
 
 
 class FilesAdmin(admin.ModelAdmin):
-    list_display = ['id', 'document', 'created_by', 'files']
+    list_display = ['id', 'document', 'project_section', 'created_by', 'files']
     list_display_links = ['document', 'files']
 
 
