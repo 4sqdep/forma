@@ -93,8 +93,11 @@ class MultipleFileUploadSerializer(serializers.Serializer):
 
         # Fayllar ro'yxatini yaratish
         file_instances = [
-            Files(document=document, project_section=project_section, user=self.context['request'].user,  # Foydalanuvchini olish
-                name=name, calendar=calendar, file_code=file_code, files=file)
+            Files(document=document,
+                    project_section=project_section,
+                    created_by=self.context['request'].user,  # Foydalanuvchini olish
+                    name=name, calendar=calendar,
+                    file_code=file_code, files=file)
             for file in files
         ]
 
@@ -118,5 +121,9 @@ class ProjectSectionsSerializer(serializers.ModelSerializer):
 class CreateProjectSectionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectSections
-        fields = ['id', 'next_stage_documents', 'user', 'name', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
+        fields = ['id', 'next_stage_documents', 'name']
+
+        # def create(self, validated_data):
+        #     user = self.context['request'].user
+        #     validated_data['created_by'] = user
+        #     return super().create(validated_data)

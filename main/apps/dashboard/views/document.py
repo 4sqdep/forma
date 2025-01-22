@@ -89,7 +89,7 @@ class ProjectSectionsAPIView(APIView):
         """Yangi bo'lim yaratish"""
         serializer = document_serializer.CreateProjectSectionsSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(created_by=request.user)
             return Response({"message": "Bo'lim muvaffaqiyatli yaratildi.", 'data': serializer.data},
                             status=status.HTTP_201_CREATED)
         return Response({"message": "Xatolik yuz berdi.", 'errors': serializer.errors},
@@ -116,7 +116,7 @@ class MultipleFileUploadView(APIView):
         if serializer.is_valid():
             uploaded_files = serializer.save()  # Fayllarni saqlash
             response_serializer = document_serializer.FilesSerializer(uploaded_files, many=True)  # Javobni formatlash
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"data": response_serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
