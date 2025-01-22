@@ -49,10 +49,10 @@ class NextStageDocumentsAPIView(APIView):
         serializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
         return Response({'message': "SuccessFull....", 'data': serializer.data}, status=status.HTTP_200_OK)
 
-    def post(self, request, pk=None):
+    def post(self, request):
         serializer = document_serializer.NextStageDocumentsCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(created_by=request.user)
             return Response({'message': "Kerakli papkalar yaratildi....", 'data': serializer.data},
                             status=status.HTTP_201_CREATED)
 

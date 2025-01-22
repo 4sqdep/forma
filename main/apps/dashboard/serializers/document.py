@@ -8,11 +8,14 @@ class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
     subcategories_btn = DashboardSubCategoryButtonSerializerName()
     project_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
+    first_name = serializers.CharField(source='created_by.first_name', read_only=True)
+    last_name = serializers.CharField(source='created_by.last_name', read_only=True)
     class Meta:
         model = ProjectDocumentation
         fields = (
-            'id', 
-            'user', 
+            'id',
+            'first_name',
+            'last_name',
             'subcategories_btn', 
             'name', 
             'project_count',
@@ -20,8 +23,7 @@ class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
             'is_obj_password', 
             'is_project_doc', 
             'is_work_smr', 
-            'is_equipment', 
-            'created_at'
+            'is_equipment',
         )
 
 
@@ -37,6 +39,8 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextStageDocuments
         fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section']
+
+
 
 
 class FilesSerializer(serializers.ModelSerializer):
