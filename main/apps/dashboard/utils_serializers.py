@@ -6,7 +6,7 @@ from rest_framework import serializers
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'name']
+        fields = ['id', 'created_by', 'name', 'is_forma', 'is_section']
 
 
 class ProjectDocumentationSerializer(serializers.ModelSerializer):

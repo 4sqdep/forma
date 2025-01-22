@@ -12,14 +12,14 @@ class BaseModel(models.Model):
         on_delete=models.CASCADE, 
         null=True, 
         blank=True, 
-        related_name='%(class)s_created_by'
+        related_name='%(app_label)s_%(class)s_created_by'
     )
     deleted_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 
         null=True, 
         blank=True, 
-        related_name='%(class)s_deleted_by'
+        related_name='%(app_label)s_%(class)s_deleted_by'
     )
 
     class Meta:

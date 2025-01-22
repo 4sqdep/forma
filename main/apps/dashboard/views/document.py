@@ -1,5 +1,5 @@
 from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
-from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectSections
+from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectSections, ProjectDocumentation
 from main.apps.dashboard.serializers import document as document_serializer
 from main.apps.dashboard.utils_serializers import NextStageDocumentsSerializer, ProjectDocumentationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
+from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas
 
 
 class ProjectDocumentAPIView(APIView):
@@ -25,7 +26,7 @@ class ProjectDocumentAPIView(APIView):
         order_case = Case(*[
             When(name=name, then=index) for index, name in enumerate(order)
         ])
-        subcategory = DashboardSubCategoryButton.objects.get(pk=pk)
+        subcategory = DashboardSubCategoryButton.objects.get(id=pk)
         sub_btn = subcategory.projectdocumentation.all().order_by(order_case).annotate(
                 has_data=Case(
                     When(name__isnull=False, then=Value(True)),  # Agar 'name' maydoni mavjud bo'lsa
@@ -33,7 +34,7 @@ class ProjectDocumentAPIView(APIView):
                     output_field=BooleanField()
                 )
             )
-        serializer = ProjectDocumentationSerializer(sub_btn, many=True)
+        serializer = ProjectDocumentationSerializerHas(sub_btn, many=True)
         return Response({'message': "Lo'yiha bo'limlari...", 'data': serializer.data}, status=status.HTTP_200_OK)
 
 
@@ -48,10 +49,10 @@ class NextStageDocumentsAPIView(APIView):
         serializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
         return Response({'message': "SuccessFull....", 'data': serializer.data}, status=status.HTTP_200_OK)
 
-    def post(self, request, pk=None):
+    def post(self, request):
         serializer = document_serializer.NextStageDocumentsCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(created_by=request.user)
             return Response({'message': "Kerakli papkalar yaratildi....", 'data': serializer.data},
                             status=status.HTTP_201_CREATED)
 
@@ -88,7 +89,7 @@ class ProjectSectionsAPIView(APIView):
         """Yangi bo'lim yaratish"""
         serializer = document_serializer.CreateProjectSectionsSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(user=request.user)
+            serializer.save(created_by=request.user)
             return Response({"message": "Bo'lim muvaffaqiyatli yaratildi.", 'data': serializer.data},
                             status=status.HTTP_201_CREATED)
         return Response({"message": "Xatolik yuz berdi.", 'errors': serializer.errors},
@@ -115,7 +116,7 @@ class MultipleFileUploadView(APIView):
         if serializer.is_valid():
             uploaded_files = serializer.save()  # Fayllarni saqlash
             response_serializer = document_serializer.FilesSerializer(uploaded_files, many=True)  # Javobni formatlash
-            return Response(response_serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"data": response_serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

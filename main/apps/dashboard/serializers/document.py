@@ -4,15 +4,18 @@ from rest_framework import serializers
 
 
 
-class ProjectDocumentationSerializer(serializers.ModelSerializer):
+class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
     subcategories_btn = DashboardSubCategoryButtonSerializerName()
     project_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
+    first_name = serializers.CharField(source='created_by.first_name', read_only=True)
+    last_name = serializers.CharField(source='created_by.last_name', read_only=True)
     class Meta:
         model = ProjectDocumentation
         fields = (
-            'id', 
-            'user', 
+            'id',
+            'first_name',
+            'last_name',
             'subcategories_btn', 
             'name', 
             'project_count',
@@ -20,8 +23,7 @@ class ProjectDocumentationSerializer(serializers.ModelSerializer):
             'is_obj_password', 
             'is_project_doc', 
             'is_work_smr', 
-            'is_equipment', 
-            'created_at'
+            'is_equipment',
         )
 
 
@@ -37,6 +39,8 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextStageDocuments
         fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section']
+
+
 
 
 class FilesSerializer(serializers.ModelSerializer):
@@ -89,8 +93,11 @@ class MultipleFileUploadSerializer(serializers.Serializer):
 
         # Fayllar ro'yxatini yaratish
         file_instances = [
-            Files(document=document, project_section=project_section, user=self.context['request'].user,  # Foydalanuvchini olish
-                name=name, calendar=calendar, file_code=file_code, files=file)
+            Files(document=document,
+                    project_section=project_section,
+                    created_by=self.context['request'].user,  # Foydalanuvchini olish
+                    name=name, calendar=calendar,
+                    file_code=file_code, files=file)
             for file in files
         ]
 
@@ -114,5 +121,9 @@ class ProjectSectionsSerializer(serializers.ModelSerializer):
 class CreateProjectSectionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectSections
-        fields = ['id', 'next_stage_documents', 'user', 'name', 'created_at', 'updated_at']
-        read_only_fields = ['created_at', 'updated_at']
+        fields = ['id', 'next_stage_documents', 'name']
+
+        # def create(self, validated_data):
+        #     user = self.context['request'].user
+        #     validated_data['created_by'] = user
+        #     return super().create(validated_data)
