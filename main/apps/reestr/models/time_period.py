@@ -10,7 +10,7 @@ class Year(BaseModel):
 
 
     def __str__(self):
-        return self.year
+        return self.title
     
     class Meta(BaseMeta):
         verbose_name = "Yil"
@@ -23,7 +23,7 @@ class Month(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Oy")
 
     def __str__(self):
-        return f"{self.title} ({self.year.year})"
+        return f"{self.title} ({self.year.title})"
 
     class Meta(BaseMeta):
         verbose_name = "Oy"

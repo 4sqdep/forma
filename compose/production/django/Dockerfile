@@ -28,14 +28,6 @@ RUN mkdir $APP_HOME/main/static && chown django $APP_HOME/main/static
 RUN mkdir $APP_HOME/main/media && chown django $APP_HOME/main/media
 RUN chmod gu+rw /var/run && chmod gu+s /usr/sbin/cron
 
-RUN mkdir -p /var/www/static
-RUN chown -R django:django /var/www/static
-RUN chmod -R 777 /var/www/static
-
-RUN mkdir -p /var/www/media
-RUN chown -R django:django /var/www/media
-RUN chmod -R 777 /var/www/media
-
 USER django
 
 ENTRYPOINT ["/entrypoint"]
