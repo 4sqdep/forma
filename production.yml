@@ -51,8 +51,8 @@ services:
     networks:
       - gidro_network
     volumes:
-      - static_volume:/var/www/static
-      - media_volume:/var/www/media
+      - static_volume:/home/app/web/main/static
+      - media_volume:/home/app/web/main/media
     ports:
       - "80:80"
       - "443:443"

@@ -2,6 +2,15 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.reestr.models.construction import ConstructionTask, MonthlyExpense
+from main.apps.reestr.utils.calculations import(
+    constructions_total_cost, 
+    constructions_total_cost_for_month, 
+    get_difference, 
+    get_fact_sum, 
+    get_total_difference, 
+    get_total_fact_sum, get_total_year_sum, 
+    total_year_calculation_horizontally
+)
 from ..serializers import construction as construction_task_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -98,7 +107,6 @@ construction_task_detail_api_view = ConstructionTaskDetailAPIView.as_view()
 
 
 
-
 class ConstructionTaskUpdateAPIView(generics.UpdateAPIView):
     queryset = ConstructionTask.objects.all()
     serializer_class = construction_task_serializer.ConstructionTaskSerializer
@@ -162,110 +170,13 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
-            ),
-        ]
-    )
-
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-    
     def get_queryset(self):
         queryset = MonthlyExpense.objects.all()
+        next_stage_document_id = self.request.query_params.get('next_stage_document')
+        if next_stage_document_id:
+            queryset = queryset.filter(construction_task__next_stage_document_id=next_stage_document_id)
         return queryset
     
-    def get_total_year_sum(self, queryset):
-        year_totals = (
-            queryset.values(
-                'year__id', 
-                'year__title',
-                'construction_task__id', 
-                'construction_task__title'
-            ).annotate(total_year_sum=Sum('spent_amount')).order_by('year__title')
-        )
-        return [
-            {
-                'year_id': year['year__id'],
-                'year_title': year['year__title'],
-                'total_year_sum': year['total_year_sum'] or 0,
-                'task_title': year['construction_task__title']
-            }
-            for year in year_totals
-        ]
-    
-    
-    def get_fact_sum(self, queryset):
-        total_year_sum = self.get_total_year_sum(queryset)
-        grouped_data = queryset.values(
-            'construction_task__id', 
-            'construction_task__title'
-        ).annotate(total_spent=Sum('spent_amount')).order_by('construction_task__id')
-        each_task_total = [
-            {
-                'construction_task_id': task['construction_task__id'],
-                'construction_task_title': task['construction_task__title'],
-                'total_spent': task['total_spent'] or 0
-            }
-            for task in grouped_data
-        ]
-        return each_task_total
-
-
-    # def get_difference(self, queryset):    
-    #     grouped_data = queryset.values(
-    #         'construction_task__id', 
-    #         'construction_task__title', 
-    #         'construction_task__total_cost'
-    #     )
-    #     for task in grouped_data:
-    #         fact_sum = self.get_fact_sum(queryset)
-    #         for item in fact_sum:
-    #             total_spent = item['total_spent']
-    #             total_cost = task['construction_task__total_cost'] or 0
-    #             difference_amount = total_cost - total_spent
-    #             difference_each_task = [
-    #                 {
-    #                     'task_id': task['construction_task__id'],
-    #                     'task_title': task['construction_task__title'],
-    #                     'task_difference_amount': difference_amount,
-    #                 }
-    #             ]
-    #     return difference_each_task
-
-    def get_difference(self, queryset):    
-        fact_sum = self.get_fact_sum(queryset)
-
-        difference_each_task = []
-
-        processed_task_ids = set()
-
-        grouped_data = queryset.values(
-            'construction_task__id', 
-            'construction_task__title', 
-            'construction_task__total_cost'
-        )
-        for task in grouped_data:
-            if task['construction_task__id'] in processed_task_ids:
-                continue
-            processed_task_ids.add(task['construction_task__id'])
-
-            task_fact_sum = next((item['total_spent'] for item in fact_sum if item['construction_task_id'] == task['construction_task__id']), 0)
-            
-            total_cost = task['construction_task__total_cost'] or 0
-            difference_amount = total_cost - task_fact_sum
-            
-            difference_each_task.append({
-                'task_id': task['construction_task__id'],
-                'task_title': task['construction_task__title'],
-                'task_difference_amount': difference_amount,
-            })
-        return difference_each_task
-
-
-
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
         if p:
@@ -273,30 +184,49 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
         return None
 
     def list(self, request, *args, **kwargs):
+        next_stage_document_id = self.request.query_params.get('next_stage_document')
         queryset = self.get_queryset()
         paginator = self.get_pagination_class()
-        total_year_sums = self.get_total_year_sum(queryset)
-        fact_sums = self.get_fact_sum(queryset)
-        difference_amount = self.get_difference(queryset)
+
+        constructions_total = constructions_total_cost(next_stage_document_id)
+        constructions_monthly = constructions_total_cost_for_month(queryset)
+        yearly_sums = get_total_year_sum(queryset)
+        yearly_horizontal = total_year_calculation_horizontally(queryset)
+        fact_sums = get_fact_sum(queryset)
+        total_fact_sums = get_total_fact_sum(queryset)
+        differences = get_difference(queryset)
+        total_differences = get_total_difference(queryset)
 
         if paginator:
             paginator = paginator()
             page = paginator.paginate_queryset(queryset, request)
             serializer = self.get_serializer(page, many=True)
             response_data = paginator.get_paginated_response(serializer.data)
-            response_data.data["total_year_sums"] = total_year_sums
-            response_data.data["fact_sums"] = fact_sums
-            response_data.data["difference_amount"] = difference_amount
-            response_data.data["status_code"] = status.HTTP_200_OK
-            response_data.data["data"] = response_data.data.pop("results", None)
+            response_data.data.update({
+                "constructions_total_cost": constructions_total,
+                "constructions_total_cost_for_month": constructions_monthly,
+                "total_year_sums": yearly_sums,
+                "total_year_calculation_horizontally": yearly_horizontal,
+                "fact_sums": fact_sums,
+                "total_fact_sums": total_fact_sums,
+                "difference_amount": differences,
+                "total_difference_amount": total_differences,
+                "status_code": status.HTTP_200_OK,
+                "data": response_data.data.pop("results", None),
+            })
         else:
             serializer = self.get_serializer(queryset, many=True)
             response_data = Response(
                 {
                     'data': serializer.data,
-                    'total_year_sums': total_year_sums,
+                    'constructions_total_cost': constructions_total,
+                    'constructions_total_cost_for_month': constructions_monthly,
+                    'total_year_sums': yearly_sums,
+                    'total_year_calculation_horizontally': yearly_horizontal,
                     'fact_sums': fact_sums,
-                    'difference_amount': difference_amount
+                    'total_fact_sums': total_fact_sums,
+                    'difference_amount': differences,
+                    'total_difference_amount': total_differences,
                 },
                 status=status.HTTP_200_OK
             )
