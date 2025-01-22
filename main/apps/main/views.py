@@ -33,7 +33,7 @@ class GetObjectsPasswordView(APIView):
         obj_password = ObjectsPassword.objects.get(id=pk)
         serializer = CreateObjectsPasswordSerializer(obj_password, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(created_by=request.user)
             return Response({'message': "Malumot yangilandi.....", "data": serializer.data},
             status=status.HTTP_200_OK)
 
@@ -44,7 +44,7 @@ class UploadFilesAPIView(APIView):
     def post(self, request):
         serializer = FilesCreateSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(created_by=request.user)
             return Response({"message": "Fayl yuklandi......", "data": serializer.data},
                             status=status.HTTP_201_CREATED)
         else:

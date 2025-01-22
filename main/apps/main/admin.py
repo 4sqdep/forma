@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import ObjectsPassword
+from .models import ObjectsPassword, Files
 
 
 class ObjectsPasswordAdmin(admin.ModelAdmin):
@@ -10,3 +10,14 @@ class ObjectsPasswordAdmin(admin.ModelAdmin):
                      'smr_price', 'equipment_price', 'investment_price', 'uge_price', 'total_price', 'total_power']
 
 admin.site.register(ObjectsPassword, ObjectsPasswordAdmin)
+
+
+class FilesAdmin(admin.ModelAdmin):
+    list_display = [
+        'id', 'created_by',
+        'obj_password', 'file'
+    ]
+    list_display_links = ['created_by']
+
+
+admin.site.register(Files, FilesAdmin)

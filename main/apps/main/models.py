@@ -48,6 +48,6 @@ class Files(BaseModel):
         verbose_name_plural = "Fayllar"
 
     def __str__(self):
-        return self.created_at
+        return f"{self.created_by}"
 
     
