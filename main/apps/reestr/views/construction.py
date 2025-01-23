@@ -4,10 +4,10 @@ from main.apps.common.pagination import CustomPagination
 from main.apps.reestr.models.construction import ConstructionTask, MonthlyExpense
 from main.apps.reestr.utils.calculations import(
     constructions_total_cost, 
-    constructions_total_cost_for_month, 
     get_difference, 
-    get_fact_sum, 
     get_total_difference, 
+    constructions_total_cost_for_month, 
+    get_fact_sum, 
     get_total_fact_sum, get_total_year_sum, 
     total_year_calculation_horizontally
 )
@@ -171,7 +171,7 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = MonthlyExpense.objects.all()
+        queryset = MonthlyExpense.objects.select_related("construction_task")
         next_stage_document_id = self.request.query_params.get('next_stage_document')
         if next_stage_document_id:
             queryset = queryset.filter(construction_task__next_stage_document_id=next_stage_document_id)
@@ -220,20 +220,19 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
                 {
                     'data': serializer.data,
                     'constructions_total_cost': constructions_total,
-                    'constructions_total_cost_for_month': constructions_monthly,
+                    'constructions_total_cost_month_vertically': constructions_monthly,
                     'total_year_sums': yearly_sums,
-                    'total_year_calculation_horizontally': yearly_horizontal,
+                    'total_year_calculation_vertically': yearly_horizontal,
                     'fact_sums': fact_sums,
-                    'total_fact_sums': total_fact_sums,
-                    'difference_amount': differences,
-                    'total_difference_amount': total_differences,
+                    'total_cost_fact_sums': total_fact_sums,
+                    'amount_difference': differences,
+                    'amount_difference_total': total_differences,
                 },
                 status=status.HTTP_200_OK
             )
         return response_data
 
 monthly_expense_list_api_view = MonthlyExpenseListAPIView.as_view()
-
 
 
 
