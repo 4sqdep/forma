@@ -12,7 +12,6 @@ from main.apps.account.models.user import User
 
 class ObjectsPassword(BaseModel):
     """Obyektlar uchun paspord modeli"""
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, verbose_name="Foydalanuvchi")
     main_btn = models.ForeignKey(DashboardButton, on_delete=models.SET_NULL, null=True, blank=True,
                                     verbose_name="Asosiy knopkalar")
     category_btn = models.ForeignKey(DashboardCategoryButton, on_delete=models.SET_NULL, null=True, blank=True,
@@ -31,7 +30,7 @@ class ObjectsPassword(BaseModel):
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 
     def __str__(self):
-        return self.project_documentation.name
+        return f"{self.project_documentation}"
 
     class Meta(BaseMeta):
         verbose_name = "Obyekt paspord modeli"
@@ -49,6 +48,6 @@ class Files(BaseModel):
         verbose_name_plural = "Fayllar"
 
     def __str__(self):
-        return self.created_at
+        return f"{self.created_by}"
 
     
