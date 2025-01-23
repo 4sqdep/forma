@@ -24,20 +24,6 @@ class ConstructionTask(BaseModel):
 
 
 class MonthlyExpense(BaseModel):
-    year = models.ManyToManyField(
-        Year, 
-        related_name="monthly_expenses", 
-        blank=True, 
-        verbose_name="Yil"
-    )
-    month = models.ForeignKey(
-        Month, 
-        on_delete=models.SET_NULL, 
-        related_name="monthly_expenses", 
-        blank=True, 
-        null=True, 
-        verbose_name="Oy"
-    )
     construction_task = models.ForeignKey(
         ConstructionTask, 
         on_delete=models.SET_NULL, 
@@ -47,15 +33,10 @@ class MonthlyExpense(BaseModel):
         null=True
     )
     spent_amount = models.DecimalField(max_digits=32, decimal_places=2, default=0, verbose_name="Sarflangan summa")
-    amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Miqdori")
-    total_year = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami yil summa")
-    total_fact = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami fakt summa")
-    total_fact_amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami fakt summa")
-    difference_amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Farq summa")
-    total_difference_amount = models.DecimalField(max_digits=32, decimal_places=2, null=True, blank=True, verbose_name="Jami Farq summa")
-
+    date = models.DateField()
+    
     def __str__(self):
-        return f"{self.month.title}, {self.construction_task.title}"
+        return f"{self.construction_task.title}, {self.date}"
 
     class Meta(BaseMeta):
         verbose_name = "Monthly Expense"
