@@ -43,8 +43,9 @@ RUN chmod -R 777 $APP_HOME/media
 RUN mkdir -p /var/www/static && chown -R django:django /var/www/static
 RUN chmod -R 777 /var/www/static
 
-# Specifically create the /var/www/static/drf-yasg directory for static file storage
+# Create drf-yasg directory under /var/www/static and set permissions
 RUN mkdir -p /var/www/static/drf-yasg && chown -R django:django /var/www/static/drf-yasg
+RUN chmod -R 777 /var/www/static/drf-yasg
 
 # Set permissions for cron and other services
 RUN chmod gu+rw /var/run && chmod gu+s /usr/sbin/cron
