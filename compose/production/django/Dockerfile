@@ -1,10 +1,5 @@
 FROM python:3.10-slim-buster
 
-# Add PostgreSQL APT repository
-#RUN apt-get update && apt-get install -y wget gnupg2 lsb-release
-#RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
-#RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-
 ENV PYTHONUNBUFFERED 1
 
 # Install system dependencies
@@ -12,11 +7,10 @@ RUN apt-get update \
     && apt-get install -y build-essential \
     && apt-get install -y libpq-dev libmagic-dev \
     && apt-get install -y gettext \
-    postgresql-client-12 \
-    cmake \
-    build-essential \
-    python3-dev \
-    libgl1 \
+    && apt-get install -y postgresql-client \
+    && apt-get install -y cmake \
+    && apt-get install -y python3-dev \
+    && apt-get install -y libgl1 \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
 
