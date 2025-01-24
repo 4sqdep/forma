@@ -58,7 +58,7 @@ services:
       - "443:443"
     depends_on:
       - django
-    command: /bin/bash -c "chown -R nginx:nginx /var/www/static && chmod -R 755 /var/www/static && nginx -g 'daemon off;'"
+    command: /bin/bash -c "chown -R django:django /var/www/static /var/www/media && chmod -R 755 /var/www/static /var/www/media && /start"
 
 networks:
   gidro_network:
