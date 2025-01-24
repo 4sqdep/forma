@@ -24,8 +24,8 @@ RUN chmod +x /start && chown django /start
 
 COPY --chown=django:django . $APP_HOME
 
-RUN mkdir $APP_HOME/main/static && chmod -R 777 django $APP_HOME/main/static
-RUN mkdir $APP_HOME/main/media && chmod -R 777 django $APP_HOME/main/media
+RUN mkdir -p /home/app/web/main/static && chmod -R 777 /home/app/web/main/static
+RUN mkdir /home/app/web/main/media && chmod -R 777 /home/app/web/main/media
 RUN chmod gu+rw /var/run && chmod gu+s /usr/sbin/cron
 
 USER django
