@@ -20,7 +20,7 @@ services:
     volumes:
       - .:/app:cached
       - static_volume:/var/www/static
-      - media_volume:var/www/media
+      - media_volume:/var/www/media
     env_file:
       - ./.envs/.production/.django
       - ./.envs/.production/.postgres
