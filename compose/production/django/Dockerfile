@@ -24,8 +24,20 @@ RUN chmod +x /start && chown django /start
 
 COPY --chown=django:django . $APP_HOME
 
-RUN mkdir -p /home/app/web/main/static && chmod -R 777 /home/app/web/main/static
-RUN mkdir /home/app/web/main/media && chmod -R 777 /home/app/web/main/media
+# RUN mkdir $APP_HOME/main/static && chown django $APP_HOME/main/static
+# RUN mkdir $APP_HOME/main/media && chown django $APP_HOME/main/media
+
+RUN mkdir -p $APP_HOME/static
+RUN chown -R django:django $APP_HOME/static
+RUN mkdir -p $APP_HOME/media
+RUN chown -R django:django $APP_HOME/media
+
+# Create the '/var/www/static/' directory and set permissions
+RUN mkdir -p /var/www/static
+RUN chown -R django:django /var/www/static
+RUN chmod -R 777 /var/www/static
+
+
 RUN chmod gu+rw /var/run && chmod gu+s /usr/sbin/cron
 
 USER django
