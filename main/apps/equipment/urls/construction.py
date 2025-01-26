@@ -10,7 +10,7 @@ urlpatterns = [
         name='construction_create'
     ),
     path(
-        'task-list/<int:next_stage_document>/', 
+        'task-list/', 
         construction.construction_task_list_api_view, 
         name='construction_list'
     ),
@@ -35,7 +35,7 @@ urlpatterns = [
         name='construction_create'
     ),
     path(
-        'monthly-expense-list/<int:next_stage_document>/', 
+        'monthly-expense-list/', 
         construction.monthly_expense_list_api_view, 
         name='construction_list'
     ),

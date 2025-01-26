@@ -8,7 +8,6 @@ class ConstructionTaskSerializer(serializers.ModelSerializer):
         model = ConstructionTask 
         fields = (
             'id',
-            'next_stage_document',
             'employee',
             'currency',
             'title',

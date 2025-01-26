@@ -8,17 +8,15 @@ from main.apps.reestr.utils.calculations import(
     get_total_difference, 
     constructions_total_cost_for_month, 
     get_fact_sum, 
-    get_total_fact_sum, 
-    get_total_year_sum, 
+    get_total_fact_sum, get_total_year_sum, 
     total_year_calculation_horizontally
 )
 from ..serializers import construction as construction_task_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
+from django.db.models import Sum
 from decimal import Decimal
-from django.db.models import Sum, Value as V
-from django.db.models.functions import Coalesce
 
 
 
@@ -33,7 +31,7 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {'message': 'Successfully created'},
+                # {'message': 'Successfully created'},
                 data=serializer.data, 
                 status=status.HTTP_201_CREATED
                 )
@@ -60,10 +58,8 @@ class ConstructionTaskListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        next_stage_document = self.kwargs.get('next_stage_document')
-        if next_stage_document:
-            return ConstructionTask.objects.filter(next_stage_document=next_stage_document)
-        return ConstructionTask.objects.all()
+        queryset = ConstructionTask.objects.all()
+        return queryset
 
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -175,70 +171,66 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        next_stage_document = self.kwargs.get('next_stage_document')
-        if not next_stage_document:
-            return MonthlyExpense.objects.none()
-        return MonthlyExpense.objects.select_related("construction_task").filter(
-            construction_task__next_stage_document=next_stage_document
-        )
-
+        queryset = MonthlyExpense.objects.select_related("construction_task")
+        next_stage_document_id = self.request.query_params.get('next_stage_document')
+        if next_stage_document_id:
+            queryset = queryset.filter(construction_task__next_stage_document_id=next_stage_document_id)
+        return queryset
+    
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
 
     def list(self, request, *args, **kwargs):
-        next_stage_document = self.kwargs.get('next_stage_document')
+        next_stage_document_id = self.request.query_params.get('next_stage_document')
         queryset = self.get_queryset()
+        paginator = self.get_pagination_class()
 
-        constructions_data = {}
-        data = []
+        constructions_total = constructions_total_cost(next_stage_document_id)
+        constructions_monthly = constructions_total_cost_for_month(queryset)
+        yearly_sums = get_total_year_sum(queryset)
+        yearly_horizontal = total_year_calculation_horizontally(queryset)
+        fact_sums = get_fact_sum(queryset)
+        total_fact_sums = get_total_fact_sum(queryset)
+        differences = get_difference(queryset)
+        total_differences = get_total_difference(queryset)
 
-        total_year_sum = get_total_year_sum(queryset, next_stage_document)
-
-        for expense in queryset:
-            task = expense.construction_task
-            if task.id not in constructions_data:
-                fact_sum = queryset.filter(construction_task__next_stage_document=next_stage_document, construction_task_id=task.id).aggregate(
-                    total_spent=Coalesce(Sum("spent_amount"), Decimal(0))
-                )["total_spent"]
-                data.append(fact_sum)
-                total_cost = task.total_cost or Decimal(0)
-                difference = total_cost - fact_sum
-
-                year_sums = total_year_sum.get(task.id, {}).get('year_sums', [])
-
-                constructions_data[task.id] = {
-                    "construction": {
-                        "id": task.id,
-                        "title": task.title,
-                        "currency": task.currency.title if task.currency else None,
-                        "total_cost": float(total_cost),
-                        "fact_sum": float(fact_sum),
-                        "difference": float(difference),
-                        "year_sums": year_sums,  
-                    },
-                    "monthly_expense": [],
-                }
-
-            constructions_data[task.id]["monthly_expense"].append({
-                "construction_id": task.id,
-                "spent_amount": float(expense.spent_amount),
-                "date": expense.date.isoformat(),
+        if paginator:
+            paginator = paginator()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data.update({
+                "constructions_total_cost": constructions_total,
+                "constructions_total_cost_for_month": constructions_monthly,
+                "total_year_sums": yearly_sums,
+                "total_year_calculation_horizontally": yearly_horizontal,
+                "fact_sums": fact_sums,
+                "total_fact_sums": total_fact_sums,
+                "difference_amount": differences,
+                "total_difference_amount": total_differences,
+                "status_code": status.HTTP_200_OK,
+                "data": response_data.data.pop("results", None),
             })
-
-        total_cost = constructions_total_cost(next_stage_document)
-        monthly_totals = constructions_total_cost_for_month(queryset, next_stage_document)
-        year_total_calculations = total_year_calculation_horizontally(queryset, next_stage_document)
-        total_fact_sum = sum(data)
-        total_difference = get_total_difference(queryset, next_stage_document)
-
-        response_data = {
-            "construction_data": list(constructions_data.values()),
-            "total_cost": float(total_cost),
-            "monthly_totals": monthly_totals,
-            "total_fact_sum": float(total_fact_sum),
-            "year_total_calculations": year_total_calculations,
-            "total_difference": float(total_difference),
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            response_data = Response(
+                {
+                    'data': serializer.data,
+                    'constructions_total_cost': constructions_total,
+                    'constructions_total_cost_month_vertically': constructions_monthly,
+                    'total_year_sums': yearly_sums,
+                    'total_year_calculation_vertically': yearly_horizontal,
+                    'fact_sums': fact_sums,
+                    'total_cost_fact_sums': total_fact_sums,
+                    'amount_difference': differences,
+                    'amount_difference_total': total_differences,
+                },
+                status=status.HTTP_200_OK
+            )
+        return response_data
 
 monthly_expense_list_api_view = MonthlyExpenseListAPIView.as_view()
 
