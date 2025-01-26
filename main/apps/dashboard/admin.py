@@ -36,7 +36,8 @@ class ProjectDocumentationAdmin(admin.ModelAdmin):
 
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_by_full_name', 'subcategories_btn', 'project_document', 'name', 'is_forma', 'is_section']
+    list_display = ['id', 'created_by_full_name', 'subcategories_btn', 'project_document', 'name',
+                    'is_file', 'is_forma', 'is_section']
     list_display_links = ['project_document', 'name']
     search_fields = ['name', 'project_document']
 

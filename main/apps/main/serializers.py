@@ -75,7 +75,6 @@ class GetFilesSerializer(serializers.ModelSerializer):
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun serializer"""
     object_name = DashboardSubCategoryButtonNameSerializer(source='subcategories_btn', read_only=True)
-    user = UserSerializer(read_only=True)
     class Meta:
         model = NextStageDocuments
         fields = ['id', 'user', 'object_name', 'name']

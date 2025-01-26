@@ -8,7 +8,7 @@ from main.apps.reestr.models.time_period import Month, Year
 
 
 class ConstructionTask(BaseModel):
-    next_stage_document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, null=True)
+    next_stage_document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, null=True, blank=True)
     employee = models.ManyToManyField(User, verbose_name='Xodimlar', blank=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, verbose_name="Ish nomi")
