@@ -77,4 +77,4 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
     object_name = DashboardSubCategoryButtonNameSerializer(source='subcategories_btn', read_only=True)
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'user', 'object_name', 'name']
+        fields = ['id', 'object_name', 'name']
