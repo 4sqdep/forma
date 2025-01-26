@@ -31,14 +31,14 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun serializer"""
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'name', 'is_forma', 'is_section']
+        fields = ['id', 'name', 'is_forma', 'is_section', 'is_file']
 
 
 class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun papakalar yaratish uchun serializer"""
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section']
+        fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section', 'is_file']
 
 
 
@@ -109,13 +109,13 @@ class MultipleFileUploadSerializer(serializers.Serializer):
 class GetFilesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Files
-        fields = ['id', 'files', 'name', 'file_code', 'calendar', 'created_at']
+        fields = ['id', 'files', 'name', 'file_code', 'calendar']
 
 
 class ProjectSectionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectSections
-        fields = ['id', 'name', 'created_at']
+        fields = ['id', 'name']
 
 
 class CreateProjectSectionsSerializer(serializers.ModelSerializer):
