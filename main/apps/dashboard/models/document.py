@@ -27,12 +27,13 @@ class ProjectDocumentation(BaseModel):
 class NextStageDocuments(BaseModel):
     """Keyingi bosqich uchun qabul qilinadigan hujjatlar uchun model"""
     project_document = models.ForeignKey(ProjectDocumentation, on_delete=models.SET_NULL,
-                                         verbose_name="Loyiha hujjatlar", blank=True, null=True)
+                                         verbose_name="Loyiha hujjatlar", blank=True, null=True, related_name='data')
     subcategories_btn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL,
                                           verbose_name="Loyiha nomi", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
     is_forma = models.BooleanField(default=False, verbose_name="Forma")
     is_section = models.BooleanField(default=False, verbose_name="Bo'lim")
+    is_file = models.BooleanField(default=False, verbose_name="Fayl yuklash")
 
     def __str__(self):
         return f"{self.project_document} -- {self.name}"

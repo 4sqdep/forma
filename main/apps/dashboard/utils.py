@@ -9,7 +9,8 @@ from .utils_serializers import ProjectDocumentationSerializer
 from collections import defaultdict
 from django.db.models import Count, Case, When, Value, IntegerField
 from main.apps.main.models import ObjectsPassword
-from main.apps.main.serializers import GetObjectsPasswordSerializer, NextStageDocumentsSerializer
+from main.apps.main.serializers import (GetObjectsPasswordSerializer,
+                                        NextStageDocumentsSerializer)
 from main.apps.dashboard.models.document import  NextStageDocuments
 from main.apps.common.pagination import CustomPagination
 
@@ -84,3 +85,8 @@ class NestedDataAPIView(APIView):
 #                     status=status.HTTP_400_BAD_REQUEST)
 #         except Exception as e:
 #             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
