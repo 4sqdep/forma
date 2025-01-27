@@ -10,8 +10,8 @@ class HydroStation(BaseModel):
     contract_number = models.CharField(max_length=255, null=True, blank=True)
     contract_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
+    additional_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     delivery_date = models.DateField()
-    
 
     def __str__(self):
         return f"{self.title}"
@@ -30,7 +30,6 @@ class FinancialResource(BaseModel):
     prepayment_from_foreign_credit_account = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     additional_prepayment = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     payment_on_completion = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    
 
     def __str__(self):
         return f"{self.title}"
