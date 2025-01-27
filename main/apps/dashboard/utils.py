@@ -50,7 +50,7 @@ class ObjectsPasswordDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):
-        get_password = ObjectsPassword.objects.filter(project_documentation_id=pk)
+        get_password = ObjectsPassword.objects.filter(subcategory_btn_id=pk)
         if not get_password.exists():
             return Response({'message': "Malumot yo'q"}, status=status.HTTP_404_NOT_FOUND)
         serializer = GetObjectsPasswordSerializer(get_password, many=True)
