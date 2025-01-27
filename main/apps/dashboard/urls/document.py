@@ -1,5 +1,5 @@
 from django.urls import path
-from main.apps.dashboard.utils import NestedDataAPIView
+from main.apps.dashboard.utils import NestedDataAPIView, StatisticalData, ObjectsPasswordDetailAPIView
 from main.apps.dashboard.views.document import (
     FilesSearchAPIView, 
     GetFilesAPIView, 
@@ -25,6 +25,8 @@ urlpatterns = [
     path('patch-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='patch-sections'),
     path('files-search/', FilesSearchAPIView.as_view(), name='files-search'),
     path('get-doc/', NestedDataAPIView.as_view(), name='get-doc'),
+    path('get-statistic/<int:pk>/', ObjectsPasswordDetailAPIView.as_view(), name='post-doc'),
+    path('all-statistic/', StatisticalData.as_view(), name='all-statistic'),
 ]
 
 

@@ -31,14 +31,21 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun serializer"""
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'name', 'is_forma', 'is_section', 'is_file']
+        fields = ['id', 'name',
+                  'is_forma',
+                  'is_section',
+                  'is_file']
 
 
 class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun papakalar yaratish uchun serializer"""
     class Meta:
         model = NextStageDocuments
-        fields = ['id', 'project_document', 'subcategories_btn', 'name', 'is_forma', 'is_section', 'is_file']
+        fields = ['id',
+                  'project_document',
+                  'subcategories_btn',
+                  'name', 'is_forma',
+                  'is_section', 'is_file']
 
 
 
@@ -122,8 +129,3 @@ class CreateProjectSectionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectSections
         fields = ['id', 'next_stage_documents', 'name']
-
-        # def create(self, validated_data):
-        #     user = self.context['request'].user
-        #     validated_data['created_by'] = user
-        #     return super().create(validated_data)
