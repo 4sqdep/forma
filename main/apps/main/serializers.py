@@ -59,6 +59,15 @@ class CreateObjectsPasswordSerializer(serializers.ModelSerializer):
                   'uge_price', 'total_price', 'total_power', 'start_date', 'end_date',]
 
 
+class PatchbjectsPasswordSerializer(serializers.ModelSerializer):
+    """Obyekt pasportini O'zgartirish uchun serializer"""
+    class Meta:
+        model = ObjectsPassword
+        fields = ['id', 'main_btn', 'category_btn', 'subcategory_btn', 'project_documentation',
+                  'smr_price', 'equipment_price', 'investment_price',
+                  'uge_price', 'total_price', 'total_power', 'start_date', 'end_date',]
+
+
 class FilesCreateSerializer(serializers.ModelSerializer):
     """Fayl yuklash uchun serializer"""
     class Meta:
