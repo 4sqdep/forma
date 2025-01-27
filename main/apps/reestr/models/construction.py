@@ -3,7 +3,6 @@ from main.apps.account.models.user import User
 from main.apps.common.models import BaseMeta, BaseModel
 from main.apps.dashboard.models.document import NextStageDocuments
 from main.apps.reestr.models.currency import Currency
-from main.apps.reestr.models.time_period import Month, Year
 
 
 

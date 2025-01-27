@@ -219,6 +219,7 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
 
             constructions_data[task.id]["monthly_expense"].append({
                 "construction_id": task.id,
+                'monthly_exepense_id': expense.id,
                 "spent_amount": Decimal(expense.spent_amount),
                 "date": expense.date.isoformat(),
             })
@@ -250,7 +251,6 @@ class MonthlyExpenseDetailAPIView(generics.RetrieveAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
@@ -273,15 +273,23 @@ class MonthlyExpenseUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=serializer.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {'message': 'Successfully Updated'},
-                status = status.HTTP_200_OK,
-                data=serializer.data
-                )
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            {
+                'message': 'Successfully Updated',
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                'message': 'Failed to Update',
+                'errors': serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()
     
