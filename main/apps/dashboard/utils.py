@@ -45,46 +45,29 @@ class NestedDataAPIView(APIView):
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class ProjectDocumentationView(APIView):
-#     """Navbar menu uchun """
-#     permission_classes = [IsAuthenticated]
-#     def get(self, request):
-#         query_params = request.query_params.get('query')
-#         try:
-#             if query_params == "1":
-#                 project_doc = ProjectDocumentation.objects.filter(is_obj_password=True)
-#                 next_stage_doc = (NextStageDocuments.objects.filter(project_document__in=project_doc).
-#                                   prefetch_related('documents'))
-#                 serializer = ProjectDocumentationSerializer(next_stage_doc, many=True)
-#                 return Response({"message": "Barcha malumotlar....", "data": serializer.data},
-#                                 status=status.HTTP_200_OK)
-#             elif query_params == "2":
-#                 project_doc = ProjectDocumentation.objects.filter(is_project_doc=True)
-#                 next_stage_doc = (NextStageDocuments.objects.filter(project_document__in=project_doc).
-#                                   prefetch_related('documents'))
-#                 serializer = ProjectDocumentationSerializer(next_stage_doc, many=True)
-#                 return Response({"message": "Barcha malumotlar....", "data": serializer.data},
-#                                 status=status.HTTP_200_OK)
-#             elif query_params == "3":
-#                 project_doc = ProjectDocumentation.objects.filter(is_work_smr=True)
-#                 next_stage_doc = (NextStageDocuments.objects.filter(project_document__in=project_doc).
-#                                   prefetch_related('documents'))
-#                 serializer = ProjectDocumentationSerializer(next_stage_doc, many=True)
-#                 return Response({"message": "Barcha malumotlar....", "data": serializer.data},
-#                                 status=status.HTTP_200_OK)
-#             elif query_params == "4":
-#                 project_doc = ProjectDocumentation.objects.filter(is_equipment=True)
-#                 next_stage_doc = (NextStageDocuments.objects.filter(project_document__in=project_doc).
-#                                   prefetch_related('documents'))
-#                 serializer = ProjectDocumentationSerializer(next_stage_doc, many=True)
-#                 return Response({"message": "Barcha malumotlar....", "data": serializer.data},
-#                                 status=status.HTTP_200_OK)
-#             else:
-#                 return Response(
-#                     {"message": "Parametr noto‘g‘ri yoki ma’lumotlar topilmadi"},
-#                     status=status.HTTP_400_BAD_REQUEST)
-#         except Exception as e:
-#             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+class ObjectsPasswordDetailAPIView(APIView):
+    """Obyekt pasporti uchun qilinga deteil"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        get_password = ObjectsPassword.objects.filter(project_documentation_id=pk)
+        if not get_password.exists():
+            return Response({'message': "Malumot yo'q"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = GetObjectsPasswordSerializer(get_password, many=True)
+        return Response({'message': "Malumotlar......", "data": serializer.data}, status.HTTP_200_OK)
+
+
+
+class StatisticalData(APIView):
+    """Statistik ma'lumotlar olish uchun"""
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        all_statistics = ObjectsPassword.objects.all()
+        serializer = GetObjectsPasswordSerializer(all_statistics, many=True)
+        return Response({'message': "Statistik ma'lumotlar........", "data": serializer.data},
+                        status=status.HTTP_200_OK)
+
+
 
 
 
