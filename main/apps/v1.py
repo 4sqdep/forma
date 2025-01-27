@@ -31,5 +31,12 @@ urlpatterns = [
             namespace="reestr",
         ),
     ),
+    path(
+        "equipment/",
+        include(
+            ("main.apps.equipment.equipment", "main.apps.equipment.equipment"),
+            namespace="equipment",
+        ),
+    ),
 ]
 

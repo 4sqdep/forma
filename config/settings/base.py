@@ -54,6 +54,7 @@ LOCAL_APPS = [
     "main.apps.dashboard.apps.DashboardConfig",
     "main.apps.main.apps.MainConfig",
     "main.apps.reestr.apps.ReestrConfig",
+    "main.apps.equipment.apps.EquipmentConfig",
     
 ]
 
