@@ -33,11 +33,19 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {'message': 'Successfully created'},
-                data=serializer.data, 
-                status=status.HTTP_201_CREATED
-                )
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            {
+                'message': 'Successfully Updated',
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                'message': 'Failed to Update',
+                'errors': serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 construction_task_create_api_view = ConstructionTaskCreateAPIView.as_view()
 
