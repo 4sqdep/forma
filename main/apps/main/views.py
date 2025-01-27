@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.db.models import Count, Case, When, Value, BooleanField, Subquery, OuterRef
 from .models import ObjectsPassword, Files
 from .serializers import (GetObjectsPasswordSerializer, CreateObjectsPasswordSerializer, GetFilesSerializer,
-                          FilesCreateSerializer, SearchObjectsNameSerializer)
+                          FilesCreateSerializer, SearchObjectsNameSerializer, PatchbjectsPasswordSerializer)
 from ..dashboard.models.dashboard import DashboardSubCategoryButton
 
 
@@ -37,7 +37,7 @@ class GetObjectsPasswordView(APIView):
                             status=status.HTTP_400_BAD_REQUEST)
     def patch(self, request, pk=None):
         obj_password = ObjectsPassword.objects.get(id=pk)
-        serializer = CreateObjectsPasswordSerializer(obj_password, data=request.data, partial=True)
+        serializer = PatchbjectsPasswordSerializer(obj_password, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
             return Response({'message': "Malumot yangilandi.....", "data": serializer.data},
