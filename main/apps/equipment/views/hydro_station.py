@@ -1,28 +1,17 @@
 from rest_framework import generics, status, permissions 
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
-from main.apps.reestr.models.construction import ConstructionTask, MonthlyExpense
-from main.apps.reestr.utils.calculations import(
-    constructions_total_cost, 
-    get_difference, 
-    get_total_difference, 
-    constructions_total_cost_for_month, 
-    get_fact_sum, 
-    get_total_fact_sum, get_total_year_sum, 
-    total_year_calculation_horizontally
-)
-from ..serializers import hydro_station as construction_task_serializer
+from main.apps.equipment.models.hydro_station import FinancialResource, HydroStation
+from ..serializers import hydro_station as hydro_station_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
-from django.db.models import Sum
-from decimal import Decimal
 
 
 
-class ConstructionTaskCreateAPIView(generics.CreateAPIView):
-    queryset = ConstructionTask.objects.all()
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+class HydroStationCreateAPIView(generics.CreateAPIView):
+    queryset = HydroStation.objects.all()
+    serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -37,12 +26,12 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
                 )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
-construction_task_create_api_view = ConstructionTaskCreateAPIView.as_view()
+hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
 
 
 
-class ConstructionTaskListAPIView(generics.ListAPIView):
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+class HydroStationListAPIView(generics.ListAPIView):
+    serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -58,7 +47,7 @@ class ConstructionTaskListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = ConstructionTask.objects.all()
+        queryset = HydroStation.objects.all()
         return queryset
 
     def get_pagination_class(self):
@@ -83,14 +72,14 @@ class ConstructionTaskListAPIView(generics.ListAPIView):
             response_data = Response({'data': serializer.data}, status=status.HTTP_200_OK)
         return response_data
 
-construction_task_list_api_view = ConstructionTaskListAPIView.as_view()
+hydro_station_list_api_view = HydroStationListAPIView.as_view()
 
 
 
 
-class ConstructionTaskDetailAPIView(generics.RetrieveAPIView):
-    queryset = ConstructionTask.objects.all()
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+class HydroStationDetailAPIView(generics.RetrieveAPIView):
+    queryset = HydroStation.objects.all()
+    serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -103,13 +92,13 @@ class ConstructionTaskDetailAPIView(generics.RetrieveAPIView):
             data=serializer.data
         )
 
-construction_task_detail_api_view = ConstructionTaskDetailAPIView.as_view()
+hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
 
 
-class ConstructionTaskUpdateAPIView(generics.UpdateAPIView):
-    queryset = ConstructionTask.objects.all()
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+class HydroStationUpdateAPIView(generics.UpdateAPIView):
+    queryset = HydroStation.objects.all()
+    serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -126,13 +115,13 @@ class ConstructionTaskUpdateAPIView(generics.UpdateAPIView):
                 )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
-construction_task_update_api_view = ConstructionTaskUpdateAPIView.as_view()
+hydro_station_update_api_view = HydroStationUpdateAPIView.as_view()
     
 
 
-class ConstructionTaskDeleteAPIView(generics.DestroyAPIView):
-    queryset = ConstructionTask.objects.all()
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+class HydroStationDeleteAPIView(generics.DestroyAPIView):
+    queryset = HydroStation.objects.all()
+    serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -144,13 +133,13 @@ class ConstructionTaskDeleteAPIView(generics.DestroyAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-construction_task_delete_api_view = ConstructionTaskDeleteAPIView.as_view()
+hydro_station_delete_api_view = HydroStationDeleteAPIView.as_view()
 
 
 
-class MonthlyExpenseCreateAPIView(generics.CreateAPIView):
-    queryset = MonthlyExpense.objects.all()
-    serializer_class = construction_task_serializer.MonthlyExpenseCreateSerializer
+class FinancialResourceCreateAPIView(generics.CreateAPIView):
+    queryset = FinancialResource.objects.all()
+    serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -161,17 +150,17 @@ class MonthlyExpenseCreateAPIView(generics.CreateAPIView):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
-monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
+financial_resource_create_api_view = FinancialResourceCreateAPIView.as_view()
 
 
 
-class MonthlyExpenseListAPIView(generics.ListAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+class FinancialResourceListAPIView(generics.ListAPIView):
+    serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = MonthlyExpense.objects.select_related("construction_task")
+        queryset = FinancialResource.objects.select_related("construction_task")
         next_stage_document_id = self.request.query_params.get('next_stage_document')
         if next_stage_document_id:
             queryset = queryset.filter(construction_task__next_stage_document_id=next_stage_document_id)
@@ -184,61 +173,28 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
         return None
 
     def list(self, request, *args, **kwargs):
-        next_stage_document_id = self.request.query_params.get('next_stage_document')
         queryset = self.get_queryset()
         paginator = self.get_pagination_class()
-
-        constructions_total = constructions_total_cost(next_stage_document_id)
-        constructions_monthly = constructions_total_cost_for_month(queryset)
-        yearly_sums = get_total_year_sum(queryset)
-        yearly_horizontal = total_year_calculation_horizontally(queryset)
-        fact_sums = get_fact_sum(queryset)
-        total_fact_sums = get_total_fact_sum(queryset)
-        differences = get_difference(queryset)
-        total_differences = get_total_difference(queryset)
 
         if paginator:
             paginator = paginator()
             page = paginator.paginate_queryset(queryset, request)
             serializer = self.get_serializer(page, many=True)
             response_data = paginator.get_paginated_response(serializer.data)
-            response_data.data.update({
-                "constructions_total_cost": constructions_total,
-                "constructions_total_cost_for_month": constructions_monthly,
-                "total_year_sums": yearly_sums,
-                "total_year_calculation_horizontally": yearly_horizontal,
-                "fact_sums": fact_sums,
-                "total_fact_sums": total_fact_sums,
-                "difference_amount": differences,
-                "total_difference_amount": total_differences,
-                "status_code": status.HTTP_200_OK,
-                "data": response_data.data.pop("results", None),
-            })
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", None)
         else:
             serializer = self.get_serializer(queryset, many=True)
-            response_data = Response(
-                {
-                    'data': serializer.data,
-                    'constructions_total_cost': constructions_total,
-                    'constructions_total_cost_month_vertically': constructions_monthly,
-                    'total_year_sums': yearly_sums,
-                    'total_year_calculation_vertically': yearly_horizontal,
-                    'fact_sums': fact_sums,
-                    'total_cost_fact_sums': total_fact_sums,
-                    'amount_difference': differences,
-                    'amount_difference_total': total_differences,
-                },
-                status=status.HTTP_200_OK
-            )
+            response_data = Response({'data': serializer.data}, status=status.HTTP_200_OK)
         return response_data
 
-monthly_expense_list_api_view = MonthlyExpenseListAPIView.as_view()
+financial_resource_list_api_view = FinancialResourceListAPIView.as_view()
 
 
 
-class MonthlyExpenseDetailAPIView(generics.RetrieveAPIView):
-    queryset = MonthlyExpense.objects.all()
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+class FinancialResourceDetailAPIView(generics.RetrieveAPIView):
+    queryset = FinancialResource.objects.all()
+    serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -251,14 +207,14 @@ class MonthlyExpenseDetailAPIView(generics.RetrieveAPIView):
             data=serializer.data
         )
 
-monthly_expense_detail_api_view = MonthlyExpenseDetailAPIView.as_view()
+financial_resource_detail_api_view = FinancialResourceDetailAPIView.as_view()
 
 
 
 
-class MonthlyExpenseUpdateAPIView(generics.UpdateAPIView):
-    queryset = MonthlyExpense.objects.all()
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+class FinancialResourceUpdateAPIView(generics.UpdateAPIView):
+    queryset = FinancialResource.objects.all()
+    serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -275,13 +231,13 @@ class MonthlyExpenseUpdateAPIView(generics.UpdateAPIView):
                 )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
-monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()
+financial_resource_update_api_view = FinancialResourceUpdateAPIView.as_view()
     
 
 
-class MonthlyExpenseDeleteAPIView(generics.DestroyAPIView):
-    queryset = MonthlyExpense.objects.all()
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+class FinancialResourceDeleteAPIView(generics.DestroyAPIView):
+    queryset = FinancialResource.objects.all()
+    serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -293,4 +249,4 @@ class MonthlyExpenseDeleteAPIView(generics.DestroyAPIView):
             status=status.HTTP_204_NO_CONTENT
         )
 
-monthly_expense_delete_api_view = MonthlyExpenseDeleteAPIView.as_view()
+financial_resource_delete_api_view = FinancialResourceDeleteAPIView.as_view()
