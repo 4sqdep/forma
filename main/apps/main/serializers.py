@@ -42,12 +42,16 @@ class ProjectDocumentationNameSerializer(serializers.ModelSerializer):
 
 class GetObjectsPasswordSerializer(serializers.ModelSerializer):
     """Obyekt pasportiga tegishlim malumotlarni olish uchun serializer"""
-    user = UserSerializer(read_only=True)
     object_name = DashboardSubCategoryButtonNameSerializer(source='subcategory_btn', read_only=True)
     class Meta:
         model = ObjectsPassword
-        fields = ['id', 'user', 'object_name', 'smr_price', 'equipment_price', 'investment_price', 'uge_price',
-                  'total_price', 'total_power', 'start_date', 'end_date', 'created_at']
+        fields = ['id', 'object_name',
+                  'main_btn', 'category_btn',
+                  'subcategory_btn', 'project_documentation',
+                  'smr_price', 'equipment_price',
+                  'investment_price', 'uge_price',
+                  'total_price', 'total_power',
+                  'start_date', 'end_date']
 
 
 class CreateObjectsPasswordSerializer(serializers.ModelSerializer):
@@ -63,9 +67,12 @@ class PatchbjectsPasswordSerializer(serializers.ModelSerializer):
     """Obyekt pasportini O'zgartirish uchun serializer"""
     class Meta:
         model = ObjectsPassword
-        fields = ['id', 'main_btn', 'category_btn', 'subcategory_btn', 'project_documentation',
-                  'smr_price', 'equipment_price', 'investment_price',
-                  'uge_price', 'total_price', 'total_power', 'start_date', 'end_date',]
+        fields = ['id', 'main_btn',
+                  'category_btn', 'subcategory_btn',
+                  'project_documentation', 'smr_price',
+                  'equipment_price', 'investment_price',
+                  'uge_price', 'total_price',
+                  'total_power', 'start_date', 'end_date',]
 
 
 class FilesCreateSerializer(serializers.ModelSerializer):
