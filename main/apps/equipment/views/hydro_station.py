@@ -11,7 +11,7 @@ from main.apps.reestr.utils.calculations import(
     get_total_fact_sum, get_total_year_sum, 
     total_year_calculation_horizontally
 )
-from ..serializers import construction as construction_task_serializer
+from ..serializers import hydro_station as construction_task_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response

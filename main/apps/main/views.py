@@ -14,6 +14,7 @@ from ..dashboard.models.dashboard import DashboardSubCategoryButton
 class GetObjectsPasswordView(APIView):
     """Obyekt pasportini olish"""
     permissions_classes = [IsAuthenticated]
+    
     def get(self, request, pk=None):
         project_doc = ObjectsPassword.objects.filter(project_documentation_id=pk)
         serializer = GetObjectsPasswordSerializer(project_doc, many=True)
@@ -35,6 +36,7 @@ class GetObjectsPasswordView(APIView):
         else:
             return Response({'message': "Malumot qo'shilmadi .. . .", "data": serializer.errors},
                             status=status.HTTP_400_BAD_REQUEST)
+        
     def patch(self, request, pk=None):
         obj_password = ObjectsPassword.objects.get(id=pk)
         serializer = PatchbjectsPasswordSerializer(obj_password, data=request.data, partial=True)
