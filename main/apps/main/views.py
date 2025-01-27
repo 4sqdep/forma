@@ -7,8 +7,8 @@ from django.db.models import Q
 from django.db.models import Count, Case, When, Value, BooleanField, Subquery, OuterRef
 from .models import ObjectsPassword, Files
 from .serializers import (GetObjectsPasswordSerializer, CreateObjectsPasswordSerializer, GetFilesSerializer,
-                          FilesCreateSerializer)
-
+                          FilesCreateSerializer, SearchObjectsNameSerializer)
+from ..dashboard.models.dashboard import DashboardSubCategoryButton
 
 
 class GetObjectsPasswordView(APIView):
@@ -66,3 +66,17 @@ class GetFilesAPIView(APIView):
         get_files = Files.objects.filter(obj_password_id=pk)
         serializer = GetFilesSerializer(get_files, many=True)
         return Response({'message': "Fayl....", "data": serializer.data}, status=status.HTTP_200_OK)
+
+
+class SearchObjectsNameAPIView(APIView):
+    """Obyekt nomlarini izlash uchun APIView"""
+
+    permissions_classes = [IsAuthenticated]
+    def get(self, request):
+        q = request.query_params.get('query')
+        if not q:
+            return Response({"error": "Qidiruv so'rovi (query) parametri talab qilinadi."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        obj_name = DashboardSubCategoryButton.objects.filter(Q(name__icontains=q))
+        serializer = SearchObjectsNameSerializer(obj_name, many=True)
+        return Response({"message": "Siz izlagan malumotlar....", "data": serializer.data},)

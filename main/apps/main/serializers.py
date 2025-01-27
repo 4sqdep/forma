@@ -11,6 +11,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'first_name', 'last_name']
 
+
 class DashboardButtonNameSerializer(serializers.ModelSerializer):
     """"Asosiy button name olish uchun serializer"""
     class Meta:
@@ -78,3 +79,10 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = NextStageDocuments
         fields = ['id', 'object_name', 'name']
+
+
+class SearchObjectsNameSerializer(serializers.ModelSerializer):
+    """Obyekt nomlarini izlash uchun serializer"""
+    class Meta:
+        model = DashboardSubCategoryButton
+        fields = ['id', 'name']
