@@ -1,7 +1,5 @@
 from django.db import models
-from main.apps.account.models.user import User
 from main.apps.common.models import BaseMeta, BaseModel
-from main.apps.dashboard.models.document import NextStageDocuments
 from main.apps.reestr.models.currency import Currency
 
 
@@ -12,9 +10,6 @@ class HydroStation(BaseModel):
     contract_number = models.CharField(max_length=255, null=True, blank=True)
     contract_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
-    prepayment_from_own_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    prepayment_from_foreign_credit_account = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    additional_prepayment = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     delivery_date = models.DateField()
     
 
@@ -31,6 +26,10 @@ class FinancialResource(BaseModel):
     hydro_station = models.ForeignKey(HydroStation, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    prepayment_from_own_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    prepayment_from_foreign_credit_account = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    additional_prepayment = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    payment_on_completion = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     
 
     def __str__(self):

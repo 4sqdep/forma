@@ -35,4 +35,11 @@ class MonthlyExpenseListSerializer(serializers.ModelSerializer):
             'spent_amount',
             'date'
         )
+    
+    def update(self, instance, validated_data):
+        instance.construction_task = validated_data.get('construction_task', instance.construction_task)
+        instance.spent_amount = validated_data.get('spent_amount', instance.spent_amount)
+        instance.date = validated_data.get('date', instance.date)
+        instance.save()
+        return instance
 
