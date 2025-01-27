@@ -1,7 +1,7 @@
 from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
 from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectSections, ProjectDocumentation
 from main.apps.dashboard.serializers import document as document_serializer
-from main.apps.dashboard.utils_serializers import NextStageDocumentsSerializer, ProjectDocumentationSerializer
+from main.apps.dashboard.utils_serializers import ProjectDocumentationSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
-from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas
+from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas, NextStageDocumentsSerializer
 
 
 class ProjectDocumentAPIView(APIView):
