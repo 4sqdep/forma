@@ -209,9 +209,9 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
                         "id": task.id,
                         "title": task.title,
                         "currency": task.currency.title if task.currency else None,
-                        "total_cost": float(total_cost),
-                        "fact_sum": float(fact_sum),
-                        "difference": float(difference),
+                        "total_cost": Decimal(total_cost),
+                        "fact_sum": Decimal(fact_sum),
+                        "difference": Decimal(difference),
                         "year_sums": year_sums,  
                     },
                     "monthly_expense": [],
@@ -219,7 +219,7 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
 
             constructions_data[task.id]["monthly_expense"].append({
                 "construction_id": task.id,
-                "spent_amount": float(expense.spent_amount),
+                "spent_amount": Decimal(expense.spent_amount),
                 "date": expense.date.isoformat(),
             })
 
@@ -231,11 +231,11 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
 
         response_data = {
             "construction_data": list(constructions_data.values()),
-            "total_cost": float(total_cost),
+            "total_cost": Decimal(total_cost),
             "monthly_totals": monthly_totals,
-            "total_fact_sum": float(total_fact_sum),
+            "total_fact_sum": Decimal(total_fact_sum),
             "year_total_calculations": year_total_calculations,
-            "total_difference": float(total_difference),
+            "total_difference": Decimal(total_difference),
         }
 
         return Response(response_data, status=status.HTTP_200_OK)
