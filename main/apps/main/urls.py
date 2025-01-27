@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import GetObjectsPasswordView, UploadFilesAPIView, GetFilesAPIView
+from .views import (GetObjectsPasswordView, SearchObjectsNameAPIView,
+                    UploadFilesAPIView, GetFilesAPIView)
 
 
 app_name = "main"
@@ -11,4 +12,5 @@ urlpatterns = [
     path('patch-objects-password/<int:pk>/', GetObjectsPasswordView.as_view(), name='patch-objects-password'),
     path('upload-file/', UploadFilesAPIView.as_view(), name='upload-file'),
     path('get-file/<int:pk>/', GetFilesAPIView.as_view(), name='get-file'),
+    path('search-objects-name/', SearchObjectsNameAPIView.as_view(), name='search-objects-name'),
 ]
