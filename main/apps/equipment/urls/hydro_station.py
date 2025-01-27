@@ -5,27 +5,27 @@ from ..views import hydro_station
 
 urlpatterns = [
     path(
-        'hydro-station-create/', 
+        'create/', 
         hydro_station.hydro_station_create_api_view, 
         name='hydro_station_create'
     ),
     path(
-        'hydrostation-list/', 
+        'list/', 
         hydro_station.hydro_station_list_api_view, 
         name='hydro_station_list'
     ),
     path(
-        'hydro-station-detail/<int:pk>/', 
+        'detail/<int:pk>/', 
         hydro_station.hydro_station_detail_api_view, 
         name='hydro_station_retrieve'
     ),
     path(
-        'hydro-station-update/<int:pk>/', 
+        'update/<int:pk>/', 
         hydro_station.hydro_station_update_api_view, 
         name='hydro_station_update'
     ),
     path(
-        'hydro-station-delete/<int:pk>/', 
+        'delete/<int:pk>/', 
         hydro_station.hydro_station_delete_api_view, 
         name='hydro_station_delete'
     ),
