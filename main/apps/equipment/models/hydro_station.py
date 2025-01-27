@@ -14,8 +14,8 @@ class HydroStation(BaseModel):
     additional_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     delivery_date = models.DateField()
 
-    def __str__(self):
-        return f"{self.title}"
+    # def __str__(self):
+    #     return f"{self.title}"
 
     class Meta(BaseMeta):
         verbose_name = "Hydro Station"

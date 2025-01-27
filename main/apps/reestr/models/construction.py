@@ -34,8 +34,8 @@ class MonthlyExpense(BaseModel):
     spent_amount = models.DecimalField(max_digits=32, decimal_places=2, default=0, verbose_name="Sarflangan summa")
     date = models.DateField()
     
-    def __str__(self):
-        return f"{self.construction_task.title}, {self.date}"
+    # def __str__(self):
+    #     return f"{self.construction_task.title}, {self.date}"
 
     class Meta(BaseMeta):
         verbose_name = "Monthly Expense"
