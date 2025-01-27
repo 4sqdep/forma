@@ -1,11 +1,12 @@
 from django.db import models
 from main.apps.common.models import BaseMeta, BaseModel
+from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
 from main.apps.reestr.models.currency import Currency
 
 
 
 class HydroStation(BaseModel):
-    title = models.CharField(max_length=255, null=True, blank=True)
+    dashboard_subbtn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL, null=True)
     supplier_name = models.CharField(max_length=255, null=True, blank=True)
     contract_number = models.CharField(max_length=255, null=True, blank=True)
     contract_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')

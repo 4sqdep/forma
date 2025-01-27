@@ -8,7 +8,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
         model = HydroStation 
         fields = (
             'id',
-            'title',
+            'dashboard_subbtn',
             'supplier_name',
             'contract_number',
             'contract_amount',
