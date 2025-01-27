@@ -22,12 +22,12 @@ class GetObjectsPasswordView(APIView):
 
     def post(self, request):
         """Obyekt pasportini qo'shish"""
-        created_by = request.user
-        if ObjectsPassword.objects.filter(created_by=created_by).exists():
-            return Response(
-                {"message": "Siz allaqachon ma'lumot qo'shgansiz. Ikkinchi marta qo'shish mumkin emas."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # created_by = request.user
+        # if ObjectsPassword.objects.filter(created_by=created_by).exists():
+        #     return Response(
+        #         {"message": "Siz allaqachon ma'lumot qo'shgansiz. Ikkinchi marta qo'shish mumkin emas."},
+        #         status=status.HTTP_400_BAD_REQUEST
+        #     )
         serializer = CreateObjectsPasswordSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
