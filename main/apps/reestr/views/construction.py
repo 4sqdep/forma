@@ -34,14 +34,14 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
             serializer.save()
             return Response(
             {
-                'message': 'Successfully Updated',
+                'message': 'Successfully Created',
                 'data': serializer.data
             },
             status=status.HTTP_200_OK
             )
         return Response(
             {
-                'message': 'Failed to Update',
+                'message': 'Failed to create',
                 'errors': serializer.errors
             },
             status=status.HTTP_400_BAD_REQUEST
@@ -170,8 +170,20 @@ class MonthlyExpenseCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+            return Response(
+            {
+                'message': 'Successfully Created',
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                'message': 'Failed to create',
+                'errors': serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
 

@@ -1,3 +1,4 @@
+from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
 from main.apps.dashboard.models.document import NextStageDocuments, ProjectDocumentation
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.views import APIView
@@ -14,6 +15,8 @@ from main.apps.main.serializers import (GetObjectsPasswordSerializer,
 from main.apps.dashboard.models.document import  NextStageDocuments
 from main.apps.common.pagination import CustomPagination
 
+
+
 class NestedDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
     """Navbar menu uchun """
@@ -27,11 +30,18 @@ class NestedDataAPIView(APIView):
                 serialializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '2':
-                project_docs = NextStageDocuments.objects.filter(project_document__is_project_doc=True)
+                data={}
+                sub_btns = DashboardSubCategoryButton.objects.all()
+                for sub_btn in sub_btns:
+                    project_docs = NextStageDocuments.objects.filter(project_document__is_project_doc=True, subcategories_btn=sub_btn)
+                    serialializer = NextStageDocumentsSerializer(project_docs, many=True)
+                    data[sub_btn.name] = {
+                        'project_doc': serialializer.data
+                    }
                 paginator = CustomPagination()
                 paginated_queryset = paginator.paginate_queryset(project_docs, request)
-                serialializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
-                return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
+                
+                return Response(data, status=status.HTTP_200_OK)
             elif query_params == '3':
                 project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
                 paginator = CustomPagination()
