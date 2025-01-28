@@ -9,10 +9,11 @@ from .utils_serializers import ProjectDocumentationSerializer
 from collections import defaultdict
 from django.db.models import Count, Case, When, Value, IntegerField
 from main.apps.main.models import ObjectsPassword
-from main.apps.main.serializers import (GetObjectsPasswordSerializer,
-                                        NextStageDocumentsSerializer)
+from main.apps.main.serializers import (GetObjectsPasswordSerializer, NextStageDocumentsSerializer)
 from main.apps.dashboard.models.document import  NextStageDocuments
+from main.apps.main.serializer.statistic import DashboardButtonStatisticsSerializer
 from main.apps.common.pagination import CustomPagination
+from main.apps.dashboard.models.dashboard import DashboardButton
 
 class NestedDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -62,8 +63,8 @@ class StatisticalData(APIView):
     """Statistik ma'lumotlar olish uchun"""
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        all_statistics = ObjectsPassword.objects.all()
-        serializer = GetObjectsPasswordSerializer(all_statistics, many=True)
+        all_statistics = DashboardButton.objects.all()
+        serializer = DashboardButtonStatisticsSerializer(all_statistics, many=True)
         return Response({'message': "Statistik ma'lumotlar........", "data": serializer.data},
                         status=status.HTTP_200_OK)
 
