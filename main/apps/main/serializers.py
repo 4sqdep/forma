@@ -102,3 +102,4 @@ class SearchObjectsNameSerializer(serializers.ModelSerializer):
     class Meta:
         model = DashboardSubCategoryButton
         fields = ['id', 'name']
+
