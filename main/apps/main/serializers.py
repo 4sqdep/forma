@@ -94,7 +94,7 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
     # object_name = DashboardSubCategoryButtonNameSerializer(source='subcategories_btn', read_only=True)
     class Meta:
         model = NextStageDocuments
-        fields = ['id',  'name']
+        fields = ['id',  'name', 'is_forma', 'is_section', 'is_file']
 
 
 class SearchObjectsNameSerializer(serializers.ModelSerializer):
