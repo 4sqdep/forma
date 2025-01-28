@@ -75,11 +75,19 @@ class ObjectsPasswordDetailAPIView(APIView):
 class StatisticalData(APIView):
     """Statistik ma'lumotlar olish uchun"""
     permission_classes = [IsAuthenticated]
+
     def get(self, request):
         all_statistics = DashboardButton.objects.all()
         serializer = DashboardButtonStatisticsSerializer(all_statistics, many=True)
-        return Response({'message': "Statistik ma'lumotlar........", "data": serializer.data},
-                        status=status.HTTP_200_OK)
+        response_data = {
+            "message": "Statistik ma'lumotlar........",
+            "data": {}
+        }
+        for item in serializer.data:
+            key = item['name'].lower().replace(" ", "")  
+            response_data["data"][key] = item
+        return Response(response_data, status=status.HTTP_200_OK)
+
 
 
 
