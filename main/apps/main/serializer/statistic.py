@@ -23,12 +23,11 @@ class DashboardButtonStatisticsSerializer(serializers.ModelSerializer):
             'name',
             'category_data',
             'total_category_count',
-            'total_subcategory_count',
+            'total_subcategory_count',   
             'total_price_sum'
         ]
 
     def get_category_data(self, obj):
-        # `category_btn` bo'yicha nom, son va `total_price` summasi
         category_data = (
             ObjectsPassword.objects.filter(main_btn=obj)
             .values('category_btn')
@@ -39,22 +38,20 @@ class DashboardButtonStatisticsSerializer(serializers.ModelSerializer):
         )
         return [
             {
-                "category_btn_id": data['category_btn'],  # ID'si
-                "category_btn_name": DashboardCategoryButton.objects.get(id=data['category_btn']).name if data['category_btn'] else None,  # Nomi
-                "count": data['count'],  # Soni
-                "total_price": data['total_price'] or 0  # Total summasi
+                "category_btn_id": data['category_btn'],  
+                "category_btn_name": DashboardCategoryButton.objects.get(id=data['category_btn']).name if data['category_btn'] else None,  
+                "count": data['count'],  
+                "total_price": data['total_price'] or 0  
             }
             for data in category_data
         ]
 
     def get_total_category_count(self, obj):
-        # Umumiy `category_btn` soni
         return ObjectsPassword.objects.filter(main_btn=obj).values('category_btn').distinct().count()
 
     def get_total_subcategory_count(self, obj):
-        # Umumiy `subcategory_btn` soni
         return ObjectsPassword.objects.filter(main_btn=obj).values('subcategory_btn').distinct().count()
 
     def get_total_price_sum(self, obj):
-        # Umumiy `total_price` summasi
         return ObjectsPassword.objects.filter(main_btn=obj).aggregate(total_sum=Sum('total_price'))['total_sum'] or 0
+
