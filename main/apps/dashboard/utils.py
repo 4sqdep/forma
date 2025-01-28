@@ -31,18 +31,22 @@ class NestedDataAPIView(APIView):
                 serialializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             elif query_params == '2':
-                data={}
+                data = []
                 sub_btns = DashboardSubCategoryButton.objects.all()
                 for sub_btn in sub_btns:
-                    project_docs = NextStageDocuments.objects.filter(project_document__is_project_doc=True, subcategories_btn=sub_btn)
-                    serialializer = NextStageDocumentsSerializer(project_docs, many=True)
-                    data[sub_btn.name] = {
-                        'project_doc': serialializer.data
-                    }
-                paginator = CustomPagination()
-                paginated_queryset = paginator.paginate_queryset(project_docs, request)
-                
-                return Response(data, status=status.HTTP_200_OK)
+                    project_docs = NextStageDocuments.objects.filter(
+                        project_document__is_project_doc=True, subcategories_btn=sub_btn
+                    )
+                    paginator = CustomPagination()
+                    paginated_queryset = paginator.paginate_queryset(project_docs, request)
+                    serializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
+                    data.append({
+                        "sub_btn_id": sub_btn.id,
+                        "sub_btn_title": sub_btn.name,
+                        "project_docs": serializer.data
+                    })
+                    respond_data = {'projects': data}
+                return Response(respond_data, status=status.HTTP_200_OK)
             elif query_params == '3':
                 project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
                 paginator = CustomPagination()
@@ -51,7 +55,6 @@ class NestedDataAPIView(APIView):
                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
             else:
                 return Response({"data": "XATO"}, status=status.HTTP_200_OK)
-
         except Exception as e:
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
