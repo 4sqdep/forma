@@ -21,19 +21,18 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
             serializer.save()
             return Response(
             {
-                'message': 'Successfully Updated',
+                'message': 'Successfully created',
                 'data': serializer.data
             },
             status=status.HTTP_200_OK
             )
         return Response(
             {
-                'message': 'Failed to Update',
+                'message': 'Failed to create',
                 'errors': serializer.errors
             },
             status=status.HTTP_400_BAD_REQUEST
         )
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
 
