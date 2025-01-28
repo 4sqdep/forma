@@ -20,10 +20,19 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                # {'message': 'Successfully created'},
-                data=serializer.data, 
-                status=status.HTTP_201_CREATED
-                )
+            {
+                'message': 'Successfully Updated',
+                'data': serializer.data
+            },
+            status=status.HTTP_200_OK
+            )
+        return Response(
+            {
+                'message': 'Failed to Update',
+                'errors': serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
@@ -160,7 +169,7 @@ class FinancialResourceListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = FinancialResource.objects.select_related("construction_task")
+        queryset = FinancialResource.objects.select_related("hydro_station")
         next_stage_document_id = self.request.query_params.get('next_stage_document')
         if next_stage_document_id:
             queryset = queryset.filter(construction_task__next_stage_document_id=next_stage_document_id)
