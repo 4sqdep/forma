@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(blank=True, max_length=14, verbose_name='Telfon raqami')),
                 ('email', models.EmailField(blank=True, max_length=254, null=True, unique=True)),
                 ('is_download', models.BooleanField(default=False, verbose_name='Yuklash')),
-                ('image', models.ImageField(blank=True, null=True, upload_to=main.apps.account.models.user.upload_profile_images)),
+                # ('image', models.ImageField(blank=True, null=True, upload_to=main.apps.account.models.user.upload_profile_images)),
                 ('is_staff', models.BooleanField(default=False, help_text='Designates whether the user can log into this admin site.', verbose_name='staff status')),
                 ('is_active', models.BooleanField(default=True, help_text='Designates whether this user should be treated as active. Unselect this instead of deleting account.', verbose_name='active')),
                 ('is_moderator', models.BooleanField(default=False, verbose_name='moderator status')),

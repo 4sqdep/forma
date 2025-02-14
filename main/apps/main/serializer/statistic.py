@@ -1,23 +1,22 @@
 from rest_framework import serializers
 from main.apps.main.models import ObjectsPassword
 from main.apps.dashboard.models.dashboard import (
-    DashboardButton,
-    DashboardCategoryButton,
-    DashboardSubCategoryButton
+    ObjectCategory,
+    ObjectSubCategory
 )
 from django.db.models import Sum, Count
 
 
 
 
-class DashboardButtonStatisticsSerializer(serializers.ModelSerializer):
+class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
     category_data = serializers.SerializerMethodField()
     total_category_count = serializers.SerializerMethodField()
     total_subcategory_count = serializers.SerializerMethodField()
     total_price_sum = serializers.SerializerMethodField()
 
     class Meta:
-        model = DashboardButton
+        model = ObjectCategory
         fields = [
             'id',
             'name',
@@ -39,7 +38,7 @@ class DashboardButtonStatisticsSerializer(serializers.ModelSerializer):
         return [
             {
                 "category_btn_id": data['category_btn'],  
-                "category_btn_name": DashboardCategoryButton.objects.get(id=data['category_btn']).name if data['category_btn'] else None,  
+                "category_btn_name": ObjectSubCategory.objects.get(id=data['category_btn']).name if data['category_btn'] else None,  
                 "count": data['count'],  
                 "total_price": data['total_price'] or 0  
             }

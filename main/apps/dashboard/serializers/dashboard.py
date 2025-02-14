@@ -1,65 +1,75 @@
 from rest_framework import serializers
 from main.apps.dashboard.models.dashboard import (
-    DashboardButton, 
-    DashboardCategoryButton, 
-    DashboardSubCategoryButton
+    ObjectCategory, 
+    ObjectSubCategory, 
+    Object
 )
 
 
 
-class DashboardButtonSerializer(serializers.ModelSerializer):
-    """Assosiy button olish"""
+class ObjectCategorySerializer(serializers.ModelSerializer):
     category_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
     class Meta:
-        model = DashboardButton
+        model = ObjectCategory
         fields = (
             'id', 
             'name', 
+            'slug_name',
             'category_count', 
             'has_data'
         )
 
 
-class DashboardCategoryButtonSerializer(serializers.ModelSerializer):
-    """Kategoriya buttonlar"""
-    dashboard_button = DashboardButtonSerializer
+class ObjectSubCategorySerializer(serializers.ModelSerializer):
+    object_category = ObjectCategorySerializer
     subcategory_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
     class Meta:
-        model = DashboardCategoryButton
+        model = ObjectSubCategory
         fields = (
             'id', 
-            'dashboard_button', 
+            'object_category', 
             'name', 
             'subcategory_count', 
             'has_data'
         )
 
 
-class DashboardSubCategoryButtonSerializer(serializers.ModelSerializer):
-    """
-    SubCategory button larni olish
-    """
-    dashboard_category_btn = DashboardCategoryButtonSerializer
+
+class ObjectSerializer(serializers.ModelSerializer):
+    object_subcategory = ObjectSubCategorySerializer
     class Meta:
-        model = DashboardSubCategoryButton
+        model = Object
         fields = (
             'id', 
-            'dashboard_category_btn', 
+            'object_subcategory', 
             'name'
         )
+
     def create(self, validated_data):
         user = self.context['request'].user
         validated_data['created_by'] = user
         return super().create(validated_data)
 
 
-class DashboardSubCategoryButtonSerializerName(serializers.ModelSerializer):
-    """Faqan name fildni olish"""
+
+class ObjectSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DashboardSubCategoryButton
+        model = Object
         fields = (
-            'id', 
-            'name'
+            'id',
+            'object_category',
+            'object_subcategory',
+            'title',
+            'project_documentation',
+            'smr_price',
+            'equipment_price',
+            'investment_price',
+            'uge_price',
+            'total_price',
+            'total_power',
+            'start_date',
+            'end_date',
         )
+

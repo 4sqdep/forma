@@ -1,4 +1,3 @@
-import os
 from django.db import models
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AbstractUser
@@ -8,16 +7,9 @@ from main.apps.account.models.department import Department
 from main.apps.account.models.position import Position
 from main.apps.common.models import BaseMeta, BaseModel
 from django.utils.translation import gettext_lazy as _
-from django.utils import timezone
-from django.utils.text import slugify
+from main.apps.common.utils import upload_file
 
 
-
-def upload_profile_images(instance, filename):
-    filename_without_extension, extension = os.path.splitext(filename.lower())
-    timestamp = timezone.now().strftime("%Y-%m-%d.%H-%M-%S")
-    filename = f"{slugify(filename_without_extension)}.{timestamp}{extension}"
-    return f"profile/{filename}"
 
 
 class User(AbstractUser, PermissionsMixin, BaseModel):
@@ -27,11 +19,7 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
     phone = models.CharField(max_length=14, verbose_name="Telfon raqami", blank=True)
     email = models.EmailField(null=True, blank=True)
     is_download = models.BooleanField(default=False, verbose_name="Yuklash")
-    image = models.ImageField(
-        upload_to=upload_profile_images,
-        blank=True,
-        null=True
-    )
+    image = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
@@ -54,11 +42,10 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
 
     USERNAME_FIELD = "username"
 
-    class Meta:
-        ordering = ("-id",)
+    class Meta(BaseMeta):
+        db_table = "user"
         verbose_name = _("user")
         verbose_name_plural = _("users")
-
 
     @property
     def get_full_name(self):
@@ -66,7 +53,6 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
         Return the first_name plus the last_name, with a space in between.
         """
         return f"{self.first_name} {self.last_name}"
-
 
     def __str__(self):
         return f"{self.first_name}"

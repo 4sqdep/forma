@@ -10,11 +10,4 @@ urlpatterns = [
             namespace="construction",
         ),
     ),
-    path(
-        "currency/",
-        include(
-            ("main.apps.reestr.urls.currency", "main.apps.reestr.urls.currency"),
-            namespace="currency",
-        ),
-    )
 ]

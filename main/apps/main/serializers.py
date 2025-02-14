@@ -1,4 +1,4 @@
-from main.apps.dashboard.models.dashboard import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
+from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
 from main.apps.dashboard.models.document import ProjectDocumentation, NextStageDocuments
 from main.apps.main.models import Files
 from main.apps.main.models import ObjectsPassword
@@ -12,24 +12,24 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'first_name', 'last_name']
 
 
-class DashboardButtonNameSerializer(serializers.ModelSerializer):
+class ObjectCategoryNameSerializer(serializers.ModelSerializer):
     """"Asosiy button name olish uchun serializer"""
     class Meta:
-        model = DashboardButton
+        model = ObjectCategory
         fields = ['id', 'name']
 
 
-class DashboardCategoryButtonNameSerializer(serializers.ModelSerializer):
+class ObjectSubCategoryNameSerializer(serializers.ModelSerializer):
     """"Kategoriya button name olish uchun serializer"""
     class Meta:
-        model = DashboardCategoryButton
+        model = ObjectSubCategory
         fields = ['id', 'name']
 
 
-class DashboardSubCategoryButtonNameSerializer(serializers.ModelSerializer):
+class ObjectNameSerializer(serializers.ModelSerializer):
     """"Sub - Kategoriya button name olish uchun serializer"""
     class Meta:
-        model = DashboardSubCategoryButton
+        model = Object
         fields = ['id', 'name']
 
 
@@ -42,7 +42,7 @@ class ProjectDocumentationNameSerializer(serializers.ModelSerializer):
 
 class GetObjectsPasswordSerializer(serializers.ModelSerializer):
     """Obyekt pasportiga tegishlim malumotlarni olish uchun serializer"""
-    object_name = DashboardSubCategoryButtonNameSerializer(source='subcategory_btn', read_only=True)
+    object_name = ObjectNameSerializer(source='subcategory_btn', read_only=True)
     class Meta:
         model = ObjectsPassword
         fields = ['id', 'object_name',
@@ -91,7 +91,7 @@ class GetFilesSerializer(serializers.ModelSerializer):
 
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
     """Keyingi hujjatlar uchun serializer"""
-    # object_name = DashboardSubCategoryButtonNameSerializer(source='subcategories_btn', read_only=True)
+    # object_name = ObjectNameSerializer(source='subcategories_btn', read_only=True)
     class Meta:
         model = NextStageDocuments
         fields = ['id',  'name', 'is_forma', 'is_section', 'is_file']
@@ -100,6 +100,6 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
 class SearchObjectsNameSerializer(serializers.ModelSerializer):
     """Obyekt nomlarini izlash uchun serializer"""
     class Meta:
-        model = DashboardSubCategoryButton
+        model = Object
         fields = ['id', 'name']
 

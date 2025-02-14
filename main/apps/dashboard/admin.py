@@ -1,34 +1,34 @@
 from django.contrib import admin
-from main.apps.dashboard.models.dashboard import DashboardButton, DashboardCategoryButton, DashboardSubCategoryButton
+from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
 from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectDocumentation, ProjectSections
 
 
 
-class DashboardButtonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name']
+class ObjectCategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'name', 'slug_name']
     list_display_links = ['name']
     search_fields = ['name']
 
 
-admin.site.register(DashboardButton, DashboardButtonAdmin)
+admin.site.register(ObjectCategory, ObjectCategoryAdmin)
 
 
-class DashboardCategoryButtonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'dashboard_button', 'name']
-    list_display_links = ['dashboard_button', 'name']
+class ObjectSubCategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'object_category', 'name']
+    list_display_links = ['object_category', 'name']
     search_fields = ['name']
 
 
-admin.site.register(DashboardCategoryButton, DashboardCategoryButtonAdmin)
+admin.site.register(ObjectSubCategory, ObjectSubCategoryAdmin)
 
 
-class DashboardSubCategoryButtonAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_by', 'dashboard_category_btn', 'name']
-    list_display_links = ['name']
-    search_fields = ['name']
+class ObjectAdmin(admin.ModelAdmin):
+    list_display = ['id', 'created_by', 'object_subcategory', 'title']
+    list_display_links = ['title']
+    search_fields = ['title']
 
 
-admin.site.register(DashboardSubCategoryButton, DashboardSubCategoryButtonAdmin)
+admin.site.register(Object, ObjectAdmin)
 
 @admin.register(ProjectDocumentation)
 class ProjectDocumentationAdmin(admin.ModelAdmin):
@@ -43,7 +43,7 @@ class NextStageDocumentsAdmin(admin.ModelAdmin):
 
 
     def created_by_full_name(self, obj):
-        if obj.created_by:  # created_by mavjudligini tekshiramiz
+        if obj.created_by:  
             return f"{obj.created_by.first_name} {obj.created_by.last_name}"
         return "No user assigned"
 
