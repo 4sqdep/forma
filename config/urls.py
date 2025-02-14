@@ -10,9 +10,9 @@ import debug_toolbar
 
 schema_view = get_schema_view(
     openapi.Info(
-    title="Swagger Doc for Hydroconstruction",
+    title="Swagger Doc for Hydro construction",
     default_version='v1',
-    description="This is Proclear project API",
+    description="This is Hydro construction project API",
     terms_of_service="example.uz",
     contact=openapi.Contact(email="example@gmail.com"),
     ),

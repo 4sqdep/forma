@@ -4,10 +4,26 @@ from ..views import dashboard
 
 
 urlpatterns = [
-    path('btn/', dashboard.dashboard_button_api_view, name='btn'),
-    path('category-btn/<int:pk>/', dashboard.dashboard_category_button_api_view, name='category-btn'),
-    path('sub-btn/<int:pk>/', dashboard.dashboard_subcategory_button_api_view, name='sub-btn'),
-    path('sub-btn-post/', dashboard.dashboard_category_button_api_view, name='sub-btn-post'),
+    path(
+        'object-category-list/', 
+        dashboard.object_category_api_view, 
+        name='object_category_list'
+    ),
+    path(
+        'object-subcategory/<int:pk>/', 
+        dashboard.object_subcategory_button_api_view, 
+        name='object_subcategory_list'
+    ),
+    path(
+        'object/<int:pk>/', 
+        dashboard.object_api_view, 
+        name='object'
+    ),
+    path(
+        'object-subcategory-create/', 
+        dashboard.object_subcategory_button_api_view, 
+        name='object_subcategory_create'
+    ),
 ]
 
 

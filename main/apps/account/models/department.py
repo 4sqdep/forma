@@ -11,6 +11,7 @@ class Department(BaseModel):
     name = models.CharField(max_length=50, unique=True, null=False, blank=False, verbose_name="Nomi")
 
     class Meta(BaseMeta):
+        db_table = "department"
         verbose_name = "Bo'lim"
         verbose_name_plural = "Bo'limlar"
 

@@ -1,32 +1,79 @@
 from django.urls import path
-from main.apps.dashboard.utils import NestedDataAPIView, StatisticalData, ObjectsPasswordDetailAPIView
-from main.apps.dashboard.views.document import (
-    FilesSearchAPIView, 
-    GetFilesAPIView, 
-    GetFilesSectionAPIView, 
-    MultipleFileUploadView, 
-    NextStageDocumentsAPIView, 
-    ProjectDocumentAPIView, 
-    ProjectSectionsAPIView
-)
+from ..views import document
 
 
 
 urlpatterns = [
-    path('project-btn/<int:pk>/', ProjectDocumentAPIView.as_view(), name='project-btn'),
-    path('next-project/<int:pk>/', NextStageDocumentsAPIView.as_view(), name='next-project-btn'),
-    path('next-patch-project-name/<int:pk>/', NextStageDocumentsAPIView.as_view(), name='next-patch-project-name'),
-    path('add-next-project/', NextStageDocumentsAPIView.as_view(), name='add-next-project-btn'),
-    path('files-create/', MultipleFileUploadView.as_view(), name='files-create'),
-    path('get-files/<int:pk>/', GetFilesAPIView.as_view(), name='get-files'),
-    path('get-files-section/<int:pk>/', GetFilesSectionAPIView.as_view(), name='get-files'),
-    path('get-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='get-sections'),
-    path('post-sections/', ProjectSectionsAPIView.as_view(), name='post-sections'),
-    path('patch-sections/<int:pk>/', ProjectSectionsAPIView.as_view(), name='patch-sections'),
-    path('files-search/', FilesSearchAPIView.as_view(), name='files-search'),
-    path('get-doc/', NestedDataAPIView.as_view(), name='get-doc'),
-    path('get-statistic/<int:pk>/', ObjectsPasswordDetailAPIView.as_view(), name='post-doc'),
-    path('all-statistic/', StatisticalData.as_view(), name='all-statistic'),
+    path(
+        'project-document/<int:pk>/', 
+        document.project_document_api_view, 
+        name='project-btn'
+    ),
+    path(
+        'next-project-list/<int:pk>/', 
+        document.next_stage_document_api_view,
+        name='next-project-btn'
+    ),
+    path(
+        'next-priject-update/<int:pk>/', 
+        document.next_stage_document_api_view, 
+        name='next-patch-project-name'
+    ),
+    path(
+        'next-project-create/', 
+        document.next_stage_document_api_view, 
+        name='add-next-project-btn'
+    ),
+    path(
+        'file-create/', 
+        document.multiple_file_upload_api_view, 
+        name='files-create'
+    ),
+    path(
+        'file-list/<int:pk>/', 
+        document.get_files_api_view, 
+        name='get-files'
+    ),
+    path(
+        'file-section-list/<int:pk>/', 
+        document.get_files_section_api_view, 
+        name='get-files'
+    ),
+    path(
+        'project-section-list/<int:pk>/', 
+        document.project_section_api_view, 
+        name='get-sections'
+    ),
+    path(
+        'project-section-create/', 
+        document.project_section_api_view, 
+        name='post-sections'
+    ),
+    path(
+        'project-section-update/<int:pk>/', 
+        document.project_section_api_view, 
+        name='patch-sections'
+    ),
+    path(
+        'file-search/', 
+        document.file_search_api_view, 
+        name='files-search'
+    ),
+    path(
+        'get-doc/', 
+        document.nested_data_api_view, 
+        name='get-doc'
+    ),
+    path(
+        'statistics-data/<int:pk>/', 
+        document.object_password_detail_api_view, 
+        name='post-doc'
+    ),
+    path(
+        'all-statistics-data/', 
+        document.statistical_data_api_view, 
+        name='all-statistic'
+    ),
 ]
 
 

@@ -1,11 +1,13 @@
 from django.db import models
-from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
+from main.apps.dashboard.models.dashboard import Object
 from main.apps.common.models import BaseModel, BaseMeta
+
+
 
 
 class ProjectDocumentation(BaseModel):
     """Loyiha hujjatlar Qurilish montaj ishlari Uskunalar uchun model"""
-    subcategories_btn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL,
+    subcategories_btn = models.ForeignKey(Object, on_delete=models.SET_NULL,
                                           verbose_name="Loyiha nomi", blank=True,
                                           null=True, related_name="projectdocumentation")
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
@@ -19,16 +21,17 @@ class ProjectDocumentation(BaseModel):
         return f"{self.subcategories_btn} -- {self.name}"
 
     class Meta(BaseMeta):
-        ordering = ["order"]
+        db_table = "project_documentation"
         verbose_name = "Loyiha hujjati"
         verbose_name_plural = "Loyiha Bo'limlar 1"
+
 
 
 class NextStageDocuments(BaseModel):
     """Keyingi bosqich uchun qabul qilinadigan hujjatlar uchun model"""
     project_document = models.ForeignKey(ProjectDocumentation, on_delete=models.SET_NULL,
                                          verbose_name="Loyiha hujjatlar", blank=True, null=True, related_name='data')
-    subcategories_btn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL,
+    subcategories_btn = models.ForeignKey(Object, on_delete=models.SET_NULL,
                                           verbose_name="Loyiha nomi", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi", db_index=True)
     is_forma = models.BooleanField(default=False, verbose_name="Forma")
@@ -39,8 +42,10 @@ class NextStageDocuments(BaseModel):
         return f"{self.project_document} -- {self.name}"
 
     class Meta(BaseMeta):
+        db_table = "next_stage_documents"
         verbose_name = "Keyingi hujjat"
         verbose_name_plural = "Loyiha hujjatlari"
+
 
 
 class ProjectSections(BaseModel):
@@ -50,9 +55,12 @@ class ProjectSections(BaseModel):
 
     def __str__(self):
         return f"{self.next_stage_documents} -- {self.name}"
+    
     class Meta(BaseMeta):
+        db_table = "project_sections"
         verbose_name = "Loyiha bo'limi"
         verbose_name_plural = "Loyiha Bo'limlar 2"
+
 
 
 class Files(BaseModel):
@@ -70,5 +78,6 @@ class Files(BaseModel):
         return f"{self.document} -- {self.name}"
 
     class Meta(BaseMeta):
+        db_table = "dashboard_files"
         verbose_name = "Fayl"
         verbose_name_plural = "Fayllar"

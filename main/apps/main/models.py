@@ -1,22 +1,21 @@
 from django.db import models
 from main.apps.common.models import BaseMeta, BaseModel
 from main.apps.dashboard.models.dashboard import (
-    DashboardButton, 
-    DashboardCategoryButton, 
-    DashboardSubCategoryButton
+    ObjectCategory, 
+    ObjectSubCategory, 
+    Object
 )
 from main.apps.dashboard.models.document import ProjectDocumentation
-from main.apps.account.models.user import User
+
 
 
 
 class ObjectsPassword(BaseModel):
-    """Obyektlar uchun paspord modeli"""
-    main_btn = models.ForeignKey(DashboardButton, on_delete=models.SET_NULL, null=True, blank=True,
+    main_btn = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True,
                                     verbose_name="Asosiy knopkalar")
-    category_btn = models.ForeignKey(DashboardCategoryButton, on_delete=models.SET_NULL, null=True, blank=True,
+    category_btn = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, null=True, blank=True,
                                      verbose_name="Kategoriya knopkalar")
-    subcategory_btn = models.ForeignKey(DashboardSubCategoryButton, on_delete=models.SET_NULL, null=True, blank=True,
+    subcategory_btn = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True,
                                         verbose_name="Obyekt nomi")
     project_documentation = models.ForeignKey(ProjectDocumentation, on_delete=models.SET_NULL, null=True, blank=True,
                                               verbose_name="Obyekt bo'limi")
@@ -33,17 +32,18 @@ class ObjectsPassword(BaseModel):
         return f"{self.project_documentation}"
 
     class Meta(BaseMeta):
+        db_table = "objects_password"
         verbose_name = "Obyekt paspord modeli"
         verbose_name_plural = "Obyekt paspordi"
 
 
 class Files(BaseModel):
-    """Obyekt paspotriga tegishli fayllar uchun modeli"""
     obj_password = models.ForeignKey(ObjectsPassword, on_delete=models.SET_NULL, null=True, blank=True,
                                      verbose_name="Obyekt pasporti")
     file = models.FileField(upload_to="objpassword/files/%Y/%m/%d", null=True, blank=True, verbose_name="Fayl")\
     
     class Meta(BaseMeta):
+        db_table = "main_files"
         verbose_name = "Fayl"
         verbose_name_plural = "Fayllar"
 

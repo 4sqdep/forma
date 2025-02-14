@@ -1,14 +1,29 @@
 from django.urls import path
-
-from main.apps.account.views.user import LoginUser, RegisterUser, UserProfileAPIView, AllUsersListAPIView
-
+from ..views import user
 
 
 app_name = "account"
 
+
 urlpatterns = [
-    path('register/', RegisterUser.as_view(), name='register'),
-    path('login/', LoginUser.as_view(), name='login'),
-    path('profile/<int:pk>/', UserProfileAPIView.as_view(), name='profile'),
-    path('user-all-list/', AllUsersListAPIView.as_view(), name='user-all-list'),
+    path(
+        'register/', 
+        user.user_register_api_view, 
+        name='register'
+    ),
+    path(
+        'login/', 
+        user.user_login_api_view, 
+        name='login'
+    ),
+    path(
+        'profile/<int:pk>/', 
+        user.user_profile_api_view, 
+        name='profile'
+    ),
+    path(
+        'user-all-list/', 
+        user.all_user_api_view, 
+        name='user-all-list'
+    ),
 ]

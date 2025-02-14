@@ -1,8 +1,8 @@
 from django.db import models
 from main.apps.account.models.user import User
-from main.apps.common.models import BaseMeta, BaseModel
+from main.apps.common.models import BaseMeta, BaseModel, Currency
 from main.apps.dashboard.models.document import NextStageDocuments
-from main.apps.reestr.models.currency import Currency
+
 
 
 
@@ -17,6 +17,7 @@ class ConstructionTask(BaseModel):
         return f"{self.title}"
 
     class Meta(BaseMeta):
+        db_table = "construction_task"
         verbose_name = "Construction Task"
         verbose_name_plural = "Construction Tasks"
 
@@ -33,11 +34,9 @@ class MonthlyExpense(BaseModel):
     )
     spent_amount = models.DecimalField(max_digits=32, decimal_places=2, default=0, verbose_name="Sarflangan summa")
     date = models.DateField()
-    
-    # def __str__(self):
-    #     return f"{self.construction_task.title}, {self.date}"
 
     class Meta(BaseMeta):
+        db_table = "monthly_expense"
         verbose_name = "Monthly Expense"
         verbose_name_plural = "Monthly Expenses"
     

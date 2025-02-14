@@ -38,5 +38,12 @@ urlpatterns = [
             namespace="equipment",
         ),
     ),
+    path(
+        "common/",
+        include(
+            ("main.apps.common.urls", "main.apps.common.urls"),
+            namespace="common",
+        ),
+    ),
 ]
 

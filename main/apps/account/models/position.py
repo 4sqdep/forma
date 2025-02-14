@@ -11,6 +11,7 @@ class Position(BaseModel):
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Bo'lim")
 
     class Meta(BaseMeta):
+        db_table = "position"
         verbose_name = "Lavozim"
         verbose_name_plural = "Lavozimlar"
     
