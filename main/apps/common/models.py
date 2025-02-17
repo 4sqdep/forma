@@ -58,6 +58,7 @@ class Measurement(BaseModel):
 
 class Template(BaseModel):
     file = models.FileField(upload_to="templates/", null=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta(BaseMeta):
         db_table = "template"
