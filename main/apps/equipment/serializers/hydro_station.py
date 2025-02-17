@@ -1,3 +1,4 @@
+from decimal import Decimal
 from rest_framework import serializers
 from main.apps.equipment.models.hydro_station import FinancialResource, HydroStation
 from django.db.models import Sum
@@ -8,11 +9,11 @@ from main.apps.equipment.models.industrial_equipment import IndustrialAsset
 
 class HydroStationSerializer(serializers.ModelSerializer):
     total_delivered_amount = serializers.SerializerMethodField()
-    total_transit_equipment_amount = serializers.SerializerMethodField()
+    transit_equipment_amount = serializers.SerializerMethodField()
     delivered_amount_percent = serializers.SerializerMethodField()
     remained_delivered_amount = serializers.SerializerMethodField()
     remained_delivered_amount_percent = serializers.SerializerMethodField()
-    date = serializers.SerializerMethodField()
+    latest_delivery_date = serializers.SerializerMethodField()
     class Meta:
         model = HydroStation 
         fields = (
@@ -28,7 +29,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'delivered_amount_percent',
             'remained_delivered_amount',
             'remained_delivered_amount_percent',
-            'date'
+            'latest_delivery_date'
         )
 
     def get_total_delivered_amount(self, obj):
@@ -37,7 +38,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             .aggregate(total=Sum('delivered_amount'))['total'] or 0.00
         )
     
-    def get_total_transit_equipment_amount(self, obj):
+    def get_transit_equipment_amount(self, obj):
         return (
             IndustrialAsset.objects.filter(industrial_equipment__hydro_station=obj, status='in_transit')
             .aggregate(total=Sum('transit_equipment_amount'))['total'] or 0.00
@@ -45,20 +46,18 @@ class HydroStationSerializer(serializers.ModelSerializer):
 
     def get_delivered_amount_percent(self, obj):
         total_delivered_amount = self.get_total_delivered_amount(obj)
-        contract_amount = obj.contract_amount
-        return  (total_delivered_amount * 100) / contract_amount or 0.00
+        if obj.contract_amount:
+            return round((total_delivered_amount * 100) / obj.contract_amount, 2)
+        return  Decimal("0.00")
 
     def get_remained_delivered_amount(self, obj):
-        contract_amount = obj.contract_amount
-        total_delivered_amount = self.get_total_delivered_amount(obj)
-        return contract_amount - total_delivered_amount or 0.00
+        return obj.contract_amount - self.get_total_delivered_amount(obj) or Decimal("0.00")
     
     def get_remained_delivered_amount_percent(self, obj):
-        delivered_amount_percent = self.get_delivered_amount_percent(obj)
-        return (100 - delivered_amount_percent) or 0.00
+        return round(100 - self.get_delivered_amount_percent(obj), 2)
 
-    def get_date(self, obj):
-        asset = IndustrialAsset.objects.filter(industrial_equipment__hydro_station=obj).order_by('-date').first()
+    def get_latest_delivery_date(self, obj):
+        asset = IndustrialAsset.objects.filter(industrial_equipment__hydro_station=obj).order_by("-date").first()
         return asset.date if asset else None
     
 
