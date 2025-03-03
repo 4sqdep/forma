@@ -35,6 +35,7 @@ class ObjectsPassword(BaseModel):
         db_table = "objects_password"
         verbose_name = "Obyekt paspord modeli"
         verbose_name_plural = "Obyekt paspordi"
+        
 
 
 class Files(BaseModel):

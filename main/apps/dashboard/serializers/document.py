@@ -1,11 +1,11 @@
-from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectDocumentation, ProjectSections
+from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectDocumentation, ProjectSections
 from main.apps.dashboard.serializers.dashboard import ObjectSerializer
 from rest_framework import serializers
 
 
 
 class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
-    subcategories_btn = ObjectSerializer()
+    object = ObjectSerializer()
     project_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)
     first_name = serializers.CharField(source='created_by.first_name', read_only=True)
@@ -16,7 +16,7 @@ class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
             'id',
             'first_name',
             'last_name',
-            'subcategories_btn', 
+            'object', 
             'name', 
             'project_count',
             'has_data', 
@@ -32,6 +32,7 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
         model = NextStageDocuments
         fields = (
             'id', 
+            'object',
             'name',
             'is_forma',
             'is_section',
@@ -44,8 +45,7 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
         model = NextStageDocuments
         fields = (
             'id',
-            'project_document',
-            'subcategories_btn',
+            'object',
             'name', 
             'is_forma',
             'is_section', 
@@ -56,7 +56,7 @@ class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):
 
 class FilesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Files
+        model = DocumentFiles
         fields = '__all__'
 
 
@@ -100,7 +100,7 @@ class MultipleFileUploadSerializer(serializers.Serializer):
                 raise serializers.ValidationError({"project_section_id": "ProjectSections topilmadi."})
 
         file_instances = [
-            Files(document=document,
+            DocumentFiles(document=document,
                     project_section=project_section,
                     created_by=self.context['request'].user,  
                     name=name, calendar=calendar,
@@ -108,13 +108,13 @@ class MultipleFileUploadSerializer(serializers.Serializer):
             for file in files
         ]
 
-        Files.objects.bulk_create(file_instances)
+        DocumentFiles.objects.bulk_create(file_instances)
         return file_instances
 
 
 class GetFilesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Files
+        model = DocumentFiles
         fields = (
             'id', 
             'files', 
@@ -144,17 +144,17 @@ class CreateProjectSectionsSerializer(serializers.ModelSerializer):
 
 
 
-class NextStageDocumentsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = NextStageDocuments
-        fields = (
-            'id', 
-            'created_by', 
-            'name', 
-            'is_forma', 
-            'is_section', 
-            'is_file'
-        )
+# class NextStageDocumentsSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = NextStageDocuments
+#         fields = (
+#             'id', 
+#             'created_by', 
+#             'name', 
+#             'is_forma', 
+#             'is_section', 
+#             'is_file'
+#         )
 
 
 class ProjectDocumentationSerializer(serializers.ModelSerializer):

@@ -1,6 +1,7 @@
 from django.urls import path
 from ..views import hydro_station
 
+app_name = 'hydro_station'
 
 
 urlpatterns = [
@@ -15,7 +16,7 @@ urlpatterns = [
         name='hydro_station_list'
     ),
     path(
-        'detail/<int:pk>/', 
+        'detail/<int:object_id>/', 
         hydro_station.hydro_station_detail_api_view, 
         name='hydro_station_retrieve'
     ),

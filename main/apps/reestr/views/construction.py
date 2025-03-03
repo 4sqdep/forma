@@ -15,13 +15,7 @@ from drf_yasg import openapi
 from decimal import Decimal
 from django.db.models import Sum, Value as V
 from django.db.models.functions import Coalesce
-from ...common.response import (
-    PostResponse, 
-    ErrorResponse,
-    PutResponse, 
-    ListResponse, 
-    DestroyResponse
-)
+from rest_framework.response import Response
 
 
 
@@ -35,8 +29,8 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return PostResponse(data=serializer.data, message="Construction Task")
-        return ErrorResponse(message="Failed to create Construction Task", errors=serializer.errors)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "Failed to create Construction Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 construction_task_create_api_view = ConstructionTaskCreateAPIView.as_view()
 
@@ -57,7 +51,7 @@ class ConstructionTaskListAPIView(generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
-    
+
     def get_queryset(self):
         next_stage_document = self.kwargs.get('next_stage_document')
         if next_stage_document:
@@ -84,11 +78,9 @@ class ConstructionTaskListAPIView(generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return ListResponse(data=serializer.data, status_code=status.HTTP_200_OK)
+        return Response(data={"status_code": status.HTTP_200_OK, "data": serializer.data}, status=status.HTTP_200_OK)
 
 construction_task_list_api_view = ConstructionTaskListAPIView.as_view()
-
-
 
 
 class ConstructionTaskDetailAPIView(generics.RetrieveAPIView):
@@ -97,12 +89,11 @@ class ConstructionTaskDetailAPIView(generics.RetrieveAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return ListResponse(serializer.data, status_code=status.HTTP_200_OK)
-
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+    
 construction_task_detail_api_view = ConstructionTaskDetailAPIView.as_view()
 
 
@@ -116,14 +107,13 @@ class ConstructionTaskUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=serializer.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return PutResponse(data=serializer.data, message="Construction Task", status_code=status.HTTP_200_OK)
-        return ErrorResponse(message="Failed to update Construction Task", errors=serializer.errors, status_code=status.HTTP_400_BAD_REQUEST)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(data={"message": "Failed to update Construction Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 construction_task_update_api_view = ConstructionTaskUpdateAPIView.as_view()
-    
 
 
 class ConstructionTaskDeleteAPIView(generics.DestroyAPIView):
@@ -135,7 +125,7 @@ class ConstructionTaskDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return DestroyResponse(message="Construction Task", status_code=status.HTTP_204_NO_CONTENT)
+        return Response(data={"message": "Construction Task deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 construction_task_delete_api_view = ConstructionTaskDeleteAPIView.as_view()
 
@@ -151,17 +141,24 @@ class MonthlyExpenseCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return PostResponse(data=serializer.data, message="Construction Task")
-        return ErrorResponse(message="Failed to create Construction Task", errors=serializer.errors)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "Failed to create Monthly Expense", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
-
 
 
 class MonthlyExpenseListAPIView(generics.ListAPIView):
     serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
+            ),
+        ]
+    )
 
     def get_queryset(self):
         next_stage_document = self.kwargs.get('next_stage_document')
@@ -170,7 +167,6 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
         return MonthlyExpense.objects.select_related("construction_task").filter(
             construction_task__next_stage_document=next_stage_document
         )
-
 
     def list(self, request, *args, **kwargs):
         next_stage_document = self.kwargs.get('next_stage_document')
@@ -228,10 +224,10 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
             "total_difference": Decimal(total_difference),
         }
 
-        return ListResponse(
+        return Response(
             data=response_data,
-            status_code=status.HTTP_200_OK,
-            message="Monthly expenses retrieved successfully."
+            status=status.HTTP_200_OK,
+            headers={"message": "Monthly expenses retrieved successfully."}
         )
 
 monthly_expense_list_api_view = MonthlyExpenseListAPIView.as_view()
@@ -247,10 +243,9 @@ class MonthlyExpenseDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return ListResponse(data=serializer.data, status_code=status.HTTP_200_OK)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 monthly_expense_detail_api_view = MonthlyExpenseDetailAPIView.as_view()
-
 
 
 
@@ -266,11 +261,10 @@ class MonthlyExpenseUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return PutResponse(data=serializer.data, message="Monthly Expense", status_code=status.HTTP_200_OK)
-        return ErrorResponse(message="Failed to update Monthly Expense", errors=serializer.errors, status_code=status.HTTP_400_BAD_REQUEST)
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response(data={"message": "Failed to update Monthly Expense", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()
-    
 
 
 class MonthlyExpenseDeleteAPIView(generics.DestroyAPIView):
@@ -282,6 +276,6 @@ class MonthlyExpenseDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return DestroyResponse(message="Monthly Expense", status_code=status.HTTP_204_NO_CONTENT)
+        return Response(data={"message": "Monthly Expense deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 monthly_expense_delete_api_view = MonthlyExpenseDeleteAPIView.as_view()
