@@ -1,6 +1,7 @@
 from django.contrib import admin
+from main.apps.dashboard.models.construction_installation_work import ConstructionFile, Section
 from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
-from main.apps.dashboard.models.document import Files, NextStageDocuments, ProjectDocumentation, ProjectSections
+from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectDocumentation, ProjectSections
 
 
 
@@ -36,10 +37,10 @@ class ProjectDocumentationAdmin(admin.ModelAdmin):
 
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):
-    list_display = ['id', 'created_by_full_name', 'subcategories_btn', 'project_document', 'name',
+    list_display = ['id', 'created_by_full_name', 'object', 'name',
                     'is_file', 'is_forma', 'is_section']
-    list_display_links = ['project_document', 'name']
-    search_fields = ['name', 'project_document']
+    list_display_links = ['name']
+    search_fields = ['name']
 
 
     def created_by_full_name(self, obj):
@@ -51,12 +52,12 @@ class NextStageDocumentsAdmin(admin.ModelAdmin):
 admin.site.register(NextStageDocuments, NextStageDocumentsAdmin)
 
 
-class FilesAdmin(admin.ModelAdmin):
-    list_display = ['id', 'document', 'project_section', 'created_by', 'files']
+class DocumentFilesAdmin(admin.ModelAdmin):
+    list_display = ['id', 'document', 'created_by', 'files']
     list_display_links = ['document', 'files']
 
 
-admin.site.register(Files, FilesAdmin)
+admin.site.register(DocumentFiles)
 
 
 class ProjectSectionsAdmin(admin.ModelAdmin):
@@ -65,3 +66,7 @@ class ProjectSectionsAdmin(admin.ModelAdmin):
     search_fields = ['name']
 
 admin.site.register(ProjectSections, ProjectSectionsAdmin)
+
+
+admin.site.register(Section)
+admin.site.register(ConstructionFile)

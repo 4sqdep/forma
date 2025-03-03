@@ -1,6 +1,7 @@
 from django.db import models
 from main.apps.account.models.user import User
-from main.apps.common.models import BaseMeta, BaseModel
+from main.apps.common.models import BaseMeta, BaseModel, Currency
+from main.apps.dashboard.models.dashboard import Object
     
 
 
@@ -11,21 +12,27 @@ class DocumentType(models.TextChoices):
     DELIVERED = 'delivered', "Delivered"
 
 
+
 class Form3(BaseModel):
-    inn_number = models.CharField(max_length=255, null=True, blank=True)
-    organization_name = models.CharField(max_length=355, null=True, blank=True)
-    employee = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    total_amount_year = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    vat = models.PositiveIntegerField()
     
+    work_volume_from_construction_beginning = models.PositiveIntegerField()
+    current_contract_amount_from_construction_beginning = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    
+    work_volume_from_year_beginnging = models.PositiveIntegerField()
+    current_contract_amount_from_year_beginnging = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
+    work_volume_for_month = models.PositiveIntegerField()
+    current_contract_amount_for_month = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
-
-    def __str__(self):
-        return f"{self.title}"
 
     class Meta(BaseMeta):
-        db_table = "industrial_equipment"
-        verbose_name = "Industrial Equipment"
-        verbose_name_plural = "Industrial Equipment"
-
+        db_table = "form3"
+        verbose_name = "Form3"
+        verbose_name_plural = "Form3"
 
     

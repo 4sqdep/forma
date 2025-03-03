@@ -29,7 +29,7 @@ urlpatterns = [
     path("api/v1/", include("main.apps.v1"), name="main"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path("", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui-v1"),
-    path('__debug__', include(debug_toolbar.urls)),
+    path('__debug__/', include(debug_toolbar.urls)),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

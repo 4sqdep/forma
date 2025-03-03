@@ -12,7 +12,7 @@ class EquipmentStatus(models.TextChoices):
 
 
 
-class IndustrialEquipment(BaseModel):
+class EquipmentCategory(BaseModel):
     hydro_station = models.ForeignKey(HydroStation, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     total_cost = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
@@ -21,14 +21,28 @@ class IndustrialEquipment(BaseModel):
         return f"{self.title}"
 
     class Meta(BaseMeta):
-        db_table = "industrial_equipment"
-        verbose_name = "Industrial Equipment"
-        verbose_name_plural = "Industrial Equipment"
+        db_table = "equipment_category"
+        verbose_name = "Equipment Category"
+        verbose_name_plural = "Equipment Categories"
+
+
+class EquipmentSubCategory(BaseModel):
+    equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta(BaseMeta):
+        db_table = "equipment_subcategory"
+        verbose_name = "Equipment SubCategory"
+        verbose_name_plural = "Equipment SubCategories"
 
 
 
 class IndustrialAsset(BaseModel):
-    industrial_equipment = models.ForeignKey(IndustrialEquipment, on_delete=models.SET_NULL, null=True)
+    equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
+    equipment_subcategory = models.ForeignKey(EquipmentSubCategory, on_delete=models.SET_NULL, null=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True)
     text = models.TextField(null=True, blank=True)
     quantity = models.PositiveIntegerField()
@@ -41,12 +55,7 @@ class IndustrialAsset(BaseModel):
     remaining_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     remaining_in_percent = models.PositiveIntegerField()
     expected_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    status = models.CharField(
-        max_length=20,
-        choices=EquipmentStatus.choices,
-        default=EquipmentStatus.CREATED,
-        verbose_name="Holati"
-    )
+    status = models.CharField(max_length=20, choices=EquipmentStatus.choices, default=EquipmentStatus.CREATED, verbose_name="Holati")
     date = models.DateField()
 
     class Meta(BaseMeta):
@@ -58,22 +67,22 @@ class IndustrialAsset(BaseModel):
     def save(self, *args, **kwargs):
         self.total_amount = self.quantity * self.price
         super().save(*args, **kwargs)
-        if self.industrial_equipment:
-            self.update_industrial_equipment_total_cost()
+        if self.equipment_category:
+            self.update_equipment_category_total_cost()
         
     
     def delete(self, *args, **kwargs):
-        industrial_equipment = self.industrial_equipment
+        equipment_category = self.equipment_category
         super().delete(*args, **kwargs)
-        if industrial_equipment:
-            industrial_equipment.total_cost = industrial_equipment.industrialasset_set.aggregate(total=Sum('total_amount'))['total'] or 0
-            industrial_equipment.save()
+        if equipment_category:
+            equipment_category.total_cost = equipment_category.industrialasset_set.aggregate(total=Sum('total_amount'))['total'] or 0
+            equipment_category.save()
         
     
-    def update_industrial_equipment_total_cost(self):
-        total_cost = self.industrial_equipment.industrialasset_set.aggregate(total=Sum('total_amount'))['total'] or 0
-        self.industrial_equipment.total_cost = total_cost
-        self.industrial_equipment.save()
+    def update_equipment_category_total_cost(self):
+        total_cost = self.equipment_category.industrialasset_set.aggregate(total=Sum('total_amount'))['total'] or 0
+        self.equipment_category.total_cost = total_cost
+        self.equipment_category.save()
 
 
 

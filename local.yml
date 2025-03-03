@@ -34,3 +34,11 @@ services:
       - local_postgres_data_backups:/backups:cached
     env_file:
       - ./.envs/.local/.postgres  
+
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    command: redis-server --save 60 1 --loglevel warning

@@ -19,8 +19,8 @@ class ObjectCategory(BaseModel):
 
     class Meta(BaseMeta):
         db_table = "object_category"
-        verbose_name = "ObjectCategory"
-        verbose_name_plural = "Asosiy Knopkalar"
+        verbose_name = "Object Category"
+        verbose_name_plural = "Object Categories"
 
 
 
@@ -35,21 +35,22 @@ class ObjectSubCategory(BaseModel):
     class Meta(BaseMeta):
         db_table = "object_subcategory"
         verbose_name = "Object SubCategory"
-        verbose_name_plural = "Kategoriya Knopkalar"
+        verbose_name_plural = "Object SubCategories"
 
 
 
 class Object(BaseModel):
-    object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Asosiy knopkalar")
-    object_subcategory = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, verbose_name="Categoriya knopka", blank=True, null=True)
-    title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
+    object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt Categoriya")
+    object_subcategory = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, verbose_name="Obyekt Subcategoriya", blank=True, null=True)
     project_documentation = models.ForeignKey('dashboard.ProjectDocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
-    smr_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    equipment_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    investment_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    uge_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
+    construction_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    equipment_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    other_expense = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     total_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    total_power = models.CharField(max_length=200, null=True, blank=True, verbose_name="Umumiy quvvat")
+    object_power = models.PositiveIntegerField(null=True, blank=True)
+    pressure = models.PositiveIntegerField(null=True, blank=True)
+    water_consumption = models.PositiveIntegerField(null=True, blank=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 
@@ -59,4 +60,4 @@ class Object(BaseModel):
     class Meta(BaseMeta):
         db_table = "object"
         verbose_name = "Object"
-        verbose_name_plural = "Obyekt nomlari"
+        verbose_name_plural = "Objects"

@@ -2,7 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.equipment.models.industrial_equipment import IndustrialAsset, IndustrialEquipment
-from ..serializers import industrial_equipment as industrial_equipment_serializer
+from ..serializers import form3 as industrial_equipment_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response

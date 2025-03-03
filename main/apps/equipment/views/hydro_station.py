@@ -5,18 +5,16 @@ from main.apps.equipment.models.hydro_station import FinancialResource, HydroSta
 from ..serializers import hydro_station as hydro_station_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from ...common.response import (
-    PostResponse, 
-    ErrorResponse,
-    PutResponse, 
-    ListResponse, 
-    DestroyResponse
-)
+from rest_framework import status
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
+
 
 
 class HydroStationCreateAPIView(generics.CreateAPIView):
     queryset = HydroStation.objects.all()
-    serializer_class = hydro_station_serializer.HydroStationSerializer
+    serializer_class = hydro_station_serializer.HydroStationCreateUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -24,8 +22,14 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return PostResponse(data=serializer.data, message="Hydro Station")
-        return ErrorResponse(message="Failed to create Hydro Station", errors=serializer.errors)
+            return Response(
+                data=serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+        return Response(
+            data={"message": "Failed to create Hydro Station", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
 hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
 
@@ -49,6 +53,9 @@ class HydroStationListAPIView(generics.ListAPIView):
     
     def get_queryset(self):
         queryset = HydroStation.objects.all()
+        search = self.request.query_params.get('search')
+        if search:
+            queryset = queryset.filter(object__title=search)
         return queryset
 
     def get_pagination_class(self):
@@ -68,10 +75,10 @@ class HydroStationListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
-            return response_data
+            return Response(response_data.data, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
-        return ListResponse(data=serializer.data, status_code=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 hydro_station_list_api_view = HydroStationListAPIView.as_view()
 
@@ -82,11 +89,11 @@ class HydroStationDetailAPIView(generics.RetrieveAPIView):
     serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    lookup_field='object_id'
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return ListResponse(serializer.data, status_code=status.HTTP_200_OK)
+    def get_object(self):
+        object_id = self.kwargs.get("object_id")
+        return get_object_or_404(HydroStation, object_id=object_id)
 
 hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
@@ -94,7 +101,7 @@ hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
 class HydroStationUpdateAPIView(generics.UpdateAPIView):
     queryset = HydroStation.objects.all()
-    serializer_class = hydro_station_serializer.HydroStationSerializer
+    serializer_class = hydro_station_serializer.HydroStationCreateUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -104,11 +111,11 @@ class HydroStationUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return PutResponse(data=serializer.data, message="Hydro Station", status_code=status.HTTP_200_OK)
-        return ErrorResponse(message="Failed to update Hydro Station", errors=serializer.errors, status_code=status.HTTP_400_BAD_REQUEST)
+            return Response({ "message": "Hydro Station updated successfully", "data": serializer.data,}, status=status.HTTP_200_OK)
+        return Response({"message": "Failed to update Hydro Station", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 hydro_station_update_api_view = HydroStationUpdateAPIView.as_view()
-    
+
 
 
 class HydroStationDeleteAPIView(generics.DestroyAPIView):
@@ -120,7 +127,7 @@ class HydroStationDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return DestroyResponse(message="Hydro Station", status_code=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Hydro Station deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 hydro_station_delete_api_view = HydroStationDeleteAPIView.as_view()
 
@@ -136,8 +143,8 @@ class FinancialResourceCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return PostResponse(data=serializer.data, message="Financial Resource")
-        return ErrorResponse(message="Failed to create Financial Resource", errors=serializer.errors)
+            return Response({"data": serializer.data, "message": "Financial Resource created successfully"}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Failed to create Financial Resource", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 financial_resource_create_api_view = FinancialResourceCreateAPIView.as_view()
 
@@ -147,6 +154,14 @@ class FinancialResourceListAPIView(generics.ListAPIView):
     serializer_class = hydro_station_serializer.FinancialResourceSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
+            ),
+        ]
+    )
 
     def get_queryset(self):
         queryset = FinancialResource.objects.select_related("hydro_station")
@@ -172,10 +187,10 @@ class FinancialResourceListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", None)
+            return Response(response_data.data, status=status.HTTP_200_OK)
         else:
             serializer = self.get_serializer(queryset, many=True)
-            response_data = ListResponse(data=serializer.data, status_code=status.HTTP_200_OK)
-        return response_data
+            return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
 
 financial_resource_list_api_view = FinancialResourceListAPIView.as_view()
 
@@ -190,7 +205,7 @@ class FinancialResourceDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return ListResponse(data=serializer.data, status_code=status.HTTP_200_OK)
+        return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
 
 financial_resource_detail_api_view = FinancialResourceDetailAPIView.as_view()
 
@@ -205,14 +220,14 @@ class FinancialResourceUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
-        serializer = self.get_serializer(instance, data=serializer.data, partial=partial)
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return PutResponse(data=serializer.data, message="Financial Resource", status_code=status.HTTP_200_OK)
-        return ErrorResponse(message="Failed to update Financial Resource", errors=serializer.errors, status_code=status.HTTP_400_BAD_REQUEST)
+            return Response({"data": serializer.data, "message": "Financial Resource updated successfully", "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
+        return Response({"message": "Failed to update Financial Resource", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 financial_resource_update_api_view = FinancialResourceUpdateAPIView.as_view()
-    
+
 
 
 class FinancialResourceDeleteAPIView(generics.DestroyAPIView):
@@ -224,6 +239,6 @@ class FinancialResourceDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return DestroyResponse(message="Financial Resource", status_code=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Financial Resource deleted successfully", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 
 financial_resource_delete_api_view = FinancialResourceDeleteAPIView.as_view()

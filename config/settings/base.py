@@ -55,6 +55,7 @@ LOCAL_APPS = [
     "main.apps.main.apps.MainConfig",
     "main.apps.reestr.apps.ReestrConfig",
     "main.apps.equipment.apps.EquipmentConfig",
+    "main.apps.form.apps.FormConfig",
     
 ]
 
@@ -241,4 +242,18 @@ CORS_ALLOWED_ORIGINS = [
     # "http://proclear-api.gettest.uz",
     # "http://185.100.55.144"
 ]
+
+
+DEBUG_TOOLBAR_CONFIG = {
+    "SHOW_TOOLBAR_CALLBACK": lambda request: True,
+}
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://redis:6379/1",
+    }
+}
+
 

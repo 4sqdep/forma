@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from main.apps.equipment.models.industrial_equipment import IndustrialAsset, IndustrialEquipment
+from main.apps.equipment.models.industrial_equipment import EquipmentSubCategory, IndustrialAsset, EquipmentCategory
 
 
 
-class IndustrialEquipmentCreateSerializer(serializers.ModelSerializer):
+class EquipmentCategoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IndustrialEquipment 
+        model = EquipmentCategory 
         fields = (
             'id',
             'hydro_station',
@@ -14,9 +14,9 @@ class IndustrialEquipmentCreateSerializer(serializers.ModelSerializer):
 
 
 
-class IndustrialEquipmentListSerializer(serializers.ModelSerializer):
+class EquipmentCategoryListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IndustrialEquipment 
+        model = EquipmentCategory 
         fields = (
             'id',
             'hydro_station',
@@ -25,12 +25,23 @@ class IndustrialEquipmentListSerializer(serializers.ModelSerializer):
         )
 
 
+class EquipmentSubCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EquipmentSubCategory 
+        fields = (
+            'id',
+            'equipment_category',
+            'title'
+        )
+
+
 
 class IndustrialAssetCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndustrialAsset
         fields = (
-            'industrial_equipment',
+            'equipment_category',
+            'equipment_subcategory',
             'measurement',
             'text',
             'quantity',
@@ -52,7 +63,8 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
         model = IndustrialAsset
         fields = (
             'id',
-            'industrial_equipment',
+            'equipment_category',
+            'equipment_subcategory',
             'measurement',
             'text',
             'quantity',

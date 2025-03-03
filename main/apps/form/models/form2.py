@@ -1,24 +1,29 @@
 from django.db import models
-from main.apps.common.models import BaseMeta, BaseModel, Template
+from main.apps.common.models import BaseMeta, BaseModel, Currency, Template
 from django.utils.translation import gettext_lazy as _
+from main.apps.dashboard.models.dashboard import Object
 
 
 
 
-class Form2(BaseModel):
-    template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True)
-    summary = models.TextField(null=True, blank=True)
-    attached_document = models.FileField(upload_to='attached_document/', null=True, blank=True)
-    is_delivered_to_recipient = models.BooleanField(default=False)
-    is_response_required = models.BooleanField(default=False)
-    without_qr_code = models.BooleanField(default=False)
+# class Form2(BaseModel):
+#     object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
+#     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, blank=True)
+#     total_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+#     total_amount_year = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
-    class Meta(BaseMeta):
-        db_table = "form2"
-        verbose_name = "Form2"
-        verbose_name_plural = "Form2"
-
+#     total_work_volume_from_construction_beginning = models.PositiveIntegerField()
+#     current_contract_amount_from_construction_beginning = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     
+#     total_work_volume_from_year_beginnging = models.PositiveIntegerField()
+#     current_contract_amount_from_year_beginnging = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+
+#     total_work_volume_for_month = models.PositiveIntegerField()
+#     current_contract_amount_for_month = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
 
-    
+
+#     class Meta(BaseMeta):
+#         db_table = "form2"
+#         verbose_name = "Form2"
+#         verbose_name_plural = "Form2"

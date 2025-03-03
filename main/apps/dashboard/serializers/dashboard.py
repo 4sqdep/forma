@@ -37,20 +37,20 @@ class ObjectSubCategorySerializer(serializers.ModelSerializer):
 
 
 
-class ObjectSerializer(serializers.ModelSerializer):
-    object_subcategory = ObjectSubCategorySerializer
-    class Meta:
-        model = Object
-        fields = (
-            'id', 
-            'object_subcategory', 
-            'name'
-        )
+# class ObjectSerializer(serializers.ModelSerializer):
+#     object_subcategory = ObjectSubCategorySerializer
+#     class Meta:
+#         model = Object
+#         fields = (
+#             'id', 
+#             'object_subcategory', 
+#             'name'
+#         )
 
-    def create(self, validated_data):
-        user = self.context['request'].user
-        validated_data['created_by'] = user
-        return super().create(validated_data)
+#     def create(self, validated_data):
+#         user = self.context['request'].user
+#         validated_data['created_by'] = user
+#         return super().create(validated_data)
 
 
 
@@ -61,14 +61,15 @@ class ObjectSerializer(serializers.ModelSerializer):
             'id',
             'object_category',
             'object_subcategory',
-            'title',
             'project_documentation',
-            'smr_price',
-            'equipment_price',
-            'investment_price',
-            'uge_price',
+            'title',
+            'construction_work_amount',
+            'equipment_amount',
+            'other_expense',
             'total_price',
-            'total_power',
+            'object_power',
+            'pressure',
+            'water_consumption',
             'start_date',
             'end_date',
         )

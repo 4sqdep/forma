@@ -10,28 +10,48 @@ urlpatterns = [
         name='project-btn'
     ),
     path(
+        'next-project-create/', 
+        document.next_stage_document_create_api_view, 
+        name='next_project_create'
+    ),
+    path(
         'next-project-list/<int:pk>/', 
-        document.next_stage_document_api_view,
+        document.next_stage_document_list_api_view,
         name='next-project-btn'
     ),
     path(
-        'next-priject-update/<int:pk>/', 
-        document.next_stage_document_api_view, 
+        'next-project-update/<int:pk>/', 
+        document.next_stage_document_update_api_view, 
         name='next-patch-project-name'
     ),
     path(
-        'next-project-create/', 
-        document.next_stage_document_api_view, 
-        name='add-next-project-btn'
+        'next-project-delete/<int:pk>/', 
+        document.next_stage_document_delete_api_view, 
+        name='next_project_delete'
     ),
     path(
         'file-create/', 
-        document.multiple_file_upload_api_view, 
+        document.file_create_api_view, 
         name='files-create'
     ),
     path(
         'file-list/<int:pk>/', 
-        document.get_files_api_view, 
+        document.file_list_api_view, 
+        name='get-files'
+    ),
+    path(
+        'file-update/<int:pk>/', 
+        document.file_update_api_view, 
+        name='files-create'
+    ),
+    path(
+        'file-detail/<int:pk>/', 
+        document.file_detail_api_view, 
+        name='get-files'
+    ),
+    path(
+        'file-delete/<int:pk>/', 
+        document.file_delete_api_view, 
         name='get-files'
     ),
     path(
@@ -42,17 +62,22 @@ urlpatterns = [
     path(
         'project-section-list/<int:pk>/', 
         document.project_section_api_view, 
-        name='get-sections'
+        name='get-sections_list'
     ),
     path(
         'project-section-create/', 
         document.project_section_api_view, 
-        name='post-sections'
+        name='post-sectioncreate'
     ),
     path(
         'project-section-update/<int:pk>/', 
         document.project_section_api_view, 
-        name='patch-sections'
+        name='patch-sections_update'
+    ),
+    path(
+        'project-section-delete/<int:pk>/', 
+        document.project_section_api_view, 
+        name='patch-sections_delete'
     ),
     path(
         'file-search/', 
