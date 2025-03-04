@@ -48,17 +48,17 @@ class IndustrialAssetCreateSerializer(serializers.ModelSerializer):
             'country',
             'code',
             'price',
+            'status',
             'delivered_amount',
-            'delivered_in_percent',
-            'remaining_amount',
-            'remaining_in_percent',
-            'expected_amount',
             'date'
         )
 
 
 
 class IndustrialAssetListSerializer(serializers.ModelSerializer):
+    delivered_in_percent = serializers.SerializerMethodField()
+    remaining_amount = serializers.SerializerMethodField()
+    remaining_in_percent = serializers.SerializerMethodField()
     class Meta:
         model = IndustrialAsset
         fields = (
@@ -71,12 +71,26 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
             'country',
             'code',
             'price',
+            'status',
             'total_amount',
             'delivered_amount',
             'delivered_in_percent',
             'remaining_amount',
             'remaining_in_percent',
-            'expected_amount',
             'date'
         )
+    
+    def get_delivered_in_percent(self, obj):
+        if obj.total_amount == 0:
+            return 0
+        percent = (obj.delivered_amount / obj.total_amount) * 100
+        return round(percent, 2)
+
+    def get_remaining_amount(self, obj):
+        return obj.total_amount - obj.delivered_amount
+    
+    def get_remaining_in_percent(self, obj):
+        delivered_in_percent = self.get_delivered_in_percent(obj) or 0
+        return max(0, 100 - delivered_in_percent)
+         
 
