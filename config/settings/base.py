@@ -199,7 +199,14 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = '/var/www/media/'
 STATIC_ROOT = '/var/www/static/'
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Allow only specific origins
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000",
+    "https://forma.hccs.uz",
+    "http://forma.hccs.uz",
+    "http://44.204.239.96"
+]
 
 CORS_ALLOW_HEADERS = [
     "accept",
@@ -211,7 +218,7 @@ CORS_ALLOW_HEADERS = [
     "user-agent",
     "x-csrftoken",
     "x-requested-with"
-] 
+]
 
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -222,26 +229,13 @@ CORS_ALLOW_METHODS = [
     "PUT",
 ]
 
-
 CSRF_TRUSTED_ORIGINS = [
-    # 'http://localhost:5174',
     "http://127.0.0.1:8000",
-    # "http://192.168.0.178:5174",
-    # "http://192.168.0.184:5173",
     "https://forma.hccs.uz",
     "http://forma.hccs.uz",
     "http://44.204.239.96"
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    # 'http://localhost:5174',
-    "http://127.0.0.1:8000",
-    # "http://192.168.0.178:5174",
-    # "http://192.168.0.184:5173",
-    "https://forma.hccs.uz",
-    "http://forma.hccs.uz",
-    "http://44.204.239.96"
-]
 
 
 DEBUG_TOOLBAR_CONFIG = {
