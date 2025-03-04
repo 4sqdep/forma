@@ -1,5 +1,5 @@
 from django.db import models
-from main.apps.common.models import BaseModel, BaseMeta
+from main.apps.common.models import BaseModel, BaseMeta, Currency
 from django.utils.text import slugify
 
 
@@ -43,6 +43,7 @@ class Object(BaseModel):
     object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt Categoriya")
     object_subcategory = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, verbose_name="Obyekt Subcategoriya", blank=True, null=True)
     project_documentation = models.ForeignKey('dashboard.ProjectDocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
     construction_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     equipment_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
@@ -51,6 +52,7 @@ class Object(BaseModel):
     object_power = models.PositiveIntegerField(null=True, blank=True)
     pressure = models.PositiveIntegerField(null=True, blank=True)
     water_consumption = models.PositiveIntegerField(null=True, blank=True)
+    object_file = models.FileField(upload_to="object_files/", null=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 

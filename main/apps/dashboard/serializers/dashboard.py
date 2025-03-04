@@ -62,6 +62,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             'object_category',
             'object_subcategory',
             'project_documentation',
+            'currency',
             'title',
             'construction_work_amount',
             'equipment_amount',
@@ -70,6 +71,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             'object_power',
             'pressure',
             'water_consumption',
+            'object_file',
             'start_date',
             'end_date',
         )

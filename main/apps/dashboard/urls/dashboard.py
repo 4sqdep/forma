@@ -42,22 +42,22 @@ urlpatterns = [
     path(
         'object-create/', 
         dashboard.object_api_view, 
-        name='object-create'
+        name='object_create'
     ),
     path(
         'object-detail/<int:pk>/', 
         dashboard.object_api_view, 
-        name='object-detail'
+        name='object_detail'
     ),
     path(
         'object-update/<int:pk>/', 
         dashboard.object_api_view, 
-        name='object-update'
+        name='object_update'
     ),
     path(
         'object-delete/<int:pk>/', 
         dashboard.object_api_view, 
-        name='object-delete'
+        name='object_delete'
     )
 ]
 
