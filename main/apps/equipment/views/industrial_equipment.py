@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import Q
 
 
 
@@ -261,7 +261,7 @@ class IndustrialAssetCreateAPIView(generics.CreateAPIView):
 
 industrial_asset_create_api_view = IndustrialAssetCreateAPIView.as_view()
 
-from django.db.models import Q
+
 
 class IndustrialAssetListAPIView(generics.ListAPIView):
     serializer_class = industrial_equipment_serializer.IndustrialAssetListSerializer
@@ -270,7 +270,8 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement")
-        equipment_category = self.kwargs.get("equipment_category")  
+        equipment_category = self.kwargs.get("equipment_category") 
+        equipment_subcategory = self.kwargs.get("equipment_subcategory")  
         equipment_subcategory = self.request.query_params.get("equipment_subcategory")
         status_param = self.request.query_params.get("status")
 
@@ -283,7 +284,6 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
             filter_conditions &= Q(status=status_param)
         queryset = queryset.filter(filter_conditions)
         return queryset
-
 
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
