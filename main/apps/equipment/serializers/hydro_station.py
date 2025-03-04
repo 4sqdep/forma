@@ -123,7 +123,7 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
 class HydroStationSerializer(serializers.ModelSerializer):
     object = ObjectSerializer()
     total_delivered_amount = serializers.SerializerMethodField()
-    transit_equipment_amount = serializers.SerializerMethodField()
+    # transit_equipment_amount = serializers.SerializerMethodField()
     delivered_amount_percent = serializers.SerializerMethodField()
     remained_delivered_amount = serializers.SerializerMethodField()
     remained_delivered_amount_percent = serializers.SerializerMethodField()
@@ -141,7 +141,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'prepayment_from_foreign_credit_account',
             'additional_prepayment',
             'payment_on_completion',
-            'transit_equipment_amount',
+            # 'transit_equipment_amount',
             'delivery_date',
             'calculation_type',
             'financial_resource_data',
@@ -158,11 +158,11 @@ class HydroStationSerializer(serializers.ModelSerializer):
             .aggregate(total=Sum('delivered_amount'))['total'] or 0.00
         )
     
-    def get_transit_equipment_amount(self, obj):
-        return (
-            IndustrialAsset.objects.filter(equipment_category__hydro_station=obj, status='in_transit')
-            .aggregate(total=Sum('expected_amount'))['total'] or 0.00
-        )
+    # def get_transit_equipment_amount(self, obj):
+    #     return (
+    #         IndustrialAsset.objects.filter(equipment_category__hydro_station=obj, status='in_transit')
+    #         .aggregate(total=Sum('expected_amount'))['total'] or 0.00
+    #     )
 
     def get_delivered_amount_percent(self, obj):
         total_delivered_amount = Decimal(self.get_total_delivered_amount(obj))

@@ -51,10 +51,6 @@ class IndustrialAsset(BaseModel):
     price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     total_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     delivered_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    delivered_in_percent = models.PositiveIntegerField()
-    remaining_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    remaining_in_percent = models.PositiveIntegerField()
-    expected_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     status = models.CharField(max_length=20, choices=EquipmentStatus.choices, default=EquipmentStatus.CREATED, verbose_name="Holati")
     date = models.DateField()
 
