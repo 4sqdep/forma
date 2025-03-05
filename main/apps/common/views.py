@@ -57,9 +57,26 @@ class CurrencyListAPIView(generics.ListAPIView):
         queryset = Currency.objects.all()
         cache.set(cache_key, queryset, CACHE_TIMEOUT) 
         return queryset
+    
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        paginator_class = self.get_pagination_class()
+
+        if paginator_class:
+            paginator = paginator_class()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", [])
+            return response_data
+
         serializer = self.get_serializer(queryset, many=True)
         return Response({"data":serializer.data}, status=status.HTTP_200_OK)
 
@@ -182,7 +199,7 @@ class MeasurementListAPIView(generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response({"data":serializer.data}, status=status.HTTP_200_OK)
 
 measurement_list_api_view = MeasurementListAPIView.as_view()
 
