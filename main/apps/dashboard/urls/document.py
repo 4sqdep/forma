@@ -15,7 +15,7 @@ urlpatterns = [
         name='next_project_create'
     ),
     path(
-        'next-project-list/<int:pk>/', 
+        'next-project-list/<int:object>/', 
         document.next_stage_document_list_api_view,
         name='next-project-btn'
     ),
@@ -35,7 +35,7 @@ urlpatterns = [
         name='files-create'
     ),
     path(
-        'file-list/<int:pk>/', 
+        'file-list/<int:document>/', 
         document.file_list_api_view, 
         name='get-files'
     ),

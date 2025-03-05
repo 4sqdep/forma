@@ -58,6 +58,7 @@ urlpatterns = [
         name='equipment_subcategory_delete'
     ),
 
+    # Industrial Asset
     path(
         'asset-create/', 
         industrial_equipment.industrial_asset_create_api_view, 
@@ -82,6 +83,11 @@ urlpatterns = [
         'asset-delete/<int:pk>/', 
         industrial_equipment.industrial_asset_delete_api_view, 
         name='industrial_asset_delete'
+    ),
+    path(
+        'all-asset-list/', 
+        industrial_equipment.all_industrial_asset_list_api_view, 
+        name='all_industrial_asset_list'
     ),
 ]
 

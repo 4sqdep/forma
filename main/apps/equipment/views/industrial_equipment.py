@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import Q
 
 
 
@@ -261,7 +261,7 @@ class IndustrialAssetCreateAPIView(generics.CreateAPIView):
 
 industrial_asset_create_api_view = IndustrialAssetCreateAPIView.as_view()
 
-from django.db.models import Q
+
 
 class IndustrialAssetListAPIView(generics.ListAPIView):
     serializer_class = industrial_equipment_serializer.IndustrialAssetListSerializer
@@ -270,7 +270,8 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement")
-        equipment_category = self.kwargs.get("equipment_category")  
+        equipment_category = self.kwargs.get("equipment_category") 
+        equipment_subcategory = self.kwargs.get("equipment_subcategory")  
         equipment_subcategory = self.request.query_params.get("equipment_subcategory")
         status_param = self.request.query_params.get("status")
 
@@ -283,7 +284,6 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
             filter_conditions &= Q(status=status_param)
         queryset = queryset.filter(filter_conditions)
         return queryset
-
 
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -357,3 +357,40 @@ class IndustrialAssetDeleteAPIView(generics.DestroyAPIView):
         return Response({"message": "Industrial Asset", "status_code": status.HTTP_204_NO_CONTENT})
 
 industrial_asset_delete_api_view = IndustrialAssetDeleteAPIView.as_view()
+
+
+
+class AllIndustrialAssetListAPIView(generics.ListAPIView):
+    serializer_class = industrial_equipment_serializer.IndustrialAssetListSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement")
+        # status_param = self.request.query_params.get("status")
+        # queryset = queryset.filter(stat)
+        return queryset
+
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginator_class = self.get_pagination_class()
+
+        if paginator_class:
+            paginator = paginator_class()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", [])
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"data": serializer.data})
+
+all_industrial_asset_list_api_view = AllIndustrialAssetListAPIView.as_view()

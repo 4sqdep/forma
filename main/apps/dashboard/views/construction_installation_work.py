@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.response import Response
-
+from django.db.models import Q
 
 
 
@@ -32,7 +32,7 @@ class SectionListCreateAPIView(SectionAPIView, generics.ListCreateAPIView):
         queryset = self.get_queryset()
         search = request.query_params.get('search')
         if search:
-            queryset = queryset.filter(object__title=search)
+            queryset = queryset.filter(title=search)
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -95,12 +95,16 @@ class ConstructionFileListCreateAPIView(ConstructionFileAPIView, generics.ListCr
 
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-
-        search = request.query_params.get('search')
-        if search:
-            queryset = queryset.filter(section__title__icontains=search)
-
         section = self.kwargs.get('section')
+        search = request.query_params.get('search')
+
+        if search:
+            queryset = queryset.filter(
+                Q(title__icontains=search) | 
+                Q(file_code__icontains=search) | 
+                Q(full_name__icontains=search)
+            )
+
         if section:
             queryset = queryset.filter(section=section)
 
@@ -112,9 +116,6 @@ class ConstructionFileListCreateAPIView(ConstructionFileAPIView, generics.ListCr
             response.data["status_code"] = status.HTTP_200_OK
             response.data["data"] = response.data.pop("results", [])
             return response
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)

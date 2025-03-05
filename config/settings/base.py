@@ -224,23 +224,25 @@ CORS_ALLOW_METHODS = [
 
 
 CSRF_TRUSTED_ORIGINS = [
-    # 'http://localhost:5174',
-    # "http://127.0.0.1:8000",
-    # "http://192.168.0.178:5174",
-    # "http://192.168.0.184:5173",
-    # "https://proclear-api.gettest.uz",
-    # "http://proclear-api.gettest.uz",
-    # "http://185.100.55.144"
+    'http://localhost:5174',
+    "http://127.0.0.1:8000",
+    "http://192.168.0.178:5174",
+    "http://192.168.0.184:5173",
+    "https://forma.hccs.uz",
+    "http://forma.hccs.uz",
+    "http://44.204.239.96",
+    "https://gidroproyekt.vercel.app"
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    # 'http://localhost:5174',
-    # "http://127.0.0.1:8000",
-    # "http://192.168.0.178:5174",
-    # "http://192.168.0.184:5173",
-    # "https://proclear-api.gettest.uz",
-    # "http://proclear-api.gettest.uz",
-    # "http://185.100.55.144"
+    'http://localhost:5174',
+    "http://127.0.0.1:8000",
+    "http://192.168.0.178:5174",
+    "http://192.168.0.184:5173",
+    "https://forma.hccs.uz",
+    "http://forma.hccs.uz",
+    "http://44.204.239.96",
+    "https://gidroproyekt.vercel.app"
 ]
 
 

@@ -105,14 +105,14 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = NextStageDocuments.objects.all()
-        object_id = self.kwargs.get("pk")  
+        object = self.kwargs.get("object")  
         search = self.request.query_params.get("search")
         is_forma = self.request.query_params.get("is_forma")
         is_section = self.request.query_params.get("is_section")
         is_file = self.request.query_params.get("is_file")
 
-        if object_id:
-            queryset = queryset.filter(object_id=object_id)
+        if object:
+            queryset = queryset.filter(object_id=object)
 
         if search:
             queryset = queryset.filter(name__icontains=search)
@@ -231,14 +231,14 @@ class DocumentFilesListAPIView(generics.ListAPIView):
         ]
     )
     def get_queryset(self):
-        document_id = self.kwargs.get("pk") 
+        document = self.kwargs.get("document") 
         queryset = DocumentFiles.objects.all()
         project_section = self.request.query_params.get("project_section")
         name = self.request.query_params.get("name")
         file_code = self.request.query_params.get("file_code")
 
-        if document_id:
-            queryset = queryset.filter(document_id=document_id)
+        if document:
+            queryset = queryset.filter(document=document)
         
         if project_section:
             queryset = queryset.filter(project_section=project_section)
