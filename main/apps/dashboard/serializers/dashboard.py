@@ -64,6 +64,8 @@ class ObjectSerializer(serializers.ModelSerializer):
             'project_documentation',
             'currency',
             'title',
+            'community_fund',
+            'foreign_loan',
             'construction_work_amount',
             'equipment_amount',
             'other_expense',
