@@ -78,7 +78,7 @@ class EquipmentCategoryListAPIView(generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data, "status_code": status.HTTP_200_OK})
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 equipment_category_list_api_view = EquipmentCategoryListAPIView.as_view()
 
