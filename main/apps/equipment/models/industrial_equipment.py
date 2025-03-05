@@ -16,6 +16,7 @@ class EquipmentCategory(BaseModel):
     hydro_station = models.ForeignKey(HydroStation, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     total_cost = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    has_subcategories = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title}"
@@ -27,7 +28,7 @@ class EquipmentCategory(BaseModel):
 
 
 class EquipmentSubCategory(BaseModel):
-    equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
+    equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
@@ -42,7 +43,7 @@ class EquipmentSubCategory(BaseModel):
 
 class IndustrialAsset(BaseModel):
     equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
-    equipment_subcategory = models.ForeignKey(EquipmentSubCategory, on_delete=models.SET_NULL, null=True)
+    equipment_subcategory = models.ForeignKey(EquipmentSubCategory, on_delete=models.SET_NULL, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True)
     text = models.TextField(null=True, blank=True)
     quantity = models.PositiveIntegerField()
