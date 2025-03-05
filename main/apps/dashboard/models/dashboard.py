@@ -45,6 +45,8 @@ class Object(BaseModel):
     project_documentation = models.ForeignKey('dashboard.ProjectDocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
+    community_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    foreign_loan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     construction_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     equipment_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     other_expense = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
