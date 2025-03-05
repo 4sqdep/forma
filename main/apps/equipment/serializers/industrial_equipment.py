@@ -9,9 +9,11 @@ class EquipmentCategoryCreateSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'hydro_station',
-            'title'
+            'title',
+            'has_subcategories'
         )
-
+        read_only_fields = ('has_subcategories',)   
+    
 
 
 class EquipmentCategoryListSerializer(serializers.ModelSerializer):
@@ -21,8 +23,11 @@ class EquipmentCategoryListSerializer(serializers.ModelSerializer):
             'id',
             'hydro_station',
             'title',
-            'total_cost'
+            'total_cost',
+            'has_subcategories'
         )
+    
+
 
 
 class EquipmentSubCategorySerializer(serializers.ModelSerializer):
@@ -33,6 +38,14 @@ class EquipmentSubCategorySerializer(serializers.ModelSerializer):
             'equipment_category',
             'title'
         )
+    
+    def create(self, validated_data):
+        subcategory = EquipmentSubCategory.objects.create(**validated_data)
+
+        if subcategory.equipment_category:
+            subcategory.equipment_category.has_subcategories = True
+            subcategory.equipment_category.save()
+        return subcategory
 
 
 
