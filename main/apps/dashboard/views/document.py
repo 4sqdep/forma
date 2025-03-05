@@ -627,7 +627,7 @@ class ObjectsPasswordDetailAPIView(APIView):
         paginated_queryset = paginator.paginate_queryset(get_password, request)
         serializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
         return Response(
-            data=serializer.data,
+            {'data': serializer.data},
             status=status.HTTP_200_OK
         )
     
