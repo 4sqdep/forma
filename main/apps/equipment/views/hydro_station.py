@@ -23,7 +23,7 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                data=serializer.data,
+                {'data': serializer.data},
                 status=status.HTTP_201_CREATED
             )
         return Response(
@@ -75,7 +75,7 @@ class HydroStationListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
-            return Response(response_data.data, status=status.HTTP_200_OK)
+            return Response({'data': response_data.data}, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
@@ -187,7 +187,7 @@ class FinancialResourceListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", None)
-            return Response(response_data.data, status=status.HTTP_200_OK)
+            return Response({'data': response_data.data}, status=status.HTTP_200_OK)
         else:
             serializer = self.get_serializer(queryset, many=True)
             return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
