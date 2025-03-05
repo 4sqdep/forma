@@ -29,7 +29,7 @@ class ConstructionTaskCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(data={"message": "Failed to create Construction Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 construction_task_create_api_view = ConstructionTaskCreateAPIView.as_view()
@@ -92,7 +92,7 @@ class ConstructionTaskDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
     
 construction_task_detail_api_view = ConstructionTaskDetailAPIView.as_view()
 
@@ -110,7 +110,7 @@ class ConstructionTaskUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         return Response(data={"message": "Failed to update Construction Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 construction_task_update_api_view = ConstructionTaskUpdateAPIView.as_view()
@@ -141,7 +141,7 @@ class MonthlyExpenseCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
         return Response(data={"message": "Failed to create Monthly Expense", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
@@ -225,7 +225,7 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
         }
 
         return Response(
-            data=response_data,
+            {'data': response_data},
             status=status.HTTP_200_OK,
             headers={"message": "Monthly expenses retrieved successfully."}
         )
@@ -243,7 +243,7 @@ class MonthlyExpenseDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK)
 
 monthly_expense_detail_api_view = MonthlyExpenseDetailAPIView.as_view()
 
@@ -261,7 +261,7 @@ class MonthlyExpenseUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK)
         return Response(data={"message": "Failed to update Monthly Expense", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()

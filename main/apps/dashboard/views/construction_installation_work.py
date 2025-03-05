@@ -50,7 +50,7 @@ class SectionListCreateAPIView(SectionAPIView, generics.ListCreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
 
 section_list_create_api_view = SectionListCreateAPIView.as_view()
 
@@ -124,7 +124,7 @@ class ConstructionFileListCreateAPIView(ConstructionFileAPIView, generics.ListCr
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
 
 construction_file_list_create_api_view = ConstructionFileListCreateAPIView.as_view()
 

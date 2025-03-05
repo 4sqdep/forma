@@ -23,14 +23,14 @@ class GetObjectsPasswordView(APIView):
     def get(self, request, pk=None):
         project_doc = ObjectsPassword.objects.filter(project_documentation_id=pk)
         serializer = GetObjectsPasswordSerializer(project_doc, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK, headers={"message": "Barcha malumotlar"})
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK, headers={"message": "Barcha malumotlar"})
 
     def post(self, request):
         serializer = CreateObjectsPasswordSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers={"message": "Malumot qo'shildi"})
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Malumot qo'shilmadi"})
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED, headers={"message": "Malumot qo'shildi"})
+        return Response({'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Malumot qo'shilmadi"})
 
     def patch(self, request, pk=None):
         try:
@@ -41,8 +41,8 @@ class GetObjectsPasswordView(APIView):
         serializer = PatchbjectsPasswordSerializer(obj_password, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(data=serializer.data, status=status.HTTP_200_OK, headers={"message": "Malumot yangilandi"})
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Malumotni yangilashda xatolik"})
+            return Response({'data': serializer.data}, status=status.HTTP_200_OK, headers={"message": "Malumot yangilandi"})
+        return Response({'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Malumotni yangilashda xatolik"})
 
 get_object_password_api_view = GetObjectsPasswordView.as_view()
 
@@ -56,8 +56,8 @@ class UploadFilesAPIView(APIView):
         serializer = FilesCreateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED, headers={"message": "Fayl muvaffaqiyatli yuklandi"})
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Yuklashda xatolik yuz berdi"})
+            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED, headers={"message": "Fayl muvaffaqiyatli yuklandi"})
+        return Response({'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST, headers={"message": "Yuklashda xatolik yuz berdi"})
 
 upload_files_api_view = UploadFilesAPIView.as_view()
 
@@ -70,7 +70,7 @@ class GetFilesAPIView(APIView):
     def get(self, request, pk=None):
         get_files = Files.objects.filter(obj_password_id=pk)
         serializer = GetFilesSerializer(get_files, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK, headers={"message": "Fayllar topildi"})
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK, headers={"message": "Fayllar topildi"})
 
 get_files_api_view = GetFilesAPIView.as_view()
 
@@ -86,6 +86,6 @@ class SearchObjectsNameAPIView(APIView):
 
         obj_name = Object.objects.filter(Q(name__icontains=q))
         serializer = SearchObjectsNameSerializer(obj_name, many=True)
-        return Response(data=serializer.data, status=status.HTTP_200_OK, headers={"message": "Siz izlagan ma'lumotlar"})
+        return Response({'data': serializer.data}, status=status.HTTP_200_OK, headers={"message": "Siz izlagan ma'lumotlar"})
 
 search_object_name_api_view = SearchObjectsNameAPIView.as_view()

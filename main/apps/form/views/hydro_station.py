@@ -95,10 +95,7 @@ class HydroStationDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(
-            status = status.HTTP_200_OK,
-            data=serializer.data
-        )
+        return Response({'data': serializer.data}, status = status.HTTP_200_OK)
 
 hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
@@ -121,7 +118,7 @@ class HydroStationUpdateAPIView(generics.UpdateAPIView):
                 status = status.HTTP_200_OK,
                 data=serializer.data
                 )
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+        return Response({'data': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 hydro_station_update_api_view = HydroStationUpdateAPIView.as_view()
     
