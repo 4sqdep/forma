@@ -1,5 +1,6 @@
 from django.db import models
 from main.apps.common.models import BaseMeta, BaseModel, Currency, Measurement
+from main.apps.dashboard.models.dashboard import Object
 from main.apps.equipment.models.hydro_station import HydroStation
 from django.db.models import Sum
 
@@ -44,6 +45,7 @@ class EquipmentSubCategory(BaseModel):
 class IndustrialAsset(BaseModel):
     equipment_category = models.ForeignKey(EquipmentCategory, on_delete=models.SET_NULL, null=True)
     equipment_subcategory = models.ForeignKey(EquipmentSubCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, blank=True)
     text = models.TextField(null=True, blank=True)

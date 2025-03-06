@@ -22,14 +22,8 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(
-                {'data': serializer.data},
-                status=status.HTTP_201_CREATED
-            )
-        return Response(
-            data={"message": "Failed to create Hydro Station", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Failed to create Hydro Station", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
 
@@ -89,11 +83,16 @@ class HydroStationDetailAPIView(generics.RetrieveAPIView):
     serializer_class = hydro_station_serializer.HydroStationSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field='object_id'
+    lookup_field = 'object_id'
 
     def get_object(self):
         object_id = self.kwargs.get("object_id")
         return get_object_or_404(HydroStation, object_id=object_id)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)        
 
 hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 

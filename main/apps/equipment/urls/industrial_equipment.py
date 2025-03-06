@@ -85,7 +85,7 @@ urlpatterns = [
         name='industrial_asset_delete'
     ),
     path(
-        'all-asset-list/', 
+        'all-asset-list/<int:obj>/', 
         industrial_equipment.all_industrial_asset_list_api_view, 
         name='all_industrial_asset_list'
     ),

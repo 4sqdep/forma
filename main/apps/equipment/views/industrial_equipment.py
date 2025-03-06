@@ -376,8 +376,9 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement")
-        # status_param = self.request.query_params.get("status")
-        # queryset = queryset.filter(stat)
+        obj = self.kwargs.get('obj')
+        if obj:
+            queryset = queryset.filter(object=obj)
         return queryset
 
     def get_pagination_class(self):
