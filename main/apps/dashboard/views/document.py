@@ -149,8 +149,6 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
 next_stage_document_list_api_view = NextStageDocumentsListAPIView.as_view()
 
 
-
-
 class NextStageDocumentsDetailAPIView(generics.RetrieveAPIView):
     queryset = NextStageDocuments.objects.all()
     serializer_class = document_serializer.NextStageDocumentsSerializer
