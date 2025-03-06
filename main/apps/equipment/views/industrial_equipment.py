@@ -279,6 +279,11 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
         equipment_subcategory = self.request.query_params.get("equipment_subcategory")
         status_param = self.request.query_params.get("status")
 
+        if equipment_category:
+            category = EquipmentCategory.objects.filter(id=equipment_category).first()
+            if category and category.has_subcategories and not equipment_subcategory:
+                return IndustrialAsset.objects.none()
+
         filter_conditions = Q()
         if equipment_category:
             filter_conditions &= Q(equipment_category=equipment_category)

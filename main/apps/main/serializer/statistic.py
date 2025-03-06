@@ -38,7 +38,7 @@ class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
         return [
             {
                 "object_subcategory_id": data['object_subcategory'],  
-                "object_subcategory_name": ObjectSubCategory.objects.get(id=data['object_subcategory']).name if data['object_subcategory'] else None,  
+                "object_subcategory_title": ObjectSubCategory.objects.get(id=data['object_subcategory']).name if data['object_subcategory'] else None,  
                 "count": data['count'],  
                 "total_price": data['total_price'] or 0  
             }
