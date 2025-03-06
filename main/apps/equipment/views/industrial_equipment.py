@@ -239,22 +239,12 @@ class EquipmentSubCategoryDeleteAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        equipment_category = instance.equipment_category  # Store reference before deletion
-
-        print(f"Deleting subcategory {instance.id}, category: {equipment_category}")
-
-        self.perform_destroy(instance)  # Delete subcategory first
-
-        # Ensure category is NOT deleted
-        if equipment_category and EquipmentCategory.objects.filter(id=equipment_category.id).exists():
-            if not EquipmentSubCategory.objects.filter(equipment_category=equipment_category).exists():
-                EquipmentCategory.objects.filter(id=equipment_category.id).update(has_subcategories=False)
-
-        return Response({"message": "Equipment Subcategory deleted"}, status=status.HTTP_204_NO_CONTENT)
-
-
-
-
+        equipment_cateogry = instance.equipment_category
+        self.perform_destroy(instance)
+        if equipment_cateogry and EquipmentSubCategory.objects.filter(equipment_cateogry=equipment_cateogry).exists():
+            equipment_cateogry.has_subcategories = False
+            equipment_cateogry.save()
+        return Response({"message": "Equipment Subcategory successfully deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 equipment_subcategory_delete_api_view = EquipmentSubCategoryDeleteAPIView.as_view()
 

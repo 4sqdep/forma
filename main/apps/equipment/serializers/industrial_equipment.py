@@ -29,7 +29,6 @@ class EquipmentCategoryListSerializer(serializers.ModelSerializer):
     
 
 
-
 class EquipmentSubCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = EquipmentSubCategory 
@@ -56,6 +55,7 @@ class IndustrialAssetCreateSerializer(serializers.ModelSerializer):
             'equipment_category',
             'equipment_subcategory',
             'measurement',
+            'currency',
             'text',
             'quantity',
             'country',
