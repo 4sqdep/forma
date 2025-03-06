@@ -30,6 +30,10 @@ urlpatterns = [
         name='next_project_delete'
     ),
     path(
+        'next-project-detail/<int:pk>/',
+        document.next_stage_document_detail_api_view,
+    ),
+    path(
         'file-create/', 
         document.file_create_api_view, 
         name='files-create'
