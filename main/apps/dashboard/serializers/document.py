@@ -144,17 +144,13 @@ class CreateProjectSectionsSerializer(serializers.ModelSerializer):
 
 
 
-# class NextStageDocumentsSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = NextStageDocuments
-#         fields = (
-#             'id', 
-#             'created_by', 
-#             'name', 
-#             'is_forma', 
-#             'is_section', 
-#             'is_file'
-#         )
+class NextStageDocumentsSerializerDetail(serializers.ModelSerializer):
+    class Meta:
+        model = NextStageDocuments
+        fields = (
+            'id',
+            'name',
+        )
 
 
 class ProjectDocumentationSerializer(serializers.ModelSerializer):
