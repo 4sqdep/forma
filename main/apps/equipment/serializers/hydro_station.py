@@ -8,8 +8,6 @@ from main.apps.equipment.models.industrial_equipment import IndustrialAsset
 
 
 
-
-
 class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = HydroStation 
@@ -36,6 +34,12 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         financial_type = attrs.get('financial_resource_type')
         financial_data = attrs.get('financial_resource_data', [])
+        obj = attrs.get('object')
+
+        if HydroStation.objects.filter(object=obj).exists():
+            raise serializers.ValidationError({
+                "object": "A Hydrostation is already exists for this object."
+            })
 
         required_titles = {"собственные средства", "кредитные средства"}
         if financial_type == FinancialResourceType.GES:

@@ -101,8 +101,8 @@ urlpatterns = [
     ),
     path(
         'all-statistics-data/', 
-        document.statistical_data_api_view, 
-        name='all-statistic'
+        document.all_statistics_data_api_view, 
+        name='all_statistics_data'
     ),
 ]
 
