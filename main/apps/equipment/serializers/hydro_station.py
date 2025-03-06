@@ -141,6 +141,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'contract_number',
             'contract_amount',
             'currency',
+            'file',
             'prepayment_from_own_fund',
             'prepayment_from_foreign_credit_account',
             'additional_prepayment',
