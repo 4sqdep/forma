@@ -32,14 +32,20 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
 
     
     def validate(self, attrs):
-        financial_type = attrs.get('financial_resource_type')
+        financial_type = attrs.get('financial_reource_type')
         financial_data = attrs.get('financial_resource_data', [])
         obj = attrs.get('object')
 
-        if HydroStation.objects.filter(object=obj).exists():
-            raise serializers.ValidationError({
-                "object": "A Hydrostation is already exists for this object."
-            })
+        if self.instance:
+            if HydroStation.objects.filter(object=obj).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError({
+                    "object": "A Hydrostation already exists for this object."
+                })
+        else:
+            if HydroStation.objects.filter(object=obj).exists():
+                raise serializers.ValidationError({
+                    "object": "A Hydrostation already exists for this object."
+                })
 
         required_titles = {"собственные средства", "кредитные средства"}
         if financial_type == FinancialResourceType.GES:
@@ -54,6 +60,7 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
                     "financial_resource_data": f"For 'funds', financial_resource_data must contain {required_titles}."
                 })
         return attrs
+
 
     def calculate_financial_data(self, financial_data, contract_amount, calculation_type):
         own_funds = None
@@ -110,7 +117,7 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
         instance.transit_equipment_amount = validated_data.get("transit_equipment_amount", instance.transit_equipment_amount)
         instance.delivery_date = validated_data.get("delivery_date", instance.delivery_date)
         instance.calculation_type = validated_data.get("calculation_type", instance.calculation_type)
-        instance.financial_resource_type = validated_data.get("financial_resource_type", instance.financial_resource_type)
+        instance.financial_reource_type = validated_data.get("financial_reource_type", instance.financial_reource_type)
 
         financial_data = validated_data.get("financial_resource_data", instance.financial_resource_data)
         contract_amount = Decimal(instance.contract_amount)
