@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
-from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas, NextStageDocumentsSerializer
+from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas, NextStageDocumentsSerializer, NextStageDocumentsSerializerDetail
 from main.apps.main.models import ObjectsPassword
 from main.apps.main.serializer.statistic import ObjectCategoryStatisticsSerializer
 from main.apps.main.serializers import GetObjectsPasswordSerializer
@@ -147,6 +147,8 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 next_stage_document_list_api_view = NextStageDocumentsListAPIView.as_view()
+
+
 
 
 class NextStageDocumentsDetailAPIView(generics.RetrieveAPIView):
