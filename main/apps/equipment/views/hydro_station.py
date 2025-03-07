@@ -93,11 +93,7 @@ class HydroStationDetailAPIView(generics.RetrieveAPIView):
 
     def get_object(self):
         object_id = self.kwargs.get("object_id")
-        instace = HydroStation.objects.filter(object_id=object_id).first()
-        if instace:
-            serializer = self.get_serializer(instace)
-            return Response({'data': serializer.data})
-        return Response([])
+        return get_object_or_404(HydroStation, object_id=object_id)
 
 hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
@@ -209,7 +205,7 @@ class FinancialResourceDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 financial_resource_detail_api_view = FinancialResourceDetailAPIView.as_view()
 

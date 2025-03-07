@@ -7,7 +7,7 @@ urlpatterns = [
     path(
         'project-document/<int:pk>/', 
         document.project_document_api_view, 
-        name='project-btn'
+        name='project_document'
     ),
     path(
         'next-project-create/', 
@@ -17,12 +17,12 @@ urlpatterns = [
     path(
         'next-project-list/<int:object>/', 
         document.next_stage_document_list_api_view,
-        name='next-project-btn'
+        name='next_project_list'
     ),
     path(
         'next-project-update/<int:pk>/', 
         document.next_stage_document_update_api_view, 
-        name='next-patch-project-name'
+        name='next_project_update'
     ),
     path(
         'next-project-delete/<int:pk>/', 
@@ -32,6 +32,7 @@ urlpatterns = [
     path(
         'next-project-detail/<int:pk>/',
         document.next_stage_document_detail_api_view,
+        name='next_project_detail'
     ),
     path(
         'file-create/', 
@@ -41,52 +42,52 @@ urlpatterns = [
     path(
         'file-list/<int:document>/', 
         document.file_list_api_view, 
-        name='get-files'
+        name='file_list'
     ),
     path(
         'file-update/<int:pk>/', 
         document.file_update_api_view, 
-        name='files-create'
+        name='files_update'
     ),
     path(
         'file-detail/<int:pk>/', 
         document.file_detail_api_view, 
-        name='get-files'
+        name='file_detail'
     ),
     path(
         'file-delete/<int:pk>/', 
         document.file_delete_api_view, 
-        name='get-files'
+        name='file_delete'
     ),
     path(
         'file-section-list/<int:pk>/', 
         document.get_files_section_api_view, 
-        name='get-files'
+        name='file_section_list'
     ),
     path(
         'project-section-list/<int:pk>/', 
         document.project_section_api_view, 
-        name='get-sections_list'
+        name='project_sections_list'
     ),
     path(
         'project-section-create/', 
         document.project_section_api_view, 
-        name='post-sectioncreate'
+        name='project_section_create'
     ),
     path(
         'project-section-update/<int:pk>/', 
         document.project_section_api_view, 
-        name='patch-sections_update'
+        name='project_section_update'
     ),
     path(
         'project-section-delete/<int:pk>/', 
         document.project_section_api_view, 
-        name='patch-sections_delete'
+        name='project_section_delete'
     ),
     path(
         'file-search/', 
         document.file_search_api_view, 
-        name='files-search'
+        name='file_search'
     ),
     path(
         'get-doc/', 
@@ -100,8 +101,8 @@ urlpatterns = [
     ),
     path(
         'all-statistics-data/', 
-        document.statistical_data_api_view, 
-        name='all-statistic'
+        document.all_statistics_data_api_view, 
+        name='all_statistics_data'
     ),
 ]
 

@@ -43,7 +43,6 @@ class LoginSerializer(TokenObtainPairSerializer):
                 'can_put': permission.can_put,
                 'can_delete': permission.can_delete,
             }
-
         return token
 
     def validate(self, attrs):
@@ -67,6 +66,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             'id', 
             'first_name', 
             'last_name', 
+            'username',
             'email', 
             'phone', 
             'image'

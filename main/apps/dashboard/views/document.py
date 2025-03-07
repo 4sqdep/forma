@@ -635,7 +635,7 @@ object_password_detail_api_view = ObjectsPasswordDetailAPIView.as_view()
 
 
 
-class StatisticalData(APIView):
+class AllStatisticsData(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -654,4 +654,4 @@ class StatisticalData(APIView):
         }
         return Response({'data':formatted_data}, status=status.HTTP_200_OK)
 
-statistical_data_api_view = StatisticalData.as_view()
+all_statistics_data_api_view = AllStatisticsData.as_view()

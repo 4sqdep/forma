@@ -239,8 +239,12 @@ class EquipmentSubCategoryDeleteAPIView(generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        equipment_cateogry = instance.equipment_category
         self.perform_destroy(instance)
-        return Response({"message": "Equipment Subcategory"}, status=status.HTTP_204_NO_CONTENT)
+        if equipment_cateogry and EquipmentSubCategory.objects.filter(equipment_cateogry=equipment_cateogry).exists():
+            equipment_cateogry.has_subcategories = False
+            equipment_cateogry.save()
+        return Response({"message": "Equipment Subcategory successfully deleted!"}, status=status.HTTP_204_NO_CONTENT)
 
 equipment_subcategory_delete_api_view = EquipmentSubCategoryDeleteAPIView.as_view()
 
@@ -274,6 +278,11 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
         equipment_subcategory = self.kwargs.get("equipment_subcategory")  
         equipment_subcategory = self.request.query_params.get("equipment_subcategory")
         status_param = self.request.query_params.get("status")
+
+        if equipment_category:
+            category = EquipmentCategory.objects.filter(id=equipment_category).first()
+            if category and category.has_subcategories and not equipment_subcategory:
+                return IndustrialAsset.objects.none()
 
         filter_conditions = Q()
         if equipment_category:
