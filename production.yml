@@ -53,7 +53,6 @@ services:
     volumes:
       - static_volume:/var/www/static
       - media_volume:/var/www/media
-      - /etc/letsencrypt:/etc/letsencrypt:ro  # 👈 Add this line
     ports:
       - "80:80"
       - "443:443"
@@ -64,4 +63,3 @@ services:
 networks:
   gidro_network:
     driver: bridge
-
