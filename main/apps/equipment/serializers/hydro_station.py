@@ -32,29 +32,30 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
 
     
     def validate(self, attrs):
-        financial_type = attrs.get('financial_reource_type')
-        financial_data = attrs.get('financial_resource_data', [])
-        obj = attrs.get('object')
+        financial_type = attrs.get("financial_resource_type")  
+        financial_data = attrs.get("financial_resource_data", [])
+        obj = attrs.get("object")
 
-        if self.instance:
-            if HydroStation.objects.filter(object=obj).exclude(id=self.instance.id).exists():
-                raise serializers.ValidationError({
-                    "object": "A Hydrostation already exists for this object."
-                })
-        else:
-            if HydroStation.objects.filter(object=obj).exists():
-                raise serializers.ValidationError({
-                    "object": "A Hydrostation already exists for this object."
-                })
+        if financial_data is None:
+            attrs["financial_resource_data"] = []
+        elif not isinstance(financial_data, list):
+            raise serializers.ValidationError({
+                "financial_resource_data": "Must be a list of dictionaries."
+            })
 
-        required_titles = {"собственные средства", "кредитные средства"}
-        if financial_type == FinancialResourceType.GES:
-            if not isinstance(financial_data, list):
+        if obj:
+            query = HydroStation.objects.filter(object=obj)
+            if self.instance:
+                query = query.exclude(id=self.instance.id)
+            if query.exists():
                 raise serializers.ValidationError({
-                    "financial_resource_data": "Must be a list of dictionaries."
+                    "object": "A HydroStation already exists for this object."
                 })
 
-            existing_titles = {item.get("title") for item in financial_data}
+        if financial_data and financial_type == FinancialResourceType.GES:
+            required_titles = {"собственные средства", "кредитные средства"}
+            existing_titles = {item.get("title") for item in financial_data if "title" in item}
+
             if existing_titles != required_titles:
                 raise serializers.ValidationError({
                     "financial_resource_data": f"For 'funds', financial_resource_data must contain {required_titles}."
@@ -117,15 +118,16 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
         instance.transit_equipment_amount = validated_data.get("transit_equipment_amount", instance.transit_equipment_amount)
         instance.delivery_date = validated_data.get("delivery_date", instance.delivery_date)
         instance.calculation_type = validated_data.get("calculation_type", instance.calculation_type)
-        instance.financial_reource_type = validated_data.get("financial_reource_type", instance.financial_reource_type)
+        instance.financial_reource_type = validated_data.get("financial_reource_type", instance.financial_reource_type) 
 
         financial_data = validated_data.get("financial_resource_data", instance.financial_resource_data)
         contract_amount = Decimal(instance.contract_amount)
         calculation_type = instance.calculation_type
 
-        instance.financial_resource_data = self.calculate_financial_data(
-            financial_data, contract_amount, calculation_type
-        )
+        if financial_data:
+            instance.financial_resource_data = self.calculate_financial_data(
+                financial_data, contract_amount, calculation_type
+            )
         instance.save()
         return instance
     
@@ -139,6 +141,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
     remained_delivered_amount = serializers.SerializerMethodField()
     remained_delivered_amount_percent = serializers.SerializerMethodField()
     latest_delivery_date = serializers.SerializerMethodField()
+    total_ges_amount = serializers.SerializerMethodField()
     class Meta:
         model = HydroStation 
         fields = (
@@ -157,11 +160,13 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'delivery_date',
             'calculation_type',
             'financial_resource_data',
+            'financial_reource_type',
             'total_delivered_amount',
             'delivered_amount_percent',
             'remained_delivered_amount',
             'remained_delivered_amount_percent',
-            'latest_delivery_date'
+            'latest_delivery_date',
+            'total_ges_amount'
         )
 
     def get_total_delivered_amount(self, obj):
@@ -192,6 +197,12 @@ class HydroStationSerializer(serializers.ModelSerializer):
         asset = IndustrialAsset.objects.filter(equipment_category__hydro_station=obj).order_by("-date").first()
         return asset.date if asset else None
     
+    def get_total_ges_amount(self, obj):
+        total = Decimal(0)
+        if obj.financial_reource_type == FinancialResourceType.GES:
+            for data in obj.financial_resource_data:
+                total += Decimal(data.get('percent_or_amount', "0"))
+        return float(total)
     
 
 class FinancialResourceSerializer(serializers.ModelSerializer):

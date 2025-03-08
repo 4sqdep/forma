@@ -1,5 +1,5 @@
 from django.contrib import admin
-from main.apps.dashboard.models.construction_installation_work import ConstructionFile, Section
+from main.apps.dashboard.models.construction_installation_work import ConstructionInstallationFile, ConstructionInstallationSection, ConstructionInstallationStatistics
 from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
 from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectDocumentation, ProjectSections
 
@@ -68,5 +68,6 @@ class ProjectSectionsAdmin(admin.ModelAdmin):
 admin.site.register(ProjectSections, ProjectSectionsAdmin)
 
 
-admin.site.register(Section)
-admin.site.register(ConstructionFile)
+admin.site.register(ConstructionInstallationSection)
+admin.site.register(ConstructionInstallationFile)
+admin.site.register(ConstructionInstallationStatistics)
