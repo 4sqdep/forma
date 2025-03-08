@@ -61,3 +61,7 @@ services:
       - django
     command: /bin/bash -c "chown -R nginx:nginx /var/www/static && chmod -R 755 /var/www/static && nginx -g 'daemon off;'"
 
+networks:
+  gidro_network:
+    driver: bridge
+
