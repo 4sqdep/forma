@@ -1,25 +1,54 @@
 from django.db import models
 from main.apps.dashboard.models.dashboard import Object
-from main.apps.common.models import BaseModel, BaseMeta
+from main.apps.common.models import BaseModel, BaseMeta, Currency
 
 
 
-class Section(BaseModel):
+class ConstructionInstallationSection(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, verbose_name="Loyiha nomi", blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
+    is_forma = models.BooleanField(default=False, verbose_name="Forma")
+    is_file = models.BooleanField(default=False, verbose_name="Fayl yuklash")
 
     def __str__(self):
         return f"{self.title}"
     
     class Meta(BaseMeta):
-        db_table = "sections"
-        verbose_name = "Section"
-        verbose_name_plural = "Sections"
+        db_table = "construction_installation_section"
+        verbose_name = "Construction Installation Section"
+        verbose_name_plural = "Construction Installation Sections"
 
 
 
-class ConstructionFile(BaseModel):
-    section = models.ForeignKey(Section, on_delete=models.SET_NULL, verbose_name="Project Section", blank=True, null=True)
+class ConstructionInstallationStatistics(BaseModel):
+    object = models.ForeignKey(Object, on_delete=models.SET_NULL, blank=True, null=True)
+    installation_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    date = models.DateField(null=True, blank=True)
+    remanied_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    cost_of_performed_work = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    contract_file = models.FileField(upload_to="contract_files/", blank=True, null=True)
+    contractor = models.CharField(max_length=255, null=True, blank=True)
+
+    class Meta(BaseMeta):
+        db_table = "construction_installation_statistics"
+        verbose_name = "Construction Installation Statistics"
+        verbose_name_plural = "Construction Installation Statistics"
+
+
+
+class ConstructionInstallationSubSection(BaseModel):
+    construction_installation_section = models.ForeignKey(ConstructionInstallationSection, on_delete=models.SET_NULL, blank=True, null=True)
+    title = models.CharField(max_length=1000, blank=True, null=True)
+
+    class Meta(BaseMeta):
+        db_table = "sub_section"
+        verbose_name = "Construction Installation SubSection"
+        verbose_name_plural = "Construction Installation SubSections"
+
+
+
+class ConstructionInstallationFile(BaseModel):
+    section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
@@ -30,6 +59,34 @@ class ConstructionFile(BaseModel):
         return f"{self.title}"
 
     class Meta(BaseMeta):
-        db_table = "installation_work"
-        verbose_name = "Construction File"
-        verbose_name_plural = "Construction Files"
+        db_table = "installation_file"
+        verbose_name = "Construction Installation File"
+        verbose_name_plural = "Construction Installation Files"
+
+
+
+class ConstructionInstallationProject(BaseModel):
+    section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
+    title = models.CharField(max_length=1000, blank=True, null=True)
+    currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, blank=True)
+    allocated_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+
+    def __str__(self):
+        return f"{self.title}"
+
+    class Meta(BaseMeta):
+        db_table = "construction_installation_project"
+        verbose_name = "Construction Installation Project"
+        verbose_name_plural = "Construction Installation Projects"
+
+
+
+class MonthlyCompletedTask(BaseModel):
+    construction_installation_project = models.ForeignKey(ConstructionInstallationProject, on_delete=models.SET_NULL, blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    monthly_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+
+    class Meta(BaseMeta):
+        db_table = "monthly_completed_task"
+        verbose_name = "Monthly Completed Task"
+        verbose_name_plural = "Monthly Completed Tasks"
