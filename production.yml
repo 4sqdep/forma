@@ -43,21 +43,21 @@ services:
       - ./.envs/.production/.postgres
 
   nginx:
-  build:
-    context: .
-    dockerfile: ./compose/production/nginx/Dockerfile
-  image: gidro_nginx
-  container_name: nginx
-  networks:
-    - gidro_network
-  volumes:
-    - static_volume:/var/www/static
-    - media_volume:/var/www/media
-    - /etc/letsencrypt:/etc/letsencrypt:ro  # 👈 Add this line
-  ports:
-    - "80:80"
-    - "443:443"
-  depends_on:
-    - django
-  command: /bin/bash -c "chown -R nginx:nginx /var/www/static && chmod -R 755 /var/www/static && nginx -g 'daemon off;'"
+    build:
+      context: .
+      dockerfile: ./compose/production/nginx/Dockerfile
+    image: gidro_nginx
+    container_name: nginx
+    networks:
+      - gidro_network
+    volumes:
+      - static_volume:/var/www/static
+      - media_volume:/var/www/media
+      - /etc/letsencrypt:/etc/letsencrypt:ro  # 👈 Add this line
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - django
+    command: /bin/bash -c "chown -R nginx:nginx /var/www/static && chmod -R 755 /var/www/static && nginx -g 'daemon off;'"
 
