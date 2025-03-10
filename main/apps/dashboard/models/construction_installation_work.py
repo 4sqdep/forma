@@ -66,7 +66,7 @@ class ConstructionInstallationFile(BaseModel):
 
 
 class ConstructionInstallationProject(BaseModel):
-    section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
+    section = models.ForeignKey(ConstructionInstallationSection, on_delete=models.SET_NULL, blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True, blank=True)
     allocated_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
@@ -82,7 +82,13 @@ class ConstructionInstallationProject(BaseModel):
 
 
 class MonthlyCompletedTask(BaseModel):
-    construction_installation_project = models.ForeignKey(ConstructionInstallationProject, on_delete=models.SET_NULL, blank=True, null=True)
+    construction_installation_project = models.ForeignKey(
+        ConstructionInstallationProject, 
+        on_delete=models.SET_NULL,  
+        related_name="monthly_tasks", 
+        blank=True, 
+        null=True
+    )
     date = models.DateField(blank=True, null=True)
     monthly_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 

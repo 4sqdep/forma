@@ -16,7 +16,9 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'object',
-            'title'
+            'title',
+            'is_form',
+            'is_file'
         )
 
 
