@@ -8,6 +8,13 @@ from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.response import Response
 from django.db.models import Q
+from main.apps.dashboard.utils import(
+    constructions_total_cost, 
+    get_total_difference, 
+    constructions_total_cost_for_month, 
+    get_total_year_sum, 
+    total_year_calculation_horizontally
+)
 
 
 
@@ -167,7 +174,7 @@ class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallati
     )
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        obj = self.kwargs.get('object')
+        obj = self.kwargs.get('obj')
         # section = request.query_params.get('section')
         # search = request.query_params.get('search')
         # date = request.query_params.get('date')
@@ -182,7 +189,7 @@ class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallati
         #     queryset = queryset.filter(date=date)
 
         if obj:
-            queryset = queryset.filter(object=obj)
+            queryset = queryset.filter(object_id=obj)
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -303,6 +310,10 @@ class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationP
     )
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        sub_section = self.kwargs.get('sub_section')
+
+        if sub_section:
+            queryset = queryset.filter(sub_section=sub_section)
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
             page = paginator.paginate_queryset(queryset, request)
@@ -344,6 +355,9 @@ construction_installation_project_detail_update_delete_api_view = ConstructionIn
 
 
 # ===================== Monthly Completed Task Views =====================
+from decimal import Decimal
+from django.db.models.functions import Coalesce
+from django.db.models import Sum
 
 class MonthlyCompletedTaskAPIView:
     authentication_classes = [authentication.JWTAuthentication]
@@ -361,19 +375,67 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
             openapi.Parameter('date', openapi.IN_QUERY, description='Filter by date (YYYY-MM-DD)', type=openapi.TYPE_STRING),
         ]
     )
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        paginator = CustomPagination() if request.query_params.get('p') else None
-        if paginator:
-            page = paginator.paginate_queryset(queryset, request)
-            serializer = self.get_serializer(page, many=True)
-            response = paginator.get_paginated_response(serializer.data)
-            response.data["status_code"] = status.HTTP_200_OK
-            response.data["data"] = response.data.pop("results", [])
-            return response
 
-        serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):
+        construction_installation_project = self.kwargs.get('construction_installation_project')
+        queryset = self.get_queryset()
+
+        construction_installation_data = {}
+        data = []
+
+        total_year_sum = get_total_year_sum(queryset, construction_installation_project)
+        for expense in queryset:
+            task = expense.construction_installation_project
+            if task.id not in construction_installation_data:
+                fact_sum = queryset.filter(construction_installation_project=construction_installation_project, construction_installation_project_id=task.id).aggregate(
+                    total_spent=Coalesce(Sum("monthly_amount"), Decimal(0))
+                )["total_spent"]
+                data.append(fact_sum)
+                allocated_amount = task.allocated_amount or Decimal(0)
+                difference = allocated_amount - fact_sum
+
+                year_sums = total_year_sum.get(task.id, {}).get('year_sums', [])
+
+                construction_installation_data[task.id] = {
+                    "construction": {
+                        "id": task.id,
+                        "title": task.title,
+                        "currency": task.currency.title if task.currency else None,
+                        "allocated_amount": Decimal(allocated_amount),
+                        "fact_sum": Decimal(fact_sum),
+                        "difference": Decimal(difference),
+                        "year_sums": year_sums,  
+                    },
+                    "monthly_expense": [],
+                }
+
+            construction_installation_data[task.id]["monthly_expense"].append({
+                "construction_id": task.id,
+                'monthly_exepense_id': expense.id,
+                "monthly_amount": Decimal(expense.monthly_amount),
+                "date": expense.date.isoformat(),
+            })
+
+        allocated_amount = constructions_total_cost(construction_installation_project)
+        monthly_totals = constructions_total_cost_for_month(queryset, construction_installation_project)
+        year_total_calculations = total_year_calculation_horizontally(queryset, construction_installation_project)
+        total_fact_sum = sum(data)
+        total_difference = get_total_difference(queryset, construction_installation_project)
+
+        response_data = {
+            "construction_installation_data": list(construction_installation_data.values()),
+            "allocated_amount": Decimal(allocated_amount),
+            "monthly_totals": monthly_totals,
+            "total_fact_sum": Decimal(total_fact_sum),
+            "year_total_calculations": year_total_calculations,
+            "total_difference": Decimal(total_difference),
+        }
+
+        return Response(
+            {'data': response_data},
+            status=status.HTTP_200_OK,
+            headers={"message": "Monthly expenses retrieved successfully."}
+        )
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

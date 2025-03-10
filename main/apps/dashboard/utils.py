@@ -1,101 +1,147 @@
-# from main.apps.dashboard.models.dashboard import DashboardSubCategoryButton
-# from main.apps.dashboard.models.document import NextStageDocuments, ProjectDocumentation
-# from rest_framework.parsers import MultiPartParser, FormParser
-# from rest_framework.views import APIView
-# from rest_framework.response import Response
-# from rest_framework import permissions, status
-# from rest_framework.permissions import IsAuthenticated
-# from django.db.models import Q
-# from .utils_serializers import ProjectDocumentationSerializer
-# from collections import defaultdict
-# from django.db.models import Count, Case, When, Value, IntegerField
-# from main.apps.main.models import ObjectsPassword
-# from main.apps.main.serializers import (GetObjectsPasswordSerializer, NextStageDocumentsSerializer)
-# from main.apps.dashboard.models.document import  NextStageDocuments
-# from main.apps.main.serializer.statistic import DashboardButtonStatisticsSerializer
-# from main.apps.common.pagination import CustomPagination
-# from main.apps.dashboard.models.dashboard import DashboardButton
-# from django.db.models import Prefetch
+from main.apps.dashboard.models.construction_installation_work import ConstructionInstallationProject
+from django.db.models import Sum, DecimalField
+from django.db.models.functions import ExtractYear, ExtractMonth, Coalesce
 
 
 
-# class NestedDataAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-#     """Navbar menu uchun """
-#     def get(self, request):
-#         query_params = request.query_params.get("query")
-#         try:
-#             if query_params == '1':
-#                 project_docs = ObjectsPassword.objects.filter(project_documentation__is_obj_password=True)
-#                 paginator = CustomPagination()
-#                 paginated_queryset = paginator.paginate_queryset(project_docs, request)
-#                 serialializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
-#                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
-#             elif query_params == '2':
-#                 sub_btns = DashboardSubCategoryButton.objects.prefetch_related(
-#                     Prefetch(
-#                         'nextstagedocuments_set',
-#                         queryset=NextStageDocuments.objects.filter(project_document__is_project_doc=True),
-#                         to_attr='filtered_docs'
-#                     )
-#                 )
-#                 paginator = CustomPagination()
-#                 data = [
-#                     {
-#                         "sub_btn_id": sub_btn.id,
-#                         "sub_btn_title": sub_btn.name,
-#                         "project_docs": NextStageDocumentsSerializer(paginator.paginate_queryset(sub_btn.filtered_docs, request), many=True).data
-#                     }
-#                     for sub_btn in sub_btns
-#                 ]
-#                 return Response({"projects": data}, status=status.HTTP_200_OK)
-#             elif query_params == '3':
-#                 project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
-#                 paginator = CustomPagination()
-#                 paginated_queryset = paginator.paginate_queryset(project_docs, request)
-#                 serialializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
-#                 return Response({"message": "Malumotlar......", "data": serialializer.data}, status=status.HTTP_200_OK)
-#             else:
-#                 return Response({"data": "XATO"}, status=status.HTTP_200_OK)
-#         except Exception as e:
-#             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
-# nested_data_api_view = NestedDataAPIView.as_view()
+def constructions_total_cost(sub_section=None):
+    construction_installation_project = ConstructionInstallationProject.objects.all()
+    if sub_section:
+        construction_installation_project = construction_installation_project.filter(sub_section=sub_section)
+    total_cost = construction_installation_project.aggregate(total_cost=Sum('allocated_amount'))['total_cost']
+    return total_cost or 0
 
 
-# class ObjectsPasswordDetailAPIView(APIView):
-#     """Obyekt pasporti uchun qilinga deteil"""
-#     permission_classes = [IsAuthenticated]
+def constructions_total_cost_for_month(queryset, sub_section=None):
+    if sub_section:
+        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
 
-#     def get(self, request, pk=None):
-#         get_password = ObjectsPassword.objects.filter(subcategory_btn_id=pk)
-#         if not get_password.exists():
-#             return Response({'message': "Malumot yo'q"}, status=status.HTTP_404_NOT_FOUND)
-#         serializer = GetObjectsPasswordSerializer(get_password, many=True)
-#         return Response({'message': "Malumotlar......", "data": serializer.data}, status.HTTP_200_OK)
-
-
-
-# class StatisticalData(APIView):
-#     """Statistik ma'lumotlar olish uchun"""
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         all_statistics = DashboardButton.objects.all()
-#         serializer = DashboardButtonStatisticsSerializer(all_statistics, many=True)
-#         response_data = {
-#             "message": "Statistik ma'lumotlar........",
-#             "data": {}
-#         }
-#         for item in serializer.data:
-#             key = item['name'].lower().replace(" ", "_")  
-#             response_data["data"][key] = item
-#         return Response(response_data, status=status.HTTP_200_OK)
+    month_totals = (
+        queryset.annotate(
+            year=ExtractYear('date'),
+            month=ExtractMonth('date')
+        )
+        .values('year', 'month')
+        .annotate(total_month_sum=Sum('monthly_amount'))
+        .order_by('year', 'month')
+    )
+    return [
+        {
+            'year': month['year'],
+            'month': month['month'],
+            'total_month_sum': month['total_month_sum'] or 0,
+        }
+        for month in month_totals
+    ]
 
 
+def get_total_year_sum(queryset, sub_section=None):
+    if sub_section:
+        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
+
+    year_totals = (
+        queryset.annotate(year=ExtractYear('date'))  
+        .values('construction_installation_project__id', 'construction_installation_project__title', 'year')  
+        .annotate(total_year_sum=Sum('monthly_amount'))  
+        .order_by('year') 
+    )
+    grouped_data = {}
+    for year in year_totals:
+        task_id = year['construction_installation_project__id']
+        if task_id not in grouped_data:
+            grouped_data[task_id] = {
+                'task_title': year['construction_installation_project__title'],
+                'year_sums': []
+            }
+        grouped_data[task_id]['year_sums'].append({
+            'year': year['year'],
+            'total_year_sum': year['total_year_sum'] or 0
+        })
+    return grouped_data
 
 
+def total_year_calculation_horizontally(queryset, sub_section=None):
+    total_year_sum = get_total_year_sum(queryset, sub_section)
+    year_totals = {}
+
+    for task_id, task_data in total_year_sum.items():
+        for item in task_data['year_sums']:
+            year = item["year"]
+            total_year_sum = item["total_year_sum"]
+
+            if year in year_totals:
+                year_totals[year]['total_year_sum'] += total_year_sum
+            else:
+                year_totals[year] = {
+                    'year': year,
+                    'total_year_sum': total_year_sum
+                }
+    return list(year_totals.values())
 
 
+def get_fact_sum(queryset, sub_section=None):
+    if sub_section:
+        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
 
+    grouped_data = (
+        ConstructionInstallationProject.objects.annotate(
+            total_spent=Coalesce(
+                Sum('monthly_tasks__monthly_amount', filter=queryset.filter(construction_installation_project__isnull=False)),
+                0
+            )
+        )
+        .values('id', 'title')
+        .annotate(total_spent=Sum('monthly_tasks__monthly_amount', output_field=DecimalField()))
+        .order_by('id') 
+    )
+
+    return [
+        {
+            'construction_installation_project_id': task['id'],
+            'construction_installation_project_title': task['title'],
+            'total_spent': task['total_spent'] or 0 
+        }
+        for task in grouped_data
+    ] 
+
+
+def get_total_fact_sum(queryset, sub_section=None):
+    fact_sums = get_fact_sum(queryset, sub_section)
+    total = sum(item['total_spent'] for item in fact_sums)
+    return total
+
+
+def get_difference(queryset, sub_section=None):
+    fact_sum = get_fact_sum(queryset, sub_section)
+
+    difference_each_task = []
+    processed_task_ids = set()
+
+    grouped_data = queryset.values(
+        'construction_installation_project__id', 
+        'construction_installation_project__title', 
+        'construction_installation_project__allocated_amount'
+    )
+    for task in grouped_data:
+        if task['construction_installation_project__id'] in processed_task_ids:
+            continue
+        processed_task_ids.add(task['construction_installation_project__id'])
+
+        task_fact_sum = next((item['total_spent'] for item in fact_sum if item['construction_installation_project_id'] == task['construction_installation_project__id']), 0)
+        
+        allocated_amount = task['construction_installation_project__allocated_amount'] or 0
+        difference_amount = allocated_amount - task_fact_sum
+        
+        difference_each_task.append({
+            'task_id': task['construction_installation_project__id'],
+            'task_title': task['construction_installation_project__title'],
+            'task_difference_amount': difference_amount,
+        })
+    return difference_each_task
+
+
+def get_total_difference(queryset, sub_section=None):
+    differences = get_difference(queryset, sub_section)
+    total = sum(item['task_difference_amount'] for item in differences)
+    return total
 
