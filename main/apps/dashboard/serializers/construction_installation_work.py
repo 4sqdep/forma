@@ -17,7 +17,7 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
             'id',
             'object',
             'title',
-            'is_form',
+            'is_forma',
             'is_file'
         )
 
@@ -53,7 +53,7 @@ class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
         model = ConstructionInstallationFile
         fields = (
             "id", 
-            "section", 
+            "sub_section", 
             "title", 
             "full_name", 
             "date", 

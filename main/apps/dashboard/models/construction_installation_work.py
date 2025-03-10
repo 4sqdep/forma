@@ -48,11 +48,11 @@ class ConstructionInstallationSubSection(BaseModel):
 
 
 class ConstructionInstallationFile(BaseModel):
-    section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
+    sub_section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
     full_name = models.CharField(max_length=100, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
-    file_code = models.CharField(max_length=20, blank=True, null=True, )
+    file_code = models.CharField(max_length=20, blank=True, null=True)
     file = models.FileField(upload_to="document_files/", blank=True, null=True)
 
     def __str__(self):
