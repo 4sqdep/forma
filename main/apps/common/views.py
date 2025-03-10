@@ -157,21 +157,13 @@ class MeasurementListAPIView(generics.ListAPIView):
             ),
         ]
     )
-
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        cache_key = "measurement_list"
-        cached_data = cache.get(cache_key)
-
-        if cached_data:
-            return cached_data
-
         queryset = Measurement.objects.all()
-        cache.set(cache_key, queryset, CACHE_TIMEOUT) 
         return queryset
-
+    
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
         if p:
