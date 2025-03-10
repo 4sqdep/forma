@@ -54,6 +54,7 @@ class IndustrialAssetCreateSerializer(serializers.ModelSerializer):
         fields = (
             'equipment_category',
             'equipment_subcategory',
+            'object',
             'measurement',
             'currency',
             'text',
@@ -78,6 +79,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
             'id',
             'equipment_category',
             'equipment_subcategory',
+            'object',
             'measurement',
             'text',
             'quantity',
