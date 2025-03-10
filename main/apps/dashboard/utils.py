@@ -4,17 +4,17 @@ from django.db.models.functions import ExtractYear, ExtractMonth, Coalesce
 
 
 
-def constructions_total_cost(sub_section=None):
+def constructions_total_cost(section=None):
     construction_installation_project = ConstructionInstallationProject.objects.all()
-    if sub_section:
-        construction_installation_project = construction_installation_project.filter(sub_section=sub_section)
+    if section:
+        construction_installation_project = construction_installation_project.filter(section=section)
     total_cost = construction_installation_project.aggregate(total_cost=Sum('allocated_amount'))['total_cost']
     return total_cost or 0
 
 
-def constructions_total_cost_for_month(queryset, sub_section=None):
-    if sub_section:
-        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
+def constructions_total_cost_for_month(queryset, section=None):
+    if section:
+        queryset = queryset.filter(construction_installation_project__section=section)
 
     month_totals = (
         queryset.annotate(
@@ -35,9 +35,9 @@ def constructions_total_cost_for_month(queryset, sub_section=None):
     ]
 
 
-def get_total_year_sum(queryset, sub_section=None):
-    if sub_section:
-        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
+def get_total_year_sum(queryset, section=None):
+    if section:
+        queryset = queryset.filter(construction_installation_project__section=section)
 
     year_totals = (
         queryset.annotate(year=ExtractYear('date'))  
@@ -60,8 +60,8 @@ def get_total_year_sum(queryset, sub_section=None):
     return grouped_data
 
 
-def total_year_calculation_horizontally(queryset, sub_section=None):
-    total_year_sum = get_total_year_sum(queryset, sub_section)
+def total_year_calculation_horizontally(queryset, section=None):
+    total_year_sum = get_total_year_sum(queryset, section)
     year_totals = {}
 
     for task_id, task_data in total_year_sum.items():
@@ -79,9 +79,9 @@ def total_year_calculation_horizontally(queryset, sub_section=None):
     return list(year_totals.values())
 
 
-def get_fact_sum(queryset, sub_section=None):
-    if sub_section:
-        queryset = queryset.filter(construction_installation_project__sub_section=sub_section)
+def get_fact_sum(queryset, section=None):
+    if section:
+        queryset = queryset.filter(construction_installation_project__section=section)
 
     grouped_data = (
         ConstructionInstallationProject.objects.annotate(
@@ -105,14 +105,14 @@ def get_fact_sum(queryset, sub_section=None):
     ] 
 
 
-def get_total_fact_sum(queryset, sub_section=None):
-    fact_sums = get_fact_sum(queryset, sub_section)
+def get_total_fact_sum(queryset, section=None):
+    fact_sums = get_fact_sum(queryset, section)
     total = sum(item['total_spent'] for item in fact_sums)
     return total
 
 
-def get_difference(queryset, sub_section=None):
-    fact_sum = get_fact_sum(queryset, sub_section)
+def get_difference(queryset, section=None):
+    fact_sum = get_fact_sum(queryset, section)
 
     difference_each_task = []
     processed_task_ids = set()
@@ -140,8 +140,8 @@ def get_difference(queryset, sub_section=None):
     return difference_each_task
 
 
-def get_total_difference(queryset, sub_section=None):
-    differences = get_difference(queryset, sub_section)
+def get_total_difference(queryset, section=None):
+    differences = get_difference(queryset, section)
     total = sum(item['task_difference_amount'] for item in differences)
     return total
 

@@ -73,6 +73,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
     delivered_in_percent = serializers.SerializerMethodField()
     remaining_amount = serializers.SerializerMethodField()
     remaining_in_percent = serializers.SerializerMethodField()
+    measurement = serializers.CharField(source='measurement.title')
     class Meta:
         model = IndustrialAsset
         fields = (
