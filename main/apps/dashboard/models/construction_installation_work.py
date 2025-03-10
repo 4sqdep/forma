@@ -4,6 +4,7 @@ from main.apps.common.models import BaseModel, BaseMeta, Currency
 
 
 
+
 class ConstructionInstallationSection(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, verbose_name="Loyiha nomi", blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
@@ -36,21 +37,9 @@ class ConstructionInstallationStatistics(BaseModel):
 
 
 
-class ConstructionInstallationSubSection(BaseModel):
-    construction_installation_section = models.ForeignKey(ConstructionInstallationSection, on_delete=models.SET_NULL, blank=True, null=True)
-    title = models.CharField(max_length=1000, blank=True, null=True)
-
-    class Meta(BaseMeta):
-        db_table = "sub_section"
-        verbose_name = "Construction Installation SubSection"
-        verbose_name_plural = "Construction Installation SubSections"
-
-
-
 class ConstructionInstallationFile(BaseModel):
-    sub_section = models.ForeignKey(ConstructionInstallationSubSection, on_delete=models.SET_NULL, blank=True, null=True)
+    section = models.ForeignKey(ConstructionInstallationSection, on_delete=models.SET_NULL, blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
-    full_name = models.CharField(max_length=100, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
     file_code = models.CharField(max_length=20, blank=True, null=True)
     file = models.FileField(upload_to="document_files/", blank=True, null=True)

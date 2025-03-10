@@ -11,7 +11,7 @@ urlpatterns = [
         name='section_create'
     ),
     path(
-        'section/list/',
+        'section/list/<int:object>/',
         construction_installation_work.construction_installation_section_list_create_api_view,
         name='section_list'
     ),
@@ -85,33 +85,6 @@ urlpatterns = [
         name='construction_file_delete'
     ),
 
-    # Construction Installation Subsection URLs
-    path(
-        'construction-subsection/create/',
-        construction_installation_work.construction_installation_sub_section_list_create_api_view,
-        name='construction_file_create'
-    ),
-    path(
-        'construction-subsection/list/<int:section>/',
-        construction_installation_work.construction_installation_sub_section_list_create_api_view,
-        name='construction_file_list'
-    ),
-    path(
-        'construction-subsection/detail/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
-        name='construction_file_retrieve'
-    ),
-    path(
-        'construction-subsection/update/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
-        name='construction_file_update'
-    ),
-    path(
-        'construction-subsection/delete/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
-        name='construction_file_delete'
-    ),
-
     # Construction Installation Project URLs
     path(
         'construction-project/create/',
@@ -146,7 +119,7 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'construction-completed-task/list/<int:section>/',
+        'construction-completed-task/list/<int:construction_installation_project>/',
         construction_installation_work.monthly_completed_task_list_create_api_view,
         name='construction_file_list'
     ),

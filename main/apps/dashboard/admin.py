@@ -3,7 +3,6 @@ from main.apps.dashboard.models.construction_installation_work import (
     ConstructionInstallationFile, 
     ConstructionInstallationSection, 
     ConstructionInstallationStatistics,
-    ConstructionInstallationSubSection,
     ConstructionInstallationProject,
     MonthlyCompletedTask
 )
@@ -78,6 +77,5 @@ admin.site.register(ProjectSections, ProjectSectionsAdmin)
 admin.site.register(ConstructionInstallationSection)
 admin.site.register(ConstructionInstallationFile)
 admin.site.register(ConstructionInstallationStatistics)
-admin.site.register(ConstructionInstallationSubSection)
 admin.site.register(ConstructionInstallationProject)
 admin.site.register(MonthlyCompletedTask)

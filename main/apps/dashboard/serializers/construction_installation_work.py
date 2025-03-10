@@ -4,7 +4,6 @@ from main.apps.dashboard.models.construction_installation_work import (
     ConstructionInstallationProject,  
     ConstructionInstallationSection,
     ConstructionInstallationStatistics,
-    ConstructionInstallationSubSection,
     MonthlyCompletedTask
 )
 
@@ -38,24 +37,13 @@ class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
         )
 
 
-class ConstructionInstallationSubSectionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ConstructionInstallationSubSection
-        fields = (
-            "id", 
-            "construction_installation_section", 
-            "title", 
-        )
-
-
 class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConstructionInstallationFile
         fields = (
             "id", 
-            "sub_section", 
+            "section", 
             "title", 
-            "full_name", 
             "date", 
             "file_code", 
             "file", 
