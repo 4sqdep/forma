@@ -71,7 +71,7 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED) #
 
 construction_installation_section_list_create_api_view = ConstructionInstallationSectionListCreateAPIView.as_view()
 
