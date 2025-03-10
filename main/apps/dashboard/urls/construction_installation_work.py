@@ -7,27 +7,27 @@ urlpatterns = [
     # Construction Installation Section URLs
     path(
         'section/create/',
-        construction_installation_work.construction_installation_sub_section_list_create_api_view,
+        construction_installation_work.construction_installation_section_list_create_api_view,
         name='section_create'
     ),
     path(
         'section/list/',
-        construction_installation_work.construction_installation_sub_section_list_create_api_view,
+        construction_installation_work.construction_installation_section_list_create_api_view,
         name='section_list'
     ),
     path(
         'section/detail/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
+        construction_installation_work.construction_installation_section_detail_update_delete_api_view,
         name='section_retrieve'
     ),
     path(
         'section/update/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
+        construction_installation_work.construction_installation_section_detail_update_delete_api_view,
         name='section_update'
     ),
     path(
         'section/delete/<int:pk>/',
-        construction_installation_work.construction_installation_sub_section_detail_update_delete_api_view,
+        construction_installation_work.construction_installation_section_detail_update_delete_api_view,
         name='section_delete'
     ),
 

@@ -5,7 +5,6 @@ from main.apps.dashboard.models.construction_installation_work import Constructi
 from ..serializers import construction_installation_work as construction_installation_work_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-from rest_framework import status
 from rest_framework.response import Response
 from django.db.models import Q
 from main.apps.dashboard.utils import(
@@ -15,6 +14,10 @@ from main.apps.dashboard.utils import(
     get_total_year_sum, 
     total_year_calculation_horizontally
 )
+from decimal import Decimal
+from django.db.models.functions import Coalesce
+from django.db.models import Sum
+
 
 
 
@@ -96,13 +99,13 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
         manual_parameters=[
             openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
             openapi.Parameter('search', openapi.IN_QUERY, description='Search by object title', type=openapi.TYPE_STRING),
-            openapi.Parameter('section', openapi.IN_QUERY, description='Filter by section ID', type=openapi.TYPE_INTEGER),
+            openapi.Parameter('sub_section', openapi.IN_QUERY, description='Filter by section ID', type=openapi.TYPE_INTEGER),
         ]
     )
 
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        section = self.kwargs.get('section')
+        sub_section = self.kwargs.get('sub_section')
         search = request.query_params.get('search')
 
         if search:
@@ -112,8 +115,8 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
                 Q(full_name__icontains=search)
             )
 
-        if section:
-            queryset = queryset.filter(section=section)
+        if sub_section:
+            queryset = queryset.filter(sub_section=sub_section)
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -212,6 +215,7 @@ class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallati
 construction_installation_statistics_list_create_api_view = ConstructionInstallationStatisticsListCreateAPIView.as_view()
 
 
+
 class ConstructionInstallationStatisticsRetrieveUpdateDeleteAPIView(ConstructionInstallationStatisticsAPIView, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = construction_installation_work_serializer.ConstructionInstallationStatisticsSerializer
 
@@ -271,6 +275,7 @@ class ConstructionInstallationSubSectionListCreateAPIView(ConstructionInstallati
 construction_installation_sub_section_list_create_api_view = ConstructionInstallationSubSectionListCreateAPIView.as_view()
 
 
+
 class ConstructionInstallationSubSectionRetrieveUpdateDeleteAPIView(ConstructionInstallationSubSectionAPIView, generics.RetrieveUpdateDestroyAPIView):
     serializer_class = construction_installation_work_serializer.ConstructionInstallationSubSectionSerializer
 
@@ -310,10 +315,10 @@ class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationP
     )
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        sub_section = self.kwargs.get('sub_section')
+        section = self.kwargs.get('section')
 
-        if sub_section:
-            queryset = queryset.filter(sub_section=sub_section)
+        if section:
+            queryset = queryset.filter(section=section)
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
             page = paginator.paginate_queryset(queryset, request)
@@ -333,6 +338,7 @@ class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationP
         return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
     
 construction_installation_project_list_create_api_view = ConstructionInstallationProjectListCreateAPIView.as_view()
+
 
 
 class ConstructionInstallationProjectRetrieveUpdateDeleteAPIView(ConstructionInstallationProjectAPIView, generics.RetrieveUpdateDestroyAPIView):
@@ -355,9 +361,6 @@ construction_installation_project_detail_update_delete_api_view = ConstructionIn
 
 
 # ===================== Monthly Completed Task Views =====================
-from decimal import Decimal
-from django.db.models.functions import Coalesce
-from django.db.models import Sum
 
 class MonthlyCompletedTaskAPIView:
     authentication_classes = [authentication.JWTAuthentication]
@@ -444,6 +447,7 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
 
 monthly_completed_task_list_create_api_view = MonthlyCompletedTaskListCreateAPIView.as_view()
+
 
 
 class MonthlyCompletedTaskRetrieveUpdateDeleteAPIView(MonthlyCompletedTaskAPIView, generics.RetrieveUpdateDestroyAPIView):
