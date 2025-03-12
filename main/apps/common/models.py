@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from .utils import upload_file
+from django.utils.text import slugify
 
 
 class BaseModel(models.Model):
@@ -32,6 +33,12 @@ class BaseMeta(object):
 
 class Currency(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Pul o'lchov birligi")
+    slug_title = models.SlugField(unique=True, null=True, blank=True, editable=False)
+
+    def save(self, *args, **kwargs):
+        if self.title:
+            self.slug_title = slugify(self.title)
+        super(Currency, self).save(*args, **kwargs)
     
     def __str__(self):
         return f"{self.title}"
