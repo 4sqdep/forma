@@ -22,7 +22,7 @@ class HydroStation(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, blank=True, null=True)
     supplier_name = models.CharField(max_length=255, null=True, blank=True)
     contract_number = models.CharField(max_length=255, null=True, blank=True)
-    file = models.FileField(upload_to="contract_files/", null=True)
+    file = models.FileField(upload_to="contract_files/", null=True, blank=True)
     contract_amount = models.DecimalField(max_digits=32, decimal_places=2, default=Decimal("0.00"))
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     calculation_type = models.CharField(max_length=255, choices=CalculationType.choices, default=CalculationType.PERCENT)
