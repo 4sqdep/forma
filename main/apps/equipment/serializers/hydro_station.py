@@ -142,6 +142,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
     remained_delivered_amount_percent = serializers.SerializerMethodField()
     latest_delivery_date = serializers.SerializerMethodField()
     total_ges_amount = serializers.SerializerMethodField()
+    currency_slug = serializers.CharField(source='currency.slug_title')
     class Meta:
         model = HydroStation 
         fields = (
@@ -151,6 +152,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'contract_number',
             'contract_amount',
             'currency',
+            'currency_slug',
             'file',
             'prepayment_from_own_fund',
             'prepayment_from_foreign_credit_account',

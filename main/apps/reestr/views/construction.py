@@ -184,8 +184,8 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
                     total_spent=Coalesce(Sum("spent_amount"), Decimal(0))
                 )["total_spent"]
                 data.append(fact_sum)
-                total_cost = task.total_cost or Decimal(0)
-                difference = total_cost - fact_sum
+                total = task.total_cost or Decimal(0)
+                difference = total - fact_sum
 
                 year_sums = total_year_sum.get(task.id, {}).get('year_sums', [])
 
@@ -194,7 +194,7 @@ class MonthlyExpenseListAPIView(generics.ListAPIView):
                         "id": task.id,
                         "title": task.title,
                         "currency": task.currency.title if task.currency else None,
-                        "total_cost": Decimal(total_cost),
+                        "total_cost": Decimal(total),
                         "fact_sum": Decimal(fact_sum),
                         "difference": Decimal(difference),
                         "year_sums": year_sums,  
