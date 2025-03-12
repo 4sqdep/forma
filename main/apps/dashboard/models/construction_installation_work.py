@@ -1,6 +1,7 @@
 from django.db import models
 from main.apps.dashboard.models.dashboard import Object
 from main.apps.common.models import BaseModel, BaseMeta, Currency
+from decimal import Decimal
 
 
 
@@ -35,13 +36,19 @@ class ConstructionInstallationStatistics(BaseModel):
         verbose_name = "Construction Installation Statistics"
         verbose_name_plural = "Construction Installation Statistics"
 
+    def save(self, *args, **kwargs):
+        self.installation_work_amount = self.installation_work_amount or Decimal("0.00")
+        self.cost_of_performed_work = self.cost_of_performed_work or Decimal("0.00")
+        self.remanied_work_amount = self.installation_work_amount - self.cost_of_performed_work
+        super().save(*args, **kwargs)
+
 
 
 class ConstructionInstallationFile(BaseModel):
     section = models.ForeignKey(ConstructionInstallationSection, on_delete=models.SET_NULL, blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
-    file_code = models.CharField(max_length=20, blank=True, null=True)
+    file_code = models.CharField(max_length=255, blank=True, null=True)
     file = models.FileField(upload_to="document_files/", blank=True, null=True)
 
     def __str__(self):

@@ -8,7 +8,8 @@ class CurrencySerializer(serializers.ModelSerializer):
         model = Currency 
         fields = (
             'id',
-            'title'
+            'title',
+            'slug_title'
         )
 
 
