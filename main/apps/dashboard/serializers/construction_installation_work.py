@@ -92,9 +92,10 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
         if construction_installation_project and monthly_amount:
             allocated_amount = construction_installation_project.allocated_amount or Decimal(0)
 
-            fact_sum = MonthlyCompletedTask.objects.filter(construction_installation_project=construction_installation_project).aggregate(
-                total_spent=Coalesce(Sum('monthly_amount'), Decimal(0))
-            )
+            # Extract the total_spent value correctly
+            fact_sum = MonthlyCompletedTask.objects.filter(
+                construction_installation_project=construction_installation_project
+            ).aggregate(total_spent=Coalesce(Sum('monthly_amount'), Decimal(0)))['total_spent']
 
             remaining_budget = allocated_amount - fact_sum
 

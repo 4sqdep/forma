@@ -326,30 +326,21 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         ]
     )
 
-    def get_queryset(self):
-        section = self.kwargs.get('section')
-        if not section:
-            return MonthlyCompletedTask.objects.none()
-        return MonthlyCompletedTask.objects.select_related("construction_installation_project").filter(
-            construction_installation_project__section=section
-        )
-
     def list(self, request, *args, **kwargs):
-        section = self.kwargs.get('section')
+        construction_installation_project = self.kwargs.get('construction_installation_project')
         queryset = self.get_queryset()
 
         construction_installation_data = {}
         data = []
 
-        total_year_sum = get_total_year_sum(queryset, section)
-
+        total_year_sum = get_total_year_sum(queryset, construction_installation_project)
         for expense in queryset:
             task = expense.construction_installation_project
             if not task:  
                 continue  
 
             if task.id not in construction_installation_data:
-                fact_sum = queryset.filter(construction_installation_project__section=section, construction_installation_project_id=task.id).aggregate(
+                fact_sum = queryset.filter(construction_installation_project=construction_installation_project, construction_installation_project_id=task.id).aggregate(
                     total_spent=Coalesce(Sum("monthly_amount"), Decimal(0))
                 )["total_spent"]
                 data.append(fact_sum)
@@ -378,11 +369,11 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
                 "date": expense.date.isoformat(),
             })
 
-        allocated_amount = constructions_total_cost(section)
-        monthly_totals = constructions_total_cost_for_month(queryset, section)
-        year_total_calculations = total_year_calculation_horizontally(queryset, section)
+        allocated_amount = constructions_total_cost(construction_installation_project)
+        monthly_totals = constructions_total_cost_for_month(queryset, construction_installation_project)
+        year_total_calculations = total_year_calculation_horizontally(queryset, construction_installation_project)
         total_fact_sum = sum(data)
-        total_difference = get_total_difference(queryset, section)
+        total_difference = get_total_difference(queryset, construction_installation_project)
 
         response_data = {
             "construction_installation_data": list(construction_installation_data.values()),
