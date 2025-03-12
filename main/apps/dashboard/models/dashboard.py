@@ -55,7 +55,7 @@ class Object(BaseModel):
     water_consumption = models.FloatField(null=True, blank=True, verbose_name="Suv sarfi")
     community_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="UZBEKGIDRO summasi")
     foreign_loan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Xorijiy kredit")
-    object_file = models.FileField(upload_to="object_files/", null=True, blank=True, verbose_name="Obyekt pasporti fayli")
+    object_file = models.FileField(upload_to="object_files/", blank=True, null=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 
