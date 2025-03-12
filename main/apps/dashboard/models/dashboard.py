@@ -50,6 +50,7 @@ class Object(BaseModel):
     other_expense = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Boshqa xarajatlar")
     total_price = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Obyekt umumiy summasi")
     object_power = models.PositiveIntegerField(null=True, blank=True, verbose_name="Obyekt umumiy quvvat")
+    annual_electricity_production = models.FloatField(null=True, blank=True, verbose_name='Yillik elektr ishlab chiqarish')
     pressure = models.FloatField(null=True, blank=True, verbose_name='Bosim')
     water_consumption = models.FloatField(null=True, blank=True, verbose_name="Suv sarfi")
     community_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="UZBEKGIDRO summasi")

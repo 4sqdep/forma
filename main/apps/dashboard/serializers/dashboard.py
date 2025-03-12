@@ -21,6 +21,7 @@ class ObjectCategorySerializer(serializers.ModelSerializer):
         )
 
 
+
 class ObjectSubCategorySerializer(serializers.ModelSerializer):
     object_category = ObjectCategorySerializer
     subcategory_count = serializers.IntegerField(read_only=True)
@@ -34,23 +35,6 @@ class ObjectSubCategorySerializer(serializers.ModelSerializer):
             'subcategory_count', 
             'has_data'
         )
-
-
-
-# class ObjectSerializer(serializers.ModelSerializer):
-#     object_subcategory = ObjectSubCategorySerializer
-#     class Meta:
-#         model = Object
-#         fields = (
-#             'id', 
-#             'object_subcategory', 
-#             'name'
-#         )
-
-#     def create(self, validated_data):
-#         user = self.context['request'].user
-#         validated_data['created_by'] = user
-#         return super().create(validated_data)
 
 
 
@@ -71,6 +55,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             'other_expense',
             'total_price',
             'object_power',
+            'annual_electricity_production',
             'pressure',
             'water_consumption',
             'object_file',
