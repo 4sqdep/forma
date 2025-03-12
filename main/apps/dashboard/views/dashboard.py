@@ -167,3 +167,16 @@ class ObjectListAPIView(generics.ListAPIView):
         }, status=status.HTTP_200_OK)
 
 object_list_api_view = ObjectListAPIView.as_view()
+
+
+
+class ObjectDetailAPIView(generics.RetrieveAPIView):
+    queryset = Object.objects.all()
+    serializer_class = ObjectSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+
+object_retrieve_api_view = ObjectDetailAPIView.as_view()
