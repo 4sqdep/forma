@@ -326,6 +326,14 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         ]
     )
 
+    def get_queryset(self):
+        section = self.kwargs.get('section')
+        if not section:
+            return MonthlyCompletedTask.objects.none()
+        return MonthlyCompletedTask.objects.select_related("construction_installation_project").filter(
+            construction_installation_project__section=section
+        )
+
     def list(self, request, *args, **kwargs):
         section = self.kwargs.get('section')
         queryset = self.get_queryset()
@@ -336,11 +344,11 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         total_year_sum = get_total_year_sum(queryset, section)
         for expense in queryset:
             task = expense.construction_installation_project
-            if not task:  
-                continue  
+            # if not task:  
+            #     continue  
 
             if task.id not in construction_installation_data:
-                fact_sum = queryset.filter(construction_installation_project__section=section, construction_installation_project_id=task.id).aggregate(
+                fact_sum = queryset.filter(construction_installation_project__section=section, construction_installation_project=task.id).aggregate(
                     total_spent=Coalesce(Sum("monthly_amount"), Decimal(0))
                 )["total_spent"]
                 data.append(fact_sum)
