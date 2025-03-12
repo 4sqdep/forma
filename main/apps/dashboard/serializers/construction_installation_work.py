@@ -27,7 +27,6 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
 
 
 class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
-    # contract_file = serializers.SerializerMethodField()
     currency_slug = serializers.CharField(source='object.currency.slug_title', read_only=True)
     class Meta:
         model = ConstructionInstallationStatistics
@@ -42,12 +41,6 @@ class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
             'contract_file',
             'contractor'
         )
-    
-    # def get_contract_file(self, obj):
-    #     if obj.contract_file:
-    #         request = self.context.get('request')
-    #         return request.build_absolute_uri(obj.contract_file.url) if request else obj.contract_file.url
-    #     return None
 
 
 class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
@@ -92,7 +85,6 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
         if construction_installation_project and monthly_amount:
             allocated_amount = construction_installation_project.allocated_amount or Decimal(0)
 
-            # Extract the total_spent value correctly
             fact_sum = MonthlyCompletedTask.objects.filter(
                 construction_installation_project=construction_installation_project
             ).aggregate(total_spent=Coalesce(Sum('monthly_amount'), Decimal(0)))['total_spent']

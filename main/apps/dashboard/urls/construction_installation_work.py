@@ -92,7 +92,7 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'construction-project/list/<int:sub_section>/',
+        'construction-project/list/<int:section>/',
         construction_installation_work.construction_installation_project_list_create_api_view,
         name='construction_file_list'
     ),

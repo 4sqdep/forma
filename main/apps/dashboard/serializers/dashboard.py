@@ -37,8 +37,33 @@ class ObjectSubCategorySerializer(serializers.ModelSerializer):
         )
 
 
+class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Object
+        fields = (
+            'object_category',
+            'object_subcategory',
+            'project_documentation',
+            'currency',
+            'title',
+            'community_fund',
+            'foreign_loan',
+            'construction_work_amount',
+            'equipment_amount',
+            'other_expense',
+            'total_price',
+            'object_power',
+            'annual_electricity_production',
+            'pressure',
+            'water_consumption',
+            'object_file',
+            'start_date',
+            'end_date',
+        )
+
 
 class ObjectSerializer(serializers.ModelSerializer):
+    # object_file = serializers.SerializerMethodField()
     currency_slug = serializers.CharField(source='currency.slug_title', read_only=True)
     class Meta:
         model = Object
@@ -64,4 +89,18 @@ class ObjectSerializer(serializers.ModelSerializer):
             'start_date',
             'end_date',
         )
+
+    # def to_representation(self, instance):
+    #     representation = super().to_representation(instance)
+    #     request = self.context.get('request')  # Safely get request from context
+
+    #     if instance.object_file:
+    #         file_url = instance.object_file.url  # Relative URL
+    #         if request:
+    #             representation['object_file'] = request.build_absolute_uri(file_url)  # Absolute URL
+    #         else:
+    #             representation['object_file'] = file_url  # Fallback to relative URL
+
+    #     return representation
+
 
