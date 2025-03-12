@@ -1,4 +1,4 @@
-from rest_framework import generics, status, permissions 
+from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.equipment.models.industrial_equipment import EquipmentStatus, EquipmentSubCategory, IndustrialAsset, EquipmentCategory

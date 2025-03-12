@@ -1,31 +1,73 @@
 from rest_framework import serializers
 from main.apps.dashboard.models.construction_installation_work import (
-    ConstructionFile,  
-    Section
+    ConstructionInstallationFile,
+    ConstructionInstallationProject,  
+    ConstructionInstallationSection,
+    ConstructionInstallationStatistics,
+    MonthlyCompletedTask
 )
 
 
 
-class SectionSerializer(serializers.ModelSerializer):
+class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Section
+        model = ConstructionInstallationSection
         fields = (
             'id',
             'object',
-            'title'
+            'title',
+            'is_forma',
+            'is_file'
         )
 
 
-class ConstructionFileSerializer(serializers.ModelSerializer):
+
+class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ConstructionFile
+        model = ConstructionInstallationStatistics
         fields = (
             'id',
-            'section',
-            'title',
-            'full_name',
+            'object',
+            'installation_work_amount',
             'date',
-            'file_code',
-            'file'
+            'remanied_work_amount',
+            'cost_of_performed_work',
+            'contract_file',
+            'contractor'
         )
 
+
+class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConstructionInstallationFile
+        fields = (
+            "id", 
+            "section", 
+            "title", 
+            "date", 
+            "file_code", 
+            "file", 
+        )
+
+
+class ConstructionInstallationProjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConstructionInstallationProject
+        fields = (
+            "id", 
+            "section", 
+            "title", 
+            "currency", 
+            "allocated_amount", 
+        )
+
+
+class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MonthlyCompletedTask
+        fields = (
+            "id", 
+            "construction_installation_project", 
+            "date", 
+            "monthly_amount", 
+        )
