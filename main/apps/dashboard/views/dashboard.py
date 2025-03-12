@@ -4,7 +4,8 @@ from main.apps.dashboard.models.dashboard import (
     Object
 )
 from main.apps.dashboard.serializers.dashboard import (
-    ObjectCategorySerializer, 
+    ObjectCategorySerializer,
+    ObjectCreateUpdateSerializer, 
     ObjectSubCategorySerializer, 
     ObjectSerializer
 )
@@ -16,6 +17,7 @@ from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from rest_framework import generics, status
 
 
 
@@ -117,7 +119,7 @@ class ObjectAPIView(APIView):
     # permission_classes = [IsAuthenticated]    
 
     def post(self, request):
-        serializer = ObjectSerializer(data=request.data)
+        serializer = ObjectCreateUpdateSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Object created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
@@ -135,7 +137,7 @@ class ObjectAPIView(APIView):
 
     def put(self, request, pk=None):
         obj = get_object_or_404(Object, id=pk)
-        serializer = ObjectSerializer(obj, data=request.data, partial=True)
+        serializer = ObjectCreateUpdateSerializer(obj, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Object updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
@@ -150,12 +152,20 @@ object_api_view = ObjectAPIView.as_view()
 
 
 
-class ObjectListAPIView(APIView):
-    # permission_classes = [IsAuthenticated]  
+class ObjectListAPIView(generics.ListAPIView):
+    serializer_class = ObjectSerializer
 
-    def get(self, request, pk=None):
-        objects = Object.objects.filter(object_subcategory_id=pk).select_related('object_subcategory')
-        serializer = ObjectSerializer(objects, many=True)
-        return Response({"message": "SubCategory buttonlar", "data": serializer.data}, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        """Filter objects by sub_category from URL kwargs"""
+        sub_category = self.kwargs.get('sub_category')
+        return Object.objects.filter(object_subcategory=sub_category)
+
+    def list(self, request, *args, **kwargs):
+        """Override list() to customize response format"""
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
 
 object_list_api_view = ObjectListAPIView.as_view()
