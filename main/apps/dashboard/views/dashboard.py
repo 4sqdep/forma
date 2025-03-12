@@ -156,12 +156,10 @@ class ObjectListAPIView(generics.ListAPIView):
     serializer_class = ObjectSerializer
 
     def get_queryset(self):
-        """Filter objects by sub_category from URL kwargs"""
         sub_category = self.kwargs.get('sub_category')
         return Object.objects.filter(object_subcategory=sub_category)
 
     def list(self, request, *args, **kwargs):
-        """Override list() to customize response format"""
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         return Response({

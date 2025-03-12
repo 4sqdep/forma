@@ -35,7 +35,7 @@ urlpatterns = [
         name='object_subcategory_list'
     ),
     path(
-        'object-list/<int:pk>/', 
+        'object-list/<int:sub_category>/', 
         dashboard.object_list_api_view, 
         name='object'
     ),
