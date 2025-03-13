@@ -231,7 +231,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://forma.hccs.uz",
     "http://forma.hccs.uz",
     "http://54.173.208.223",
-    "https://gidroproyekt.vercel.app"
+    "https://gidroproyekt.vercel.app",
+    "https://gidroqurilish.vercel.app"
 ]
 
 CORS_ALLOWED_ORIGINS = [
@@ -242,7 +243,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://forma.hccs.uz",
     "http://forma.hccs.uz",
     "http://54.173.208.223",
-    "https://gidroproyekt.vercel.app"
+    "https://gidroproyekt.vercel.app",
+    "https://gidroqurilish.vercel.app"
 ]
 
 
