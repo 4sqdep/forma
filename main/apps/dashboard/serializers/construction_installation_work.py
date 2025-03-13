@@ -93,6 +93,6 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
 
             if monthly_amount > remaining_budget:
                 raise serializers.ValidationError(
-                    {'allocated_amount': "You cannot add more than the remaining budget."}
+                    {'allocated_amount': "Siz qolgan byudjetdan ko‘proq qo‘sha olmaysiz."}
                 )
         return data

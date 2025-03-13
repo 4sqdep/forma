@@ -7,7 +7,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework import status
-from django.db.models import Q
+from django.db.models import Sum, Q
 
 
 
@@ -302,8 +302,8 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        
         paginator_class = self.get_pagination_class()
-
         if paginator_class:
             paginator = paginator_class()
             page = paginator.paginate_queryset(queryset, request)
@@ -389,8 +389,9 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        paginator_class = self.get_pagination_class()
+        total_amount_sum = queryset.aggregate(total_sum=Sum('total_amount'))['total_sum'] or 0
 
+        paginator_class = self.get_pagination_class()
         if paginator_class:
             paginator = paginator_class()
             page = paginator.paginate_queryset(queryset, request)
@@ -398,9 +399,13 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
+            response_data.data['total_amount_sum'] = round(total_amount_sum, 2)
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data})
+        return Response({
+            "data": serializer.data,
+            "total_amount_sum": round(total_amount_sum, 2)
+            })
 
 all_industrial_asset_list_api_view = AllIndustrialAssetListAPIView.as_view()

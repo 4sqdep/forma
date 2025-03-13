@@ -1,7 +1,7 @@
 from decimal import Decimal
 from rest_framework import serializers
 from main.apps.dashboard.serializers.dashboard import ObjectSerializer
-from main.apps.equipment.models.hydro_station import CalculationType, FinancialResource, FinancialResourceType, HydroStation
+from main.apps.equipment.models.hydro_station import CalculationType, FinancialResourceType, HydroStation
 from django.db.models import Sum
 from main.apps.equipment.models.industrial_equipment import IndustrialAsset
 
@@ -206,24 +206,5 @@ class HydroStationSerializer(serializers.ModelSerializer):
                 total += Decimal(data.get('percent_or_amount', "0"))
         return float(total)
     
-
-class FinancialResourceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FinancialResource
-        fields = (
-            'id',
-            'hydro_station',
-            'title',
-            'amount',
-            'prepayment_from_own_fund',
-            'prepayment_from_foreign_credit_account',
-            'additional_prepayment',
-            'payment_on_completion'
-        )
-
-    def validate_title(self, value):
-        if not value.strip():
-            raise serializers.ValidationError("Title name cannot be empty.")
-        return value
 
 

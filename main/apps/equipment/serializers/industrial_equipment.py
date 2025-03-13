@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from main.apps.common.serializers import MeasurementSerializer
 from main.apps.equipment.models.industrial_equipment import EquipmentSubCategory, IndustrialAsset, EquipmentCategory
 from django.db.models import Sum
 
@@ -74,8 +75,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
     delivered_in_percent = serializers.SerializerMethodField()
     remaining_amount = serializers.SerializerMethodField()
     remaining_in_percent = serializers.SerializerMethodField()
-    measurement = serializers.CharField(source='measurement.title')
-    total_amount_sum = serializers.SerializerMethodField()
+    measurement = MeasurementSerializer()
     class Meta:
         model = IndustrialAsset
         fields = (
@@ -91,7 +91,6 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
             'price',
             'status',
             'total_amount',
-            'total_amount_sum',
             'delivered_amount',
             'delivered_in_percent',
             'remaining_amount',
@@ -112,8 +111,5 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
         delivered_in_percent = self.get_delivered_in_percent(obj) or 0
         return max(0, 100 - delivered_in_percent)
 
-    def get_total_amount_sum(self, obj):
-        total_sum = IndustrialAsset.objects.aggregate(total=Sum('total_amount'))['total'] or 0
-        return round(total_sum, 2)
          
 
