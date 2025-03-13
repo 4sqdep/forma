@@ -63,7 +63,6 @@ class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class ObjectSerializer(serializers.ModelSerializer):
-    # object_file = serializers.SerializerMethodField()
     currency_slug = serializers.CharField(source='currency.slug_title', read_only=True)
     class Meta:
         model = Object
@@ -90,17 +89,6 @@ class ObjectSerializer(serializers.ModelSerializer):
             'end_date',
         )
 
-    # def to_representation(self, instance):
-    #     representation = super().to_representation(instance)
-    #     request = self.context.get('request')  # Safely get request from context
 
-    #     if instance.object_file:
-    #         file_url = instance.object_file.url  # Relative URL
-    #         if request:
-    #             representation['object_file'] = request.build_absolute_uri(file_url)  # Absolute URL
-    #         else:
-    #             representation['object_file'] = file_url  # Fallback to relative URL
-
-    #     return representation
 
 
