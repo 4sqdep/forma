@@ -1,14 +1,14 @@
-from main.apps.dashboard.models.construction_installation_work import ConstructionInstallationProject
+from main.apps.dashboard.models.construction_installation_work import ConstructionInstallationProject, MonthlyCompletedTask
 from django.db.models import Sum, DecimalField
 from django.db.models.functions import ExtractYear, ExtractMonth, Coalesce
 
 
 
 def constructions_total_cost(section=None):
-    construction_installation_project = ConstructionInstallationProject.objects.all()
+    completed_task = MonthlyCompletedTask.objects.all()
     if section:
-        construction_installation_project = construction_installation_project.filter(section=section)
-    total_cost = construction_installation_project.aggregate(total_cost=Sum('allocated_amount'))['total_cost']
+        completed_task = completed_task.filter(construction_installation_project__section=section)
+    total_cost = completed_task.aggregate(total_cost=Sum('construction_installation_project__allocated_amount'))['total_cost']
     return total_cost or 0
 
 
