@@ -278,6 +278,7 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
         equipment_subcategory = self.kwargs.get("equipment_subcategory")  
         equipment_subcategory = self.request.query_params.get("equipment_subcategory")
         status_param = self.request.query_params.get("status")
+        search = self.request.query_params.get('search')
 
         if equipment_category:
             category = EquipmentCategory.objects.filter(id=equipment_category).first()
@@ -292,6 +293,11 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
         if status_param in [EquipmentStatus.CREATED, EquipmentStatus.IN_TRANSIT, EquipmentStatus.DELIVERED]:
             filter_conditions &= Q(status=status_param)
         queryset = queryset.filter(filter_conditions)
+
+        if search:
+            queryset = queryset.filter(
+                Q(text__icontains=search) | Q(code__icontains=search) | Q(country__icontains=search)
+            )
         return queryset
 
     def get_pagination_class(self):
@@ -302,6 +308,8 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
+        total_amount_sum = queryset.aggregate(total_sum=Sum('total_amount'))['total_sum'] or 0
+        currency_slug = queryset.values_list('equipment_category__hydro_station__currency__title', flat=True).first() or ""
         
         paginator_class = self.get_pagination_class()
         if paginator_class:
@@ -311,10 +319,16 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
+            response_data.data['total_amount_sum'] = round(total_amount_sum, 2)
+            response_data.data['currency_slug'] = currency_slug
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data})
+        return Response({
+            "data": serializer.data,
+            "total_amount_sum": round(total_amount_sum, 2),
+            "currency_slug": currency_slug
+            })
 
 industrial_asset_list_api_view = IndustrialAssetListAPIView.as_view()
 
@@ -347,7 +361,7 @@ class IndustrialAssetUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Industrial Asset", "status_code": status.HTTP_200_OK})
+            return Response({"data": serializer.data, "message": "Industrial Asset"}, status=status.HTTP_200_OK)
         return Response({"message": "Failed to update Industrial Asset", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 industrial_asset_update_api_view = IndustrialAssetUpdateAPIView.as_view()
@@ -363,7 +377,7 @@ class IndustrialAssetDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({"message": "Industrial Asset", "status_code": status.HTTP_204_NO_CONTENT})
+        return Response({"message": "Industrial Asset"}, status=status.HTTP_204_NO_CONTENT)
 
 industrial_asset_delete_api_view = IndustrialAssetDeleteAPIView.as_view()
 
@@ -375,10 +389,23 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement")
+        queryset = IndustrialAsset.objects.select_related("equipment_category", "measurement", "equipment_category__hydro_station__currency")
         obj = self.kwargs.get('obj')
+        equipment_subcategory = self.request.query_params.get("equipment_subcategory")
+        status_param = self.request.query_params.get("status")
+        search = self.request.query_params.get("search")
+
         if obj:
             queryset = queryset.filter(object=obj)
+
+        if equipment_subcategory:
+            queryset = queryset.filter(equipment_subcategory=equipment_subcategory)
+        if status_param in [EquipmentStatus.CREATED, EquipmentStatus.IN_TRANSIT, EquipmentStatus.DELIVERED]:
+            queryset = queryset.filter(status=status_param)
+        if search:
+            queryset = queryset.filter(
+                Q(text__icontains=search) | Q(code__icontains=search) | Q(country__icontains=search)
+            )
         return queryset
 
     def get_pagination_class(self):
@@ -390,6 +417,7 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         total_amount_sum = queryset.aggregate(total_sum=Sum('total_amount'))['total_sum'] or 0
+        currency_slug = queryset.values_list('equipment_category__hydro_station__currency__title', flat=True).first() or ""
 
         paginator_class = self.get_pagination_class()
         if paginator_class:
@@ -400,12 +428,14 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
             response_data.data['total_amount_sum'] = round(total_amount_sum, 2)
+            response_data.data['currency_slug'] = currency_slug
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({
             "data": serializer.data,
-            "total_amount_sum": round(total_amount_sum, 2)
+            "total_amount_sum": round(total_amount_sum, 2),
+            "currency_slug": currency_slug
             })
 
 all_industrial_asset_list_api_view = AllIndustrialAssetListAPIView.as_view()

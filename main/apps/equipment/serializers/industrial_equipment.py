@@ -58,7 +58,6 @@ class IndustrialAssetCreateSerializer(serializers.ModelSerializer):
             'equipment_subcategory',
             'object',
             'measurement',
-            'currency',
             'text',
             'quantity',
             'country',
@@ -76,6 +75,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
     remaining_amount = serializers.SerializerMethodField()
     remaining_in_percent = serializers.SerializerMethodField()
     measurement = MeasurementSerializer()
+    currency_slug = serializers.CharField(source='equipment_category.hydro_station.currency.title')
     class Meta:
         model = IndustrialAsset
         fields = (
@@ -91,6 +91,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
             'price',
             'status',
             'total_amount',
+            'currency_slug',
             'delivered_amount',
             'delivered_in_percent',
             'remaining_amount',

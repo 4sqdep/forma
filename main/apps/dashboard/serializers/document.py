@@ -28,6 +28,7 @@ class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
 
 
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
+    document_file_name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = NextStageDocuments
         fields = (
@@ -36,8 +37,14 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
             'name',
             'is_forma',
             'is_section',
-            'is_file'
+            'is_file',
+            'document_file_name'
         )
+    
+    def get_document_file_name(self, obj):
+        document_files = DocumentFiles.objects.filter(document=obj)[:4]
+        return [document_file.name for document_file in document_files]
+
 
 
 class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):

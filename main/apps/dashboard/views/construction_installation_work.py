@@ -32,28 +32,65 @@ class ConstructionInstallationSectionAPIView:
     permission_classes = [permissions.IsAuthenticated]
     queryset = ConstructionInstallationSection.objects.all()
 
+from django.utils.dateparse import parse_date
 
 class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
     serializer_class = construction_installation_work_serializer.ConstructionInstallationSectionSerializer
-
 
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
             openapi.Parameter('search', openapi.IN_QUERY, description='Search by object title', type=openapi.TYPE_STRING),
+            openapi.Parameter('start_date', openapi.IN_QUERY, description='Filter by start date (YYYY-MM-DD)', type=openapi.TYPE_STRING),
+            openapi.Parameter('end_date', openapi.IN_QUERY, description='Filter by end date (YYYY-MM-DD)', type=openapi.TYPE_STRING),
+            openapi.Parameter('is_forma', openapi.IN_QUERY, description='Filter by is_forma (true/false)', type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter('is_file', openapi.IN_QUERY, description='Filter by is_file (true/false)', type=openapi.TYPE_BOOLEAN),
         ]
     )
-    
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        object = self.kwargs.get('object')
-        search = request.query_params.get('search')
+    def get_queryset(self):
+        queryset = ConstructionInstallationSection.objects.all()
 
-        if object:
-            queryset = queryset.filter(object=object)
+        object_id = self.kwargs.get("object")
+        search = self.request.query_params.get("search")
+        is_forma = self.request.query_params.get("is_forma")
+        is_file = self.request.query_params.get("is_file")
+        new = self.request.query_params.get('new')
+        old = self.request.query_params.get('old')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if object_id:
+            queryset = queryset.filter(object_id=object_id)
 
         if search:
-            queryset = queryset.filter(title=search)
+            queryset = queryset.filter(title__icontains=search)
+
+        if is_forma:
+            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1"])
+
+        if is_file:
+            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1"])
+
+        if start_date:
+            start_date_parsed = parse_date(start_date)
+            if start_date_parsed:
+                queryset = queryset.filter(created_at__date__gte=start_date_parsed)
+
+        if end_date:
+            end_date_parsed = parse_date(end_date)
+            if end_date_parsed:
+                queryset = queryset.filter(created_at__date__lte=end_date_parsed)
+
+        if new and new.lower() == 'true':
+            queryset = queryset.order_by('-created_at')
+
+        if old and old.lower() == 'true':
+            queryset = queryset.order_by('created_at')
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -71,7 +108,7 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED) #
+        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED) 
 
 construction_installation_section_list_create_api_view = ConstructionInstallationSectionListCreateAPIView.as_view()
 
