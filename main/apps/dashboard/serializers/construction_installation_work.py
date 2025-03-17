@@ -14,6 +14,7 @@ from decimal import Decimal
 
 
 class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
+    file_name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = ConstructionInstallationSection
         fields = (
@@ -21,8 +22,13 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
             'object',
             'title',
             'is_forma',
-            'is_file'
+            'is_file',
+            'file_name'
         )
+
+    def get_file_name(self, obj):
+        construction_installation_files = ConstructionInstallationFile.objects.filter(section=obj)[:4]
+        return [document_file.title for document_file in construction_installation_files]
 
 
 

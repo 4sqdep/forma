@@ -63,7 +63,7 @@ class DocumentFiles(BaseModel):
     document = models.ForeignKey(NextStageDocuments, on_delete=models.SET_NULL, verbose_name="Next Stage Document", blank=True, null=True)
     project_section = models.ForeignKey(ProjectSections, on_delete=models.SET_NULL, verbose_name="Project Section", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True)
-    full_name = models.CharField(max_length=100, blank=True, null=True)
+    full_name = models.CharField(max_length=1000, blank=True, null=True)
     calendar = models.DateField(blank=True, null=True)
     file_code = models.CharField(max_length=20, blank=True, null=True, )
     files = models.FileField(upload_to="document_files/", blank=True, null=True)

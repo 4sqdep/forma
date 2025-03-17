@@ -174,7 +174,7 @@ class ObjectListAPIView(generics.ListAPIView):
 
         if sub_category:
             queryset = queryset.filter(object_subcategory=sub_category)
-        elif search:
+        if search:
             queryset = queryset.filter(title__icontains=search)
         
         if start_date:
@@ -187,22 +187,22 @@ class ObjectListAPIView(generics.ListAPIView):
             if end_date:
                 queryset = queryset.filter(end_date__lte=end_date)
         
-        elif new and new.lower() == 'true':
+        if new and new.lower() == 'true':
             queryset = queryset.order_by('-created_at')
 
-        elif old and old.lower() == 'true':
+        if old and old.lower() == 'true':
             queryset = queryset.order_by('created_at')
         
-        elif expensive and expensive.lower() == 'true':
+        if expensive and expensive.lower() == 'true':
             queryset = queryset.order_by('-total_price')  
 
-        elif cheap and cheap.lower() == 'true':
+        if cheap and cheap.lower() == 'true':
             queryset = queryset.order_by('total_price')  
 
-        elif high_energy and high_energy.lower() == 'true':
+        if high_energy and high_energy.lower() == 'true':
             queryset = queryset.order_by('-object_power')  
 
-        elif low_energy and low_energy.lower() == 'true':
+        if low_energy and low_energy.lower() == 'true':
             queryset = queryset.order_by('object_power')
 
         return queryset
