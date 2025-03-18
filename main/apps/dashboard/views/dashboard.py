@@ -176,16 +176,13 @@ class ObjectListAPIView(generics.ListAPIView):
             queryset = queryset.filter(object_subcategory=sub_category)
         if search:
             queryset = queryset.filter(title__icontains=search)
-        
-        if start_date:
-            start_date = parse_date(start_date)
-            if start_date:
-                queryset = queryset.filter(start_date__gte=start_date)
-        
-        if end_date:
-            end_date = parse_date(end_date)
-            if end_date:
-                queryset = queryset.filter(end_date__lte=end_date)
+
+        if start_date and end_date:
+            queryset = queryset.filter(start_date__gte=start_date, end_date__lte=end_date)
+        elif start_date and not end_date:
+            queryset = queryset.filter(start_date=start_date)
+        elif end_date and not start_date:
+            queryset = queryset.filter(end_date=end_date)
         
         if new and new.lower() == 'true':
             queryset = queryset.order_by('-created_at')
