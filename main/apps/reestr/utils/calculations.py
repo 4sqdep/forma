@@ -1,16 +1,19 @@
 from main.apps.reestr.models.construction import ConstructionTask, MonthlyExpense
 from django.db.models import Sum, DecimalField
 from django.db.models.functions import ExtractYear, ExtractMonth, Coalesce
-
+from django.db.models import Sum, Value
 
 
 
 def constructions_total_cost(next_stage_document=None):
-    monthly_expense = MonthlyExpense.objects.all()
+    monthly_expense = MonthlyExpense.objects.none()
     if next_stage_document:
-        monthly_expense = monthly_expense.filter(construction_task__next_stage_document=next_stage_document)
-    total_cost = monthly_expense.aggregate(total_cost=Sum('construction_task__total_cost'))['total_cost']
-    return total_cost or 0
+        monthly_expense = MonthlyExpense.objects.filter(construction_task__next_stage_document=next_stage_document)
+
+    total_cost = monthly_expense.aggregate(
+        total_cost=Coalesce(Sum('construction_task__total_cost'), Value(0))
+    )['total_cost']
+    return total_cost
 
 
 def constructions_total_cost_for_month(queryset, next_stage_document=None):

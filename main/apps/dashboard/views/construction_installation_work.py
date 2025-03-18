@@ -23,6 +23,7 @@ from main.apps.dashboard.utils import(
 from decimal import Decimal
 from django.db.models.functions import Coalesce
 from django.db.models import Sum
+from django.utils.dateparse import parse_date
 
 
 
@@ -32,7 +33,6 @@ class ConstructionInstallationSectionAPIView:
     permission_classes = [permissions.IsAuthenticated]
     queryset = ConstructionInstallationSection.objects.all()
 
-from django.utils.dateparse import parse_date
 
 class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
     serializer_class = construction_installation_work_serializer.ConstructionInstallationSectionSerializer
@@ -150,19 +150,36 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
         ]
     )
 
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+    def get_queryset(self):
+        document = self.kwargs.get("document") 
+        queryset = ConstructionInstallationFile.objects.all()
         section = self.kwargs.get('section')
-        search = request.query_params.get('search')
+        search = self.request.query_params.get('search')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if document:
+            queryset = queryset.filter(document=document)
+        
+        if section:
+            queryset = queryset.filter(section=section)
 
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) | 
                 Q(file_code__icontains=search) 
             )
+        
+        if start_date and end_date:
+            queryset = queryset.filter(date__range=[start_date, end_date])
 
-        if section:
-            queryset = queryset.filter(section=section)
+        elif start_date:
+            queryset = queryset.filter(date=start_date)
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -381,8 +398,6 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         total_year_sum = get_total_year_sum(queryset, section)
         for expense in queryset:
             task = expense.construction_installation_project
-            # if not task:  
-            #     continue  
 
             if task.id not in construction_installation_data:
                 fact_sum = queryset.filter(construction_installation_project__section=section, construction_installation_project=task.id).aggregate(
@@ -437,9 +452,10 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response(data={"message": "Failed to create Completed Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_completed_task_list_create_api_view = MonthlyCompletedTaskListCreateAPIView.as_view()
 
