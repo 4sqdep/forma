@@ -11,8 +11,9 @@ def constructions_total_cost(next_stage_document=None):
         monthly_expense = MonthlyExpense.objects.filter(construction_task__next_stage_document=next_stage_document)
 
     total_cost = monthly_expense.aggregate(
-        total_cost=Coalesce(Sum('construction_task__total_cost'), Value(0))
+        total_cost=Coalesce(Sum('construction_task__total_cost', output_field=DecimalField()), Value(0, output_field=DecimalField()))
     )['total_cost']
+
     return total_cost
 
 
