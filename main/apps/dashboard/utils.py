@@ -8,7 +8,7 @@ def constructions_total_cost(section=None):
     completed_task = MonthlyCompletedTask.objects.all()
     if section:
         completed_task = completed_task.filter(construction_installation_project__section=section)
-    total_cost = completed_task.aggregate(total_cost=Sum('construction_installation_project__allocated_amount'))['total_cost']
+    total_cost = completed_task.aggregate(total_cost=Sum('construction_installation_project__allocated_amount', distinct=True))['total_cost']
     return total_cost or 0
 
 
