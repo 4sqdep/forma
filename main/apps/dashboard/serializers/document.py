@@ -43,7 +43,7 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
             'document_file_name'
         )
     
-    def get_file_name(self, obj):
+    def get_document_file_name(self, obj):
         if obj.is_file:
             construction_installation_files = DocumentFiles.objects.filter(document=obj)[:4]
             file_name_list = [document_file.title for document_file in construction_installation_files]
