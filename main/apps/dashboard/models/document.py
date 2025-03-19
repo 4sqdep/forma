@@ -1,6 +1,16 @@
 from django.db import models
 from main.apps.dashboard.models.dashboard import Object
 from main.apps.common.models import BaseModel, BaseMeta
+import os
+from django.utils.timezone import now
+
+
+
+def upload_document_files(instance, filename):
+    ext = os.path.splitext(filename)[1]  
+    original_name = os.path.splitext(filename)[0]  
+    timestamp = now().strftime("%Y_%m_%d") 
+    return f"document_files/{original_name}_{timestamp}{ext}"
 
 
 
@@ -66,7 +76,7 @@ class DocumentFiles(BaseModel):
     full_name = models.CharField(max_length=1000, blank=True, null=True)
     calendar = models.DateField(blank=True, null=True)
     file_code = models.CharField(max_length=20, blank=True, null=True, )
-    files = models.FileField(upload_to="document_files/", blank=True, null=True)
+    files = models.FileField(upload_to=upload_document_files, blank=True, null=True)
 
     def __str__(self):
         return f"{self.document} -- {self.name}"

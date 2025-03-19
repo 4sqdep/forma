@@ -7,8 +7,16 @@ from main.apps.account.models.department import Department
 from main.apps.account.models.position import Position
 from main.apps.common.models import BaseMeta, BaseModel
 from django.utils.translation import gettext_lazy as _
-from main.apps.common.utils import upload_file
+import os
+from django.utils.timezone import now
 
+
+
+def upload_profile_images(instance, filename):
+    ext = os.path.splitext(filename)[1]  
+    original_name = os.path.splitext(filename)[0]  
+    timestamp = now().strftime("%Y_%m_%d") 
+    return f"profile_images/{original_name}_{timestamp}{ext}"
 
 
 
@@ -19,7 +27,7 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
     phone = models.CharField(max_length=14, verbose_name="Telfon raqami", blank=True)
     email = models.EmailField(null=True, blank=True)
     is_download = models.BooleanField(default=False, verbose_name="Yuklash")
-    image = models.ImageField(upload_to="profile_pictures/", null=True, blank=True)
+    image = models.ImageField(upload_to=upload_profile_images, null=True, blank=True)
     is_staff = models.BooleanField(
         _("staff status"),
         default=False,
