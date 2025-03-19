@@ -7,10 +7,20 @@ from django.utils.timezone import now
 
 
 
+import os
+import unicodedata
+from django.utils.timezone import now
+
 def upload_hydro_station_files(instance, filename):
-    ext = os.path.splitext(filename)[1]  
-    original_name = os.path.splitext(filename)[0]  
+    ext = os.path.splitext(filename)[1]  # Extract file extension
+    original_name = os.path.splitext(filename)[0]  # Extract file name without extension
+    
+    # Normalize Unicode (preserves non-ASCII chars properly)
+    original_name = unicodedata.normalize("NFC", original_name)
+    
+    # Generate timestamp
     timestamp = now().strftime("%Y_%m_%d") 
+    
     return f"hydro_station_files/{original_name}_{timestamp}{ext}"
 
 

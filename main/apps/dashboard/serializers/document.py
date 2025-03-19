@@ -49,11 +49,11 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
             file_name_list = [document_file.name for document_file in construction_installation_files]
             return file_name_list if file_name_list else []  
         if obj.is_forma:
-            construction_task = ConstructionTask.objects.filter(next_stage_document=obj)
+            construction_task = ConstructionTask.objects.filter(next_stage_document=obj)[:4]
             construction_task_list = [project_name.title for project_name in construction_task]
             return construction_task_list if construction_task_list else [] 
         if obj.is_section:
-            project_section = ProjectSections.objects.filter(next_stage_documents=obj)
+            project_section = ProjectSections.objects.filter(next_stage_documents=obj)[:4]
             section_name_list = [project_name.name for project_name in project_section]
             return section_name_list if section_name_list else [] 
         return []
