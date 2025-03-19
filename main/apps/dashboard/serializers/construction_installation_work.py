@@ -27,8 +27,15 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
         )
 
     def get_file_name(self, obj):
-        construction_installation_files = ConstructionInstallationFile.objects.filter(section=obj)[:4]
-        return [document_file.title for document_file in construction_installation_files]
+        if obj.is_file:
+            construction_installation_files = ConstructionInstallationFile.objects.filter(section=obj)[:4]
+            file_name_list = [document_file.title for document_file in construction_installation_files]
+            return file_name_list if file_name_list else []  
+        if obj.is_forma:
+            construction_installation_project = ConstructionInstallationProject.objects.filter(section=obj)
+            project_name_list = [project_name.title for project_name in construction_installation_project]
+            return project_name_list if project_name_list else [] 
+        return [] 
 
 
 
