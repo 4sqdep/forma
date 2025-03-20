@@ -39,6 +39,7 @@ class ObjectSubCategorySerializer(serializers.ModelSerializer):
 
 
 class ObjectSerializer(serializers.ModelSerializer):
+    currency_slug = serializers.CharField(source='currency.slug_title', read_only=True)
     class Meta:
         model = Object
         fields = (
@@ -47,6 +48,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             'object_subcategory',
             'project_documentation',
             'currency',
+            'currency_slug',
             'title',
             'community_fund',
             'foreign_loan',

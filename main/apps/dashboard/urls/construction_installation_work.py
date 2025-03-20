@@ -119,7 +119,7 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'construction-completed-task/list/<int:construction_installation_project>/',
+        'construction-completed-task/list/<int:section>/',
         construction_installation_work.monthly_completed_task_list_create_api_view,
         name='construction_file_list'
     ),
