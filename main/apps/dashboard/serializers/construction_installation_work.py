@@ -102,12 +102,13 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
                 date__year=date.year,
                 date__month=date.month
             ).exists()
+
             if existing_completed_task:
                 raise serializers.ValidationError(
                     {"date": "Bu oyning bajarilgan ishlar xarajati allaqachon qo'shilgan"}
                 )
+            
             allocated_amount = construction_installation_project.allocated_amount or Decimal(0)
-
             fact_sum = MonthlyCompletedTask.objects.filter(
                 construction_installation_project=construction_installation_project
             ).aggregate(total_spent=Coalesce(Sum('monthly_amount'), Decimal(0)))['total_spent']
