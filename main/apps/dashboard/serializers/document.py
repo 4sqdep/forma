@@ -2,6 +2,8 @@ from main.apps.dashboard.models.document import DocumentFiles, NextStageDocument
 from main.apps.dashboard.serializers.dashboard import ObjectSerializer
 from rest_framework import serializers
 
+from main.apps.reestr.models.construction import ConstructionTask
+
 
 
 class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
@@ -28,6 +30,7 @@ class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
 
 
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
+    document_file_name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = NextStageDocuments
         fields = (
@@ -36,8 +39,25 @@ class NextStageDocumentsSerializer(serializers.ModelSerializer):
             'name',
             'is_forma',
             'is_section',
-            'is_file'
+            'is_file',
+            'document_file_name'
         )
+    
+    def get_document_file_name(self, obj):
+        if obj.is_file:
+            construction_installation_files = DocumentFiles.objects.filter(document=obj)[:4]
+            file_name_list = [document_file.name for document_file in construction_installation_files]
+            return file_name_list if file_name_list else []  
+        if obj.is_forma:
+            construction_task = ConstructionTask.objects.filter(next_stage_document=obj)[:4]
+            construction_task_list = [project_name.title for project_name in construction_task]
+            return construction_task_list if construction_task_list else [] 
+        if obj.is_section:
+            project_section = ProjectSections.objects.filter(next_stage_documents=obj)[:4]
+            section_name_list = [project_name.name for project_name in project_section]
+            return section_name_list if section_name_list else [] 
+        return []
+
 
 
 class NextStageDocumentsCreateSerializer(serializers.ModelSerializer):

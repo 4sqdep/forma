@@ -1,7 +1,16 @@
 from django.db import models
 from main.apps.common.models import BaseModel, BaseMeta, Currency
 from django.utils.text import slugify
+import os
+from django.utils.timezone import now
 
+
+
+def upload_object_files(instance, filename):
+    ext = os.path.splitext(filename)[1]  
+    original_name = os.path.splitext(filename)[0]  
+    timestamp = now().strftime("%Y_%m_%d") 
+    return f"object_files/{original_name}_{timestamp}{ext}"
 
 
 
@@ -42,7 +51,7 @@ class ObjectSubCategory(BaseModel):
 class Object(BaseModel):
     object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt Categoriya")
     object_subcategory = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, verbose_name="Obyekt Subcategoriya", blank=True, null=True)
-    project_documentation = models.ForeignKey('dashboard.ProjectD ocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
+    project_documentation = models.ForeignKey('dashboard.ProjectDocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
     construction_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Qurilish ishlar summasi")
@@ -55,7 +64,7 @@ class Object(BaseModel):
     water_consumption = models.FloatField(null=True, blank=True, verbose_name="Suv sarfi")
     community_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="UZBEKGIDRO summasi")
     foreign_loan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Xorijiy kredit")
-    object_file = models.FileField(upload_to="object_files/", null=True, blank=True, verbose_name="Obyekt pasporti fayli")
+    object_file = models.FileField(upload_to=upload_object_files, blank=True, null=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 

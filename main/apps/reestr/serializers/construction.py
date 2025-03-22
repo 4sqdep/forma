@@ -5,6 +5,7 @@ from django.db.models.functions import Coalesce
 from decimal import Decimal
 
 
+
 class ConstructionTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConstructionTask 
@@ -42,7 +43,7 @@ class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
 
             if spent_amount > remaining_budget:
                 raise serializers.ValidationError(
-                    {"spent_amount": "You cannot add more than the remaining budget."}
+                    {"spent_amount": "Siz qolgan byudjetdan ko‘proq qo‘sha olmaysiz."}
                     )
         return data
         

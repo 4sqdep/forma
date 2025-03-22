@@ -18,6 +18,9 @@ from rest_framework_simplejwt import authentication
 from rest_framework import generics, status, permissions 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django.utils.dateparse import parse_date
+
+
 
 
 
@@ -110,18 +113,35 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
         is_forma = self.request.query_params.get("is_forma")
         is_section = self.request.query_params.get("is_section")
         is_file = self.request.query_params.get("is_file")
+        new = self.request.query_params.get('new')
+        old = self.request.query_params.get('old')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
 
         if object:
             queryset = queryset.filter(object_id=object)
 
         if search:
             queryset = queryset.filter(name__icontains=search)
-        if is_forma is not None:
-            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1", "yes"])
-        if is_section is not None:
-            queryset = queryset.filter(is_section=is_section.lower() in ["true", "1", "yes"])
-        if is_file is not None:
-            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1", "yes"])
+        if is_forma:
+            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1"])
+        if is_section:
+            queryset = queryset.filter(is_section=is_section.lower() in ["true", "1"])
+        if is_file:
+            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1"])
+        
+        if start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+
+        if end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        if new and new.lower() == 'true':
+            queryset = queryset.order_by('-created_at')
+
+        if old and old.lower() == 'true':
+            queryset = queryset.order_by('created_at')
+
         return queryset
     
     def get_pagination_class(self):
@@ -236,6 +256,8 @@ class DocumentFilesListAPIView(generics.ListAPIView):
         project_section = self.request.query_params.get("project_section")
         name = self.request.query_params.get("name")
         file_code = self.request.query_params.get("file_code")
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
 
         if document:
             queryset = queryset.filter(document=document)
@@ -246,6 +268,13 @@ class DocumentFilesListAPIView(generics.ListAPIView):
             queryset = queryset.filter(name__icontains=name)
         if file_code:
             queryset = queryset.filter(file_code__icontains=file_code)
+        
+        if start_date and end_date:
+            queryset = queryset.filter(calendar__range=[start_date, end_date])
+
+        elif start_date:
+            queryset = queryset.filter(calendar=start_date)
+
         return queryset
     
     def get_pagination_class(self):

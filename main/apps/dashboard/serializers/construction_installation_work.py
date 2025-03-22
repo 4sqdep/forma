@@ -14,6 +14,7 @@ from decimal import Decimal
 
 
 class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
+    file_name = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = ConstructionInstallationSection
         fields = (
@@ -21,13 +22,24 @@ class ConstructionInstallationSectionSerializer(serializers.ModelSerializer):
             'object',
             'title',
             'is_forma',
-            'is_file'
+            'is_file',
+            'file_name'
         )
+
+    def get_file_name(self, obj):
+        if obj.is_file:
+            construction_installation_files = ConstructionInstallationFile.objects.filter(section=obj)[:4]
+            file_name_list = [document_file.title for document_file in construction_installation_files]
+            return file_name_list if file_name_list else []  
+        if obj.is_forma:
+            construction_installation_project = ConstructionInstallationProject.objects.filter(section=obj)[:4]
+            project_name_list = [project_name.title for project_name in construction_installation_project]
+            return project_name_list if project_name_list else [] 
+        return [] 
 
 
 
 class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
-    # contract_file = serializers.SerializerMethodField()
     currency_slug = serializers.CharField(source='object.currency.slug_title', read_only=True)
     class Meta:
         model = ConstructionInstallationStatistics
@@ -42,12 +54,6 @@ class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
             'contract_file',
             'contractor'
         )
-    
-    # def get_contract_file(self, obj):
-    #     if obj.contract_file:
-    #         request = self.context.get('request')
-    #         return request.build_absolute_uri(obj.contract_file.url) if request else obj.contract_file.url
-    #     return None
 
 
 class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
@@ -92,7 +98,6 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
         if construction_installation_project and monthly_amount:
             allocated_amount = construction_installation_project.allocated_amount or Decimal(0)
 
-            # Extract the total_spent value correctly
             fact_sum = MonthlyCompletedTask.objects.filter(
                 construction_installation_project=construction_installation_project
             ).aggregate(total_spent=Coalesce(Sum('monthly_amount'), Decimal(0)))['total_spent']
@@ -101,6 +106,6 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
 
             if monthly_amount > remaining_budget:
                 raise serializers.ValidationError(
-                    {'allocated_amount': "You cannot add more than the remaining budget."}
+                    {'allocated_amount': "Siz qolgan byudjetdan ko‘proq qo‘sha olmaysiz."}
                 )
         return data
