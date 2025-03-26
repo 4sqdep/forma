@@ -127,12 +127,49 @@ class UserProfileAPIView(APIView):
 
 user_profile_api_view = UserProfileAPIView.as_view()
 
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 class AllUsersListAPIView(generics.ListAPIView):
     queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserAllSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = CustomPagination
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        queryset = User.objects.all()
+        return queryset
+    
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginator_class = self.get_pagination_class()
+
+        if paginator_class:
+            paginator = paginator_class()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", [])
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"data":serializer.data}, status=status.HTTP_200_OK)
 
 all_user_api_view = AllUsersListAPIView.as_view()
