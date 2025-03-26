@@ -51,7 +51,6 @@ class ObjectSubCategory(BaseModel):
 class Object(BaseModel):
     object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt Categoriya")
     object_subcategory = models.ForeignKey(ObjectSubCategory, on_delete=models.SET_NULL, verbose_name="Obyekt Subcategoriya", blank=True, null=True)
-    project_documentation = models.ForeignKey('dashboard.ProjectDocumentation', on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt bo'limi")
     currency = models.ForeignKey(Currency, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
     construction_work_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Qurilish ishlar summasi")
@@ -65,6 +64,9 @@ class Object(BaseModel):
     community_fund = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="UZBEKGIDRO summasi")
     foreign_loan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Xorijiy kredit")
     object_file = models.FileField(upload_to=upload_object_files, blank=True, null=True)
+    useful_work_coefficient = models.FloatField(max_length=30, null=True, blank=True, verbose_name="Foydali ish koeffitsiyenti")
+    latitude = models.CharField(max_length=25, verbose_name="Kenglik", null=True, blank=True)
+    longitude = models.CharField(max_length=25, verbose_name="Uzunlik", null=True, blank=True)
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 

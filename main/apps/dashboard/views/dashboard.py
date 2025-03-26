@@ -128,16 +128,6 @@ class ObjectAPIView(APIView):
             return Response({"message": "Object created successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"message": "Xatolik yuz berdi", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-    # def get(self, request, pk=None):
-    #     if pk:
-    #         obj = get_object_or_404(Object, id=pk)
-    #         serializer = ObjectSerializer(obj)
-    #         return Response({"message": "SubCategory buttonlar", "data": serializer.data}, status=status.HTTP_200_OK)
-    #     else:
-    #         objects = Object.objects.filter(object_subcategory_id=pk).select_related('object_subcategory')
-    #         serializer = ObjectSerializer(objects, many=True)
-    #         return Response({"message": "SubCategory buttonlar", "data": serializer.data}, status=status.HTTP_200_OK)
-
     def put(self, request, pk=None):
         obj = get_object_or_404(Object, id=pk)
         serializer = ObjectCreateUpdateSerializer(obj, data=request.data, partial=True)

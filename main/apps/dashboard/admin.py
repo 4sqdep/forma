@@ -7,7 +7,7 @@ from main.apps.dashboard.models.construction_installation_work import (
     MonthlyCompletedTask
 )
 from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
-from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectDocumentation, ProjectSections
+from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectSections
 
 
 
@@ -36,10 +36,6 @@ class ObjectAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Object, ObjectAdmin)
-
-@admin.register(ProjectDocumentation)
-class ProjectDocumentationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'subcategories_btn', 'name', 'order')
 
 
 class NextStageDocumentsAdmin(admin.ModelAdmin):

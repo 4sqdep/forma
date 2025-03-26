@@ -14,28 +14,6 @@ def upload_document_files(instance, filename):
 
 
 
-
-class ProjectDocumentation(BaseModel):
-    subcategories_btn = models.ForeignKey(Object, on_delete=models.SET_NULL,
-                                          verbose_name="Loyiha nomi", blank=True,
-                                          null=True, related_name="projectdocumentation")
-    name = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
-    is_obj_password = models.BooleanField(default=False, verbose_name="Obyekt pasporti?")
-    is_project_doc = models.BooleanField(default=False, verbose_name="Loyiha hujjatlari?")
-    is_work_smr = models.BooleanField(default=False, verbose_name="Qurilish montaj ishlari hujjatlari?")
-    is_equipment = models.BooleanField(default=False, verbose_name="Uskunalar hujjatlari?")
-    order = models.PositiveIntegerField(default=0, verbose_name="Tartib")
-
-    def __str__(self):
-        return f"{self.subcategories_btn} -- {self.name}"
-
-    class Meta(BaseMeta):
-        db_table = "project_documentation"
-        verbose_name = "Project Documentation"
-        verbose_name_plural = "Project Documentations"
-
-
-
 class NextStageDocuments(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL,
                                           verbose_name="Loyiha nomi", blank=True, null=True)
