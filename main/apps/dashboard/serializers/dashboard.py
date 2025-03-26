@@ -43,7 +43,6 @@ class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
         fields = (
             'object_category',
             'object_subcategory',
-            'project_documentation',
             'currency',
             'title',
             'community_fund',
@@ -70,7 +69,6 @@ class ObjectSerializer(serializers.ModelSerializer):
             'id',
             'object_category',
             'object_subcategory',
-            'project_documentation',
             'currency',
             'currency_slug',
             'title',

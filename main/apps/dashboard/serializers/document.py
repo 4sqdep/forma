@@ -1,32 +1,9 @@
-from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectDocumentation, ProjectSections
+from main.apps.dashboard.models.document import DocumentFiles, NextStageDocuments, ProjectSections
 from main.apps.dashboard.serializers.dashboard import ObjectSerializer
 from rest_framework import serializers
 
 from main.apps.reestr.models.construction import ConstructionTask
 
-
-
-class ProjectDocumentationSerializerHas(serializers.ModelSerializer):
-    object = ObjectSerializer()
-    project_count = serializers.IntegerField(read_only=True)
-    has_data = serializers.BooleanField(read_only=True)
-    first_name = serializers.CharField(source='created_by.first_name', read_only=True)
-    last_name = serializers.CharField(source='created_by.last_name', read_only=True)
-    class Meta:
-        model = ProjectDocumentation
-        fields = (
-            'id',
-            'first_name',
-            'last_name',
-            'object', 
-            'name', 
-            'project_count',
-            'has_data', 
-            'is_obj_password', 
-            'is_project_doc', 
-            'is_work_smr', 
-            'is_equipment'
-        )
 
 
 class NextStageDocumentsSerializer(serializers.ModelSerializer):
@@ -170,15 +147,4 @@ class NextStageDocumentsSerializerDetail(serializers.ModelSerializer):
         fields = (
             'id',
             'name',
-        )
-
-
-class ProjectDocumentationSerializer(serializers.ModelSerializer):
-    documents = NextStageDocumentsSerializer(many=True, read_only=True)
-    class Meta:
-        model = ProjectDocumentation
-        fields = (
-            'id', 
-            'name', 
-            'documents'
         )

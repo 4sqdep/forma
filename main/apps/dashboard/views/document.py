@@ -9,64 +9,14 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
-from main.apps.dashboard.serializers.document import ProjectDocumentationSerializerHas, NextStageDocumentsSerializer, NextStageDocumentsSerializerDetail
-from main.apps.main.models import ObjectsPassword
+from main.apps.dashboard.serializers.document import  NextStageDocumentsSerializer
 from main.apps.main.serializer.statistic import ObjectCategoryStatisticsSerializer
-from main.apps.main.serializers import GetObjectsPasswordSerializer
 from django.db.models import Prefetch
 from rest_framework_simplejwt import authentication
 from rest_framework import generics, status, permissions 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.utils.dateparse import parse_date
-
-
-
-
-
-class ProjectDocumentAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk=None):
-        order = [
-            "Obyekt pasporti",
-            "Loyiha hujjatlari",
-            "Qurilish montaj ishlari hujjatlari",
-            "Uskunalar hujjatlari",
-        ]
-        order_case = Case(*[
-            When(name=name, then=index) for index, name in enumerate(order)
-        ])
-
-        try:
-            subcategory = Object.objects.get(id=pk)
-            sub_btn = subcategory.projectdocumentation.all().order_by(order_case).annotate(
-                has_data=Case(
-                    When(name__isnull=False, then=Value(True)),  
-                    default=Value(False),
-                    output_field=BooleanField()
-                )
-            )
-            serializer = ProjectDocumentationSerializerHas(sub_btn, many=True)
-            return Response(
-                data={
-                    "subcategory": {
-                        "id": subcategory.id,
-                        "name": subcategory.name
-                    },
-                    "total_documents": sub_btn.count(),
-                    "documents": serializer.data
-                },
-                status=status.HTTP_200_OK
-            )
-
-        except Object.DoesNotExist:
-            return Response(
-                data={"message": "Object does not exist"},
-                status=status.HTTP_404_NOT_FOUND
-            )
-
-project_document_api_view = ProjectDocumentAPIView.as_view()
 
 
 
@@ -167,8 +117,6 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 next_stage_document_list_api_view = NextStageDocumentsListAPIView.as_view()
-
-
 
 
 class NextStageDocumentsDetailAPIView(generics.RetrieveAPIView):
@@ -575,94 +523,6 @@ class FilesSearchAPIView(APIView):
 
 file_search_api_view = FilesSearchAPIView.as_view()
 
-
-
-class NestedDataAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        query_params = request.query_params.get("query")
-
-        if query_params not in ['1', '2', '3']:
-            return Response(
-                data={"message": "Noto'g'ri query parametri kiritildi."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        try:
-            paginator = CustomPagination()
-
-            if query_params == '1':
-                project_docs = ObjectsPassword.objects.filter(project_documentation__is_obj_password=True)
-                paginated_queryset = paginator.paginate_queryset(project_docs, request)
-                serializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
-                return Response(
-                    data=serializer.data,
-                    status=status.HTTP_200_OK
-                )
-
-            elif query_params == '2':
-                sub_btns = Object.objects.prefetch_related(
-                    Prefetch(
-                        'nextstagedocuments_set',
-                        queryset=NextStageDocuments.objects.filter(project_document__is_project_doc=True),
-                        to_attr='filtered_docs'
-                    )
-                )
-                data = [
-                    {
-                        "sub_btn_id": sub_btn.id,
-                        "sub_btn_title": sub_btn.name,
-                        "project_docs": NextStageDocumentsSerializer(
-                            paginator.paginate_queryset(sub_btn.filtered_docs, request), many=True
-                        ).data
-                    }
-                    for sub_btn in sub_btns
-                ]
-                return Response({'data':data}, status=status.HTTP_200_OK)
-
-            elif query_params == '3':
-                project_docs = NextStageDocuments.objects.filter(project_document__is_work_smr=True)
-                paginated_queryset = paginator.paginate_queryset(project_docs, request)
-                serializer = NextStageDocumentsSerializer(paginated_queryset, many=True)
-                return Response({'data':serializer.data}, status=status.HTTP_200_OK)
-
-        except Exception as e:
-            return Response(
-                data={"message": str(e)},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-
-nested_data_api_view = NestedDataAPIView.as_view()
-
-
-
-class ObjectsPasswordDetailAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, pk=None):
-        if not pk:
-            return Response(
-                data={"message": "subcategory_btn_id talab qilinadi."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
-        get_password = ObjectsPassword.objects.filter(subcategory_btn_id=pk)
-        if not get_password.exists():
-            return Response(
-                data={"message": "Ma'lumot topilmadi."},
-                status=status.HTTP_404_NOT_FOUND
-            )
-        
-        paginator = CustomPagination()
-        paginated_queryset = paginator.paginate_queryset(get_password, request)
-        serializer = GetObjectsPasswordSerializer(paginated_queryset, many=True)
-        return Response(
-            {'data': serializer.data},
-            status=status.HTTP_200_OK
-        )
-    
-object_password_detail_api_view = ObjectsPasswordDetailAPIView.as_view()
 
 
 
