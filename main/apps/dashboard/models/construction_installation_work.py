@@ -22,7 +22,6 @@ def upload_construction_installation_files(instance, filename):
 
 
 
-
 class ConstructionInstallationSection(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, verbose_name="Loyiha nomi", blank=True, null=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")

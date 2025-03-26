@@ -31,10 +31,21 @@ class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
     def validate(self, data):
         construction_task = data.get('construction_task')
         spent_amount = data.get('spent_amount')
+        date = data.get('date')
+        
+        if construction_task and spent_amount and date:
+            existing_expense = MonthlyExpense.objects.filter(
+                construction_task=construction_task,
+                date__year=date.year,
+                date__month=date.month
+            ).exists()
 
-        if construction_task and spent_amount:
+            if existing_expense:
+                raise serializers.ValidationError(
+                    {"date": "Bu oyning xarajati allaqachon qo'shilgan"}
+                )
+            
             total_cost = construction_task.total_cost or Decimal(0)
-
             fact_sum = MonthlyExpense.objects.filter(construction_task=construction_task).aggregate(
                         total_spent=Coalesce(Sum("spent_amount"), Decimal(0))
                     )["total_spent"]
