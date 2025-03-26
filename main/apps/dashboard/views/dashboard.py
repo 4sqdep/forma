@@ -43,51 +43,51 @@ object_category_api_view = ObjectCategoryAPIView.as_view()
 
 
 
-# class ObjectSubCategoryAPIView(APIView):
-#     # permission_classes = [IsAuthenticated]
-#
-#     def get(self, request, pk=None):
-#         try:
-#             btns = (
-#                 ObjectSubCategory.objects.filter(id=pk)
-#                 .select_related('object_category')
-#                 .annotate(
-#                     subcategory_count=Count('object_category', distinct=True),
-#                     has_data=Case(
-#                         When(subcategory_count__gt=0, then=Value(True)),
-#                         default=Value(False),
-#                         output_field=BooleanField()
-#                     )
-#                 )
-#             )
-#
-#             serializer = ObjectSubCategorySerializer(btns, many=True)
-#             return Response({"message": "Sub Category", "data": serializer.data}, status=status.HTTP_200_OK)
-#
-#         except Exception as e:
-#             return Response({"message": f"Xatolik yuz berdi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-#
-#     def post(self, request):
-#         serializer = ObjectSubCategorySerializer(data=request.data, context={'request': request})
-#         if serializer.is_valid():
-#             serializer.save(created_by=request.user)
-#             return Response({"message": "Sub Category", "data": serializer.data}, status=status.HTTP_201_CREATED)
-#         return Response({"message": "Xatolik yuz berdi", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def put(self, request, pk=None):
-#         obj = get_object_or_404(ObjectSubCategory, id=pk)
-#         serializer = ObjectSubCategorySerializer(obj, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response({"message": "SubCategory updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
-#         return Response({"message": "Xatolik yuz berdi", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, pk=None):
-#         obj = get_object_or_404(ObjectSubCategory, id=pk)
-#         obj.delete()
-#         return Response({"message": "SubCategory deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
-#
-# object_subcategory_api_view = ObjectSubCategoryAPIView.as_view()
+class ObjectSubCategoryAPIView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk=None):
+        try:
+            btns = (
+                ObjectSubCategory.objects.filter(id=pk)
+                .select_related('object_category')
+                .annotate(
+                    subcategory_count=Count('object_category', distinct=True),
+                    has_data=Case(
+                        When(subcategory_count__gt=0, then=Value(True)),
+                        default=Value(False),
+                        output_field=BooleanField()
+                    )
+                )
+            )
+
+            serializer = ObjectSubCategorySerializer(btns, many=True)
+            return Response({"message": "Sub Category", "data": serializer.data}, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({"message": f"Xatolik yuz berdi: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request):
+        serializer = ObjectSubCategorySerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save(created_by=request.user)
+            return Response({"message": "Sub Category", "data": serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({"message": "Xatolik yuz berdi", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk=None):
+        obj = get_object_or_404(ObjectSubCategory, id=pk)
+        serializer = ObjectSubCategorySerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "SubCategory updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({"message": "Xatolik yuz berdi", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk=None):
+        obj = get_object_or_404(ObjectSubCategory, id=pk)
+        obj.delete()
+        return Response({"message": "SubCategory deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+object_subcategory_api_view = ObjectSubCategoryAPIView.as_view()
 
 
 class ObjectSubCategoryListAPIView(APIView):

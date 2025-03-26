@@ -9,7 +9,6 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Q
 from django.db.models import Case, When, Value, BooleanField
 from main.apps.common.pagination import CustomPagination
-from main.apps.dashboard.serializers.document import  NextStageDocumentsSerializer
 from main.apps.main.serializer.statistic import ObjectCategoryStatisticsSerializer
 from django.db.models import Prefetch
 from rest_framework_simplejwt import authentication
