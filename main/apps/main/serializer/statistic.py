@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from main.apps.main.models import ObjectsPassword
 from main.apps.dashboard.models.dashboard import (
     Object,
     ObjectCategory,

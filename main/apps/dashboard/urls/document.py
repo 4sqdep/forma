@@ -1,14 +1,8 @@
 from django.urls import path
-from ..views import document
-
+from main.apps.dashboard.views import document
 
 
 urlpatterns = [
-    path(
-        'project-document/<int:pk>/', 
-        document.project_document_api_view, 
-        name='project_document'
-    ),
     path(
         'next-project-create/', 
         document.next_stage_document_create_api_view, 
@@ -88,16 +82,6 @@ urlpatterns = [
         'file-search/', 
         document.file_search_api_view, 
         name='file_search'
-    ),
-    path(
-        'get-doc/', 
-        document.nested_data_api_view, 
-        name='get-doc'
-    ),
-    path(
-        'statistics-data/<int:pk>/', 
-        document.object_password_detail_api_view, 
-        name='post-doc'
     ),
     path(
         'all-statistics-data/', 
