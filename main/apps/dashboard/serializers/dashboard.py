@@ -56,6 +56,9 @@ class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
             'pressure',
             'water_consumption',
             'object_file',
+            'useful_work_coefficient',
+            'latitude',
+            'longitude',
             'start_date',
             'end_date',
         )
@@ -83,6 +86,9 @@ class ObjectSerializer(serializers.ModelSerializer):
             'pressure',
             'water_consumption',
             'object_file',
+            'useful_work_coefficient',
+            'latitude',
+            'longitude',
             'start_date',
             'end_date',
         )
