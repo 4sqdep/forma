@@ -454,8 +454,14 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response(data={"message": "Failed to create Completed Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "message": "New information added successfully",
+                'data': serializer.data},
+                status=status.HTTP_201_CREATED)
+        return Response(data={
+            "message": "Failed to create Completed Task",
+            "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST)
 
 monthly_completed_task_list_create_api_view = MonthlyCompletedTaskListCreateAPIView.as_view()
 
@@ -470,7 +476,10 @@ class MonthlyCompletedTaskRetrieveUpdateDeleteAPIView(MonthlyCompletedTaskAPIVie
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({"message": "Monthly Completed Task updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Monthly Completed Task updated successfully",
+            "data": serializer.data},
+            status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

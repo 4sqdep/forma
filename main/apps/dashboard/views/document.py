@@ -30,13 +30,15 @@ class NextStageDocumentsCreateAPIView(generics.CreateAPIView):
         if serializer.is_valid():
             serializer.save(created_by=request.user)
             return Response(
-                {"message": "Kerakli hujjatlar yaratildi", "data": serializer.data},
+                {"message": "Kerakli hujjatlar yaratildi",
+                 "data": serializer.data},
                 status=status.HTTP_201_CREATED
             )
         return Response(
-            {"message": "Hujjat yaratishda xatolik yuz berdi", "errors": serializer.errors},
-            status=status.HTTP_400_BAD_REQUEST
-        )
+            {
+                "message": "Hujjat yaratishda xatolik yuz berdi",
+                "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST)
 
 next_stage_document_create_api_view = NextStageDocumentsCreateAPIView.as_view()
 
@@ -113,7 +115,9 @@ class NextStageDocumentsListAPIView(generics.ListAPIView):
             return Response(response_data.data, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({"message": "Malumotlar listi",
+                         "data": serializer.data},
+                        status=status.HTTP_200_OK)
 
 next_stage_document_list_api_view = NextStageDocumentsListAPIView.as_view()
 
@@ -127,7 +131,10 @@ class NextStageDocumentsDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response({"data": serializer.data, "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Successfully",
+            "data": serializer.data,
+            "status_code": status.HTTP_200_OK})
 
 next_stage_document_detail_api_view = NextStageDocumentsDetailAPIView.as_view()
 
@@ -163,7 +170,8 @@ class NextStageDocumentsDeleteAPIView(generics.DestroyAPIView):
         instance = self.get_object()
         self.perform_destroy(instance)
         return Response(
-            {"message": "Hujjat muvaffaqiyatli o'chirildi", "status_code": status.HTTP_204_NO_CONTENT},
+            {"message": "Hujjat muvaffaqiyatli o'chirildi",
+             "status_code": status.HTTP_204_NO_CONTENT},
             status=status.HTTP_204_NO_CONTENT
         )
 
@@ -181,7 +189,11 @@ class DocumentFilesCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"message": "File successfully created", "data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": "File successfully created",
+                "data": serializer.data,
+                "status_code": status.HTTP_201_CREATED},
+                status=status.HTTP_201_CREATED)
         return Response({"message": "Error creating file", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 file_create_api_view = DocumentFilesCreateAPIView.as_view()
@@ -277,7 +289,11 @@ class DocumentFilesUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "File successfully updated", "status_code": status.HTTP_200_OK}, status=status.HTTP_200_OK)
+            return Response({
+                "data": serializer.data,
+                "message": "File successfully updated",
+                "status_code": status.HTTP_200_OK},
+                status=status.HTTP_200_OK)
         return Response({"message": "Error updating file", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 file_update_api_view = DocumentFilesUpdateAPIView.as_view()
@@ -292,7 +308,10 @@ class DocumentFilesDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({"message": "File successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
+        return Response({
+            "message": "File successfully deleted",
+            "status_code": status.HTTP_204_NO_CONTENT},
+            status=status.HTTP_204_NO_CONTENT)
 
 file_delete_api_view = DocumentFilesDeleteAPIView.as_view()
 
@@ -306,9 +325,9 @@ class ProjectSectionsAPIView(APIView):
             sections = ProjectSections.objects.filter(next_stage_documents_id=pk)
             if not sections.exists():
                 return Response(
-                    {"message": "Bo'limlar topilmadi."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                    {"message": "Bo'limlar topilmadi.",
+                     "status_code":status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND)
 
             paginator = CustomPagination()
             paginated_queryset = paginator.paginate_queryset(sections, request)
@@ -318,7 +337,8 @@ class ProjectSectionsAPIView(APIView):
                 {
                     "message": "Barcha bo'limlar muvaffaqiyatli olindi",
                     "total": sections.count(),
-                    "sections": serializer.data
+                    "sections": serializer.data,
+                    "status_code": status.HTTP_200_OK,
                 },
                 status=status.HTTP_200_OK
             )
@@ -396,11 +416,17 @@ class MultipleFileUploadView(APIView):
         if serializer.is_valid():
             uploaded_files = serializer.save()  
             response_serializer = document_serializer.FilesSerializer(uploaded_files, many=True)  
-            return Response(
-                data=response_serializer.data,
+            return Response({
+                "message": "Fayil yuklandi..",
+                'status_code': status.HTTP_201_CREATED,
+                "data":response_serializer.data,
+            },
                 status=status.HTTP_201_CREATED
             )
-        return Response({'data':serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({
+            'data':serializer.errors,
+            'status_code': status.HTTP_400_BAD_REQUEST
+        }, status=status.HTTP_400_BAD_REQUEST)
 
 multiple_file_upload_api_view = MultipleFileUploadView.as_view()
 
@@ -415,18 +441,20 @@ class GetFilesAPIView(APIView):
             files = DocumentFiles.objects.filter(document_id=pk)
             if not files.exists():
                 return Response(
-                    data={"message": "Tegishli fayllar topilmadi"},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+                    data={"message": "Tegishli fayllar topilmadi",
+                        'status_code': status.HTTP_404_NOT_FOUND},
+                        status=status.HTTP_404_NOT_FOUND)
 
             paginator = CustomPagination()
             paginated_queryset = paginator.paginate_queryset(files, request)
             serializer = document_serializer.GetFilesSerializer(paginated_queryset, many=True)
             
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK
-            )
+            return Response({
+                "message": "Siz izlagan fayl....",
+                "data": serializer.data,
+                'status_code': status.HTTP_200_OK
+            },
+            status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response(
@@ -447,7 +475,8 @@ class GetFilesSectionAPIView(APIView):
             files = DocumentFiles.objects.filter(project_section_id=pk)
             if not files.exists():
                 return Response(
-                    data={"message": "Tegishli fayllar topilmadi"},
+                    data={"message": "Tegishli fayllar topilmadi",
+                          'status_code': status.HTTP_404_NOT_FOUND},
                     status=status.HTTP_404_NOT_FOUND
                 )
 
@@ -455,10 +484,12 @@ class GetFilesSectionAPIView(APIView):
             paginated_queryset = paginator.paginate_queryset(files, request)
             serializer = document_serializer.GetFilesSerializer(paginated_queryset, many=True)
 
-            return Response(
-                data=serializer.data,
-                status=status.HTTP_200_OK
-            )
+            return Response({
+                "message": "Siz izlagan fayl....",
+                "data": serializer.data,
+                'status_code': status.HTTP_200_OK
+            },
+                status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response(
@@ -542,6 +573,10 @@ class AllStatisticsData(APIView):
             item['name'].lower().replace(" ", "_"): item
             for item in serializer.data
         }
-        return Response({'data':formatted_data}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Barcha Statistikalar",
+            'data': formatted_data,
+            'status_code': status.HTTP_200_OK
+        }, status=status.HTTP_200_OK)
 
 all_statistics_data_api_view = AllStatisticsData.as_view()
