@@ -21,7 +21,11 @@ class EquipmentCategoryCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Industrial Equipment"}, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": "Industrial Equipment",
+                "data": serializer.data,
+                'status_code': status.HTTP_201_CREATED
+            }, status=status.HTTP_201_CREATED)
         return Response({"message": "Failed to create Industrial Equipment", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 equipment_category_create_api_view = EquipmentCategoryCreateAPIView.as_view()
@@ -78,7 +82,12 @@ class EquipmentCategoryListAPIView(generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "EquipmentCategory modelidagi malumotlar listi",
+            "data": serializer.data,
+            'status_code': status.HTTP_200_OK
+        },
+            status=status.HTTP_200_OK)
 
 equipment_category_list_api_view = EquipmentCategoryListAPIView.as_view()
 
@@ -93,7 +102,12 @@ class EquipmentCategoryDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Equipment Category detail successfully",
+            "data": serializer.data,
+            "status_code": status.HTTP_200_OK
+        },
+        status=status.HTTP_200_OK)
 
 equipment_category_detail_api_view = EquipmentCategoryDetailAPIView.as_view()
 
@@ -110,8 +124,17 @@ class EquipmentCategoryUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Industrial Equipment", "status_code": status.HTTP_200_OK})
-        return Response({"message": "Failed to update Industrial Equipment", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "data": serializer.data,
+                "message": "Industrial Equipment",
+                "status_code": status.HTTP_200_OK},
+            status=status.HTTP_200_OK)
+        return Response({
+            "message": "Failed to update Industrial Equipment",
+            "errors": serializer.errors,
+            'status_code': status.HTTP_400_BAD_REQUEST
+        },
+            status=status.HTTP_400_BAD_REQUEST)
 
 equipment_category_update_api_view = EquipmentCategoryUpdateAPIView.as_view()
 
@@ -142,7 +165,12 @@ class EquipmentSubCategoryCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Equipment Category"}, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": "Equipment Category",
+                "data": serializer.data,
+                'status_code': status.HTTP_201_CREATED
+                },
+                status=status.HTTP_201_CREATED)
         return Response({"message": "Failed to create Equipment Category", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 equipment_subcategory_create_api_view = EquipmentSubCategoryCreateAPIView.as_view()
@@ -192,7 +220,12 @@ class EquipmentSubCategoryListAPIView(generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data})
+        return Response({
+            "message": "Equipment SubCategory list",
+            "data": serializer.data,
+            'status_code': status.HTTP_200_OK
+        },
+        status=status.HTTP_200_OK)
 
 equipment_subcategory_list_api_view = EquipmentSubCategoryListAPIView.as_view()
 
@@ -207,7 +240,12 @@ class EquipmentSubCategoryDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Equipment SubCategory detail",
+            'data': serializer.data,
+            'status_code': status.HTTP_200_OK
+        },
+            status=status.HTTP_200_OK)
 
 equipment_subcategory_detail_api_view = EquipmentSubCategoryDetailAPIView.as_view()
 
@@ -224,7 +262,11 @@ class EquipmentSubCategoryUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Equipment Subcategory"}, status=status.HTTP_204_NO_CONTENT)
+            return Response({
+                "message": "Equipment Subcategory",
+                "data": serializer.data,
+                'status_code': status.HTTP_204_NO_CONTENT
+            }, status=status.HTTP_204_NO_CONTENT)
         return Response({"message": "Failed to update Equipment Subcategory", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 equipment_subcategory_update_api_view = EquipmentSubCategoryUpdateAPIView.as_view()
@@ -260,7 +302,11 @@ class IndustrialAssetCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Industrial Asset"}, status=status.HTTP_201_CREATED)
+            return Response({
+                "message": "Industrial Asset",
+                "data": serializer.data,
+                'status_code': status.HTTP_201_CREATED
+            }, status=status.HTTP_201_CREATED)
         return Response({"message": "Failed to create Industrial Asset", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 industrial_asset_create_api_view = IndustrialAssetCreateAPIView.as_view()
@@ -325,10 +371,12 @@ class IndustrialAssetListAPIView(generics.ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({
+            "message": "Equipment Category list",
             "data": serializer.data,
             "total_amount_sum": round(total_amount_sum, 2),
-            "currency_slug": currency_slug
-            })
+            "currency_slug": currency_slug,
+            'status_code': status.HTTP_200_OK
+            }, status=status.HTTP_200_OK)
 
 industrial_asset_list_api_view = IndustrialAssetListAPIView.as_view()
 
@@ -343,7 +391,11 @@ class IndustrialAssetDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Industrial Asset detail",
+            "data": serializer.data,
+            'status_code': status.HTTP_200_OK
+        }, status=status.HTTP_200_OK)
 
 industrial_asset_detail_api_view = IndustrialAssetDetailAPIView.as_view()
 
@@ -361,7 +413,11 @@ class IndustrialAssetUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({"data": serializer.data, "message": "Industrial Asset"}, status=status.HTTP_200_OK)
+            return Response({
+                "message": "Industrial Asset",
+                "data": serializer.data,
+                'status_code': status.HTTP_200_OK
+            }, status=status.HTTP_200_OK)
         return Response({"message": "Failed to update Industrial Asset", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 industrial_asset_update_api_view = IndustrialAssetUpdateAPIView.as_view()
@@ -433,9 +489,11 @@ class AllIndustrialAssetListAPIView(generics.ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({
+            "message": "Industrial Asset list",
             "data": serializer.data,
             "total_amount_sum": round(total_amount_sum, 2),
-            "currency_slug": currency_slug
-            })
+            "currency_slug": currency_slug,
+            'status_code': status.HTTP_200_OK
+            }, status=status.HTTP_200_OK)
 
 all_industrial_asset_list_api_view = AllIndustrialAssetListAPIView.as_view()
