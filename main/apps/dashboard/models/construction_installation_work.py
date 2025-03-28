@@ -58,6 +58,9 @@ class ConstructionInstallationStatistics(BaseModel):
         self.remanied_work_amount = self.installation_work_amount - self.cost_of_performed_work
         super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.contractor}"
+
 
 
 class ConstructionInstallationFile(BaseModel):
@@ -108,3 +111,6 @@ class MonthlyCompletedTask(BaseModel):
         db_table = "monthly_completed_task"
         verbose_name = "Monthly Completed Task"
         verbose_name_plural = "Monthly Completed Tasks"
+
+    def __str__(self):
+        return f"{self.construction_installation_project}"
