@@ -1,0 +1,116 @@
+from rest_framework import generics, status, permissions 
+from rest_framework_simplejwt import authentication
+from main.apps.common.pagination import CustomPagination
+from django.utils.dateparse import parse_date
+from main.apps.construction_work.models.section import ConstructionInstallationSection
+from ..serializers import section as section_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.response import Response
+
+
+
+
+class ConstructionInstallationSectionAPIView:
+    queryset = ConstructionInstallationSection.objects.all()
+    serializer_class = section_serializer.ConstructionInstallationSectionSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
+    
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
+            openapi.Parameter('search', openapi.IN_QUERY, description='Search by object title', type=openapi.TYPE_STRING),
+            openapi.Parameter('start_date', openapi.IN_QUERY, description='Filter by start date (YYYY-MM-DD)', type=openapi.TYPE_STRING),
+            openapi.Parameter('end_date', openapi.IN_QUERY, description='Filter by end date (YYYY-MM-DD)', type=openapi.TYPE_STRING),
+            openapi.Parameter('is_forma', openapi.IN_QUERY, description='Filter by is_forma (true/false)', type=openapi.TYPE_BOOLEAN),
+            openapi.Parameter('is_file', openapi.IN_QUERY, description='Filter by is_file (true/false)', type=openapi.TYPE_BOOLEAN),
+        ]
+    )
+    def get_queryset(self):
+        queryset = ConstructionInstallationSection.objects.all()
+
+        object_id = self.kwargs.get("object")
+        search = self.request.query_params.get("search")
+        is_forma = self.request.query_params.get("is_forma")
+        is_file = self.request.query_params.get("is_file")
+        new = self.request.query_params.get('new')
+        old = self.request.query_params.get('old')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+
+        if object_id:
+            queryset = queryset.filter(object_id=object_id)
+
+        if search:
+            queryset = queryset.filter(title__icontains=search)
+
+        if is_forma:
+            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1"])
+
+        if is_file:
+            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1"])
+
+        if start_date:
+            start_date_parsed = parse_date(start_date)
+            if start_date_parsed:
+                queryset = queryset.filter(created_at__date__gte=start_date_parsed)
+
+        if end_date:
+            end_date_parsed = parse_date(end_date)
+            if end_date_parsed:
+                queryset = queryset.filter(created_at__date__lte=end_date_parsed)
+
+        if new and new.lower() == 'true':
+            queryset = queryset.order_by('-created_at')
+
+        if old and old.lower() == 'true':
+            queryset = queryset.order_by('created_at')
+
+        return queryset
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+
+        paginator = CustomPagination() if request.query_params.get('p') else None
+        if paginator:
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            response.data["status_code"] = status.HTTP_200_OK
+            response.data["data"] = response.data.pop("results", [])
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED) 
+
+construction_installation_section_list_create_api_view = ConstructionInstallationSectionListCreateAPIView.as_view()
+
+
+
+class ConstructionInstallationSectionRetrieveUpdateDeleteAPIView(ConstructionInstallationSectionAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "ConstructionInstallationSection updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "ConstructionInstallationSection deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+construction_installation_section_detail_update_delete_api_view = ConstructionInstallationSectionRetrieveUpdateDeleteAPIView.as_view()

@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from main.apps.common.serializers import MeasurementSerializer
 from main.apps.equipment.models.industrial_equipment import EquipmentSubCategory, IndustrialAsset, EquipmentCategory
-from django.db.models import Sum
 
 
 

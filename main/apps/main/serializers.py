@@ -1,5 +1,5 @@
-from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory, Object
-from main.apps.dashboard.models.document import NextStageDocuments
+from main.apps.dashboard.models.dashboard import ObjectCategory, ObjectSubCategory
+# from main.apps.dashboard.models.document import NextStageDocuments
 from main.apps.account.models.user import User
 from rest_framework import serializers
 
@@ -24,25 +24,25 @@ class ObjectSubCategoryNameSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
 
 
-class ObjectNameSerializer(serializers.ModelSerializer):
-    """"Sub - Kategoriya button name olish uchun serializer"""
-    class Meta:
-        model = Object
-        fields = ['id', 'name']
+# class ObjectNameSerializer(serializers.ModelSerializer):
+#     """"Sub - Kategoriya button name olish uchun serializer"""
+#     class Meta:
+#         model = Object
+#         fields = ['id', 'name']
 
 
 
-class NextStageDocumentsSerializer(serializers.ModelSerializer):
-    """Keyingi hujjatlar uchun serializer"""
-    # object_name = ObjectNameSerializer(source='subcategories_btn', read_only=True)
-    class Meta:
-        model = NextStageDocuments
-        fields = ['id',  'name', 'is_forma', 'is_section', 'is_file']
+# class NextStageDocumentsSerializer(serializers.ModelSerializer):
+#     """Keyingi hujjatlar uchun serializer"""
+#     # object_name = ObjectNameSerializer(source='subcategories_btn', read_only=True)
+#     class Meta:
+#         model = NextStageDocuments
+#         fields = ['id',  'name', 'is_forma', 'is_section', 'is_file']
 
 
-class SearchObjectsNameSerializer(serializers.ModelSerializer):
-    """Obyekt nomlarini izlash uchun serializer"""
-    class Meta:
-        model = Object
-        fields = ['id', 'name']
+# class SearchObjectsNameSerializer(serializers.ModelSerializer):
+#     """Obyekt nomlarini izlash uchun serializer"""
+#     class Meta:
+#         model = Object
+#         fields = ['id', 'name']
 

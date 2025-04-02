@@ -1,9 +1,9 @@
 from django.db import models
 from main.apps.common.models import BaseMeta, BaseModel, Currency
-from main.apps.dashboard.models.dashboard import Object
 from decimal import Decimal
 import os
 from django.utils.timezone import now
+from main.apps.object_passport.models.object import Object
 
 
 

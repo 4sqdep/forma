@@ -1,10 +1,10 @@
-from django.db import models
-from main.apps.common.models import BaseMeta, BaseModel
-from main.apps.dashboard.models.dashboard import (
-    ObjectCategory, 
-    ObjectSubCategory, 
-    Object
-)
+# from django.db import models
+# from main.apps.common.models import BaseMeta, BaseModel
+# from main.apps.dashboard.models.dashboard import (
+#     ObjectCategory, 
+#     ObjectSubCategory, 
+#     Object
+# )
 
 
 
