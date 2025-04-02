@@ -1,9 +1,9 @@
 from decimal import Decimal
 from rest_framework import serializers
-from main.apps.dashboard.serializers.dashboard import ObjectSerializer
 from main.apps.equipment.models.hydro_station import CalculationType, FinancialResourceType, HydroStation
 from django.db.models import Sum
 from main.apps.equipment.models.industrial_equipment import IndustrialAsset
+from main.apps.object_passport.serializers.object import ObjectSerializer
 
 
 

@@ -18,17 +18,24 @@ urlpatterns = [
         ),
     ),
     path(
-        "main/",
+        "object-passport/",
         include(
-            ("main.apps.main.urls", "main.apps.main.urls"),
-            namespace="main",
+            ("main.apps.object_passport.object_passport", "main.apps.object_passport.object_passport"),
+            namespace="object_passport",
         ),
     ),
     path(
-        "reestr/",
+        "project-document/",
         include(
-            ("main.apps.reestr.reestr", "main.apps.reestr.reestr"),
-            namespace="reestr",
+            ("main.apps.project_document.project_document", "main.apps.project_document.project_document"),
+            namespace="project_document",
+        ),
+    ),
+    path(
+        "construction-work/",
+        include(
+            ("main.apps.construction_work.construction_work", "main.apps.construction_work.construction_work"),
+            namespace="construction_work",
         ),
     ),
     path(
@@ -44,6 +51,6 @@ urlpatterns = [
             ("main.apps.common.urls", "main.apps.common.urls"),
             namespace="common",
         ),
-    ),
+    )
 ]
 

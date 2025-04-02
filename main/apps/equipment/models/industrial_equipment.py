@@ -1,8 +1,9 @@
 from django.db import models
 from main.apps.common.models import BaseMeta, BaseModel, Measurement
-from main.apps.dashboard.models.dashboard import Object
 from main.apps.equipment.models.hydro_station import HydroStation
 from django.db.models import Sum
+
+from main.apps.object_passport.models.object import Object
 
 
 

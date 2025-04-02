@@ -1,14 +1,11 @@
 from main.apps.common.pagination import CustomPagination
 from main.apps.dashboard.models.dashboard import (
     ObjectCategory, 
-    ObjectSubCategory, 
-    Object
+    ObjectSubCategory
 )
 from main.apps.dashboard.serializers.dashboard import (
     ObjectCategorySerializer,
-    ObjectCreateUpdateSerializer, 
-    ObjectSubCategorySerializer, 
-    ObjectSerializer
+    ObjectSubCategorySerializer
 )
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
