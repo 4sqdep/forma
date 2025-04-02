@@ -85,10 +85,10 @@ class CurrencyListAPIView(BaseCurrencyAPIView, generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(
-            {   
-                "status_code": status.HTTP_200_OK,
-                "data":serializer.data
+        return Response({
+            'message': "Currency list successfully",
+            "data": serializer.data,
+            "status_code": status.HTTP_200_OK,
             }, 
             status=status.HTTP_200_OK)
 
@@ -103,6 +103,7 @@ class CurrencyDetailAPIView(BaseCurrencyAPIView, generics.RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response(
             {
+                'message': "Currency detail successfully",
                 "status_code": status.HTTP_200_OK,
                 "data": serializer.data
             },
