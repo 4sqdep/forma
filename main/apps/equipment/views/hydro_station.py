@@ -22,8 +22,15 @@ class HydroStationCreateAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({"message": "Failed to create Hydro Station", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({
+                "message": "Malumot yuklandi.....",
+                'data': serializer.data,
+                'status_code': status.HTTP_201_CREATED
+            }, status=status.HTTP_201_CREATED)
+        return Response({"message": "Failed to create Hydro Station",
+                         "errors": serializer.errors,
+                         'status_code': status.HTTP_400_BAD_REQUEST},
+                        status=status.HTTP_400_BAD_REQUEST)
 
 hydro_station_create_api_view = HydroStationCreateAPIView.as_view()
 
@@ -72,7 +79,12 @@ class HydroStationListAPIView(generics.ListAPIView):
             return Response({'data': response_data.data}, status=status.HTTP_200_OK)
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "HydroStation modelidagi malumotlar listi...",
+            "data": serializer.data,
+            'status_code': status.HTTP_200_OK
+        },
+            status=status.HTTP_200_OK)
 
 hydro_station_list_api_view = HydroStationListAPIView.as_view()
 
@@ -92,7 +104,12 @@ class HydroStationDetailAPIView(generics.RetrieveAPIView):
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)        
+        return Response({
+            "message": "Hydro Station detail successfully",
+            "data": serializer.data,
+            'status_code': status.HTTP_200_OK
+        },
+            status=status.HTTP_200_OK)
 
 hydro_station_detail_api_view = HydroStationDetailAPIView.as_view()
 
@@ -110,7 +127,12 @@ class HydroStationUpdateAPIView(generics.UpdateAPIView):
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
-            return Response({ "message": "Hydro Station updated successfully", "data": serializer.data,}, status=status.HTTP_200_OK)
+            return Response({
+                "message": "Hydro Station updated successfully",
+                "data": serializer.data,
+                'status_code': status.HTTP_200_OK
+            },
+                status=status.HTTP_200_OK)
         return Response({"message": "Failed to update Hydro Station", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 hydro_station_update_api_view = HydroStationUpdateAPIView.as_view()
@@ -126,6 +148,9 @@ class HydroStationDeleteAPIView(generics.DestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
-        return Response({"message": "Hydro Station deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({
+            "message": "Hydro Station deleted successfully",
+            'status_cose': status.HTTP_204_NO_CONTENT
+        }, status=status.HTTP_204_NO_CONTENT)
 
 hydro_station_delete_api_view = HydroStationDeleteAPIView.as_view()
