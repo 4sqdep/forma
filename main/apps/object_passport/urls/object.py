@@ -11,7 +11,7 @@ urlpatterns = [
         name='object_create'
     ),
     path(
-        'list/', 
+        '<int:sub_category>/list/', 
         object.object_list_api_view, 
         name='object_list'
     ),
