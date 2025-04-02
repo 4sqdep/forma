@@ -19,12 +19,9 @@ class BaseObjectAPIView(generics.GenericAPIView):
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_serializer(self, *args, **kwargs):
-        return getattr(self, 'serializer_class', object_serializer.ObjectCreateUpdateSerializer())
-
 
 class ObjectCreateAPIView(BaseObjectAPIView, generics.CreateAPIView):
-    serializer_class = object_serializer.ObjectCreateUpdateSerializer()
+    serializer_class = object_serializer.ObjectCreateUpdateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
