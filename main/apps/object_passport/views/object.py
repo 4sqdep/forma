@@ -48,7 +48,7 @@ object_create_api_view = ObjectCreateAPIView.as_view()
 
 
 class ObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
-    serializer_class = object_serializer.ObjectSerializer()
+    serializer_class = object_serializer.ObjectSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -119,7 +119,7 @@ object_list_api_view = ObjectListAPIView.as_view()
 
 
 class ObjectDetailAPIView(BaseObjectAPIView, generics.RetrieveAPIView):
-    serializer_class = object_serializer.ObjectSerializer()
+    serializer_class = object_serializer.ObjectSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -137,7 +137,7 @@ object_detail_api_view = ObjectDetailAPIView.as_view()
 
 
 class ObjectUpdateAPIView(BaseObjectAPIView, generics.UpdateAPIView):
-    serializer_class = object_serializer.ObjectCreateUpdateSerializer()
+    serializer_class = object_serializer.ObjectCreateUpdateSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -167,7 +167,7 @@ object_update_api_view = ObjectUpdateAPIView.as_view()
 
 
 class ObjectDeleteAPIView(BaseObjectAPIView, generics.DestroyAPIView):
-    serializer_class = object_serializer.ObjectSerializer()
+    serializer_class = object_serializer.ObjectSerializer
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
