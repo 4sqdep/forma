@@ -13,7 +13,7 @@ from main.apps.project_document.models.project_file import ProjectDocumentFile
 
 class BaseProjectDocumentFileAPIView(generics.GenericAPIView):
     queryset = ProjectDocumentFile.objects.all()
-    serializer_class = document_serializer.FileSerializer
+    serializer_class = document_serializer.FileSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 

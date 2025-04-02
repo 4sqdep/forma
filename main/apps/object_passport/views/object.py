@@ -7,7 +7,8 @@ from rest_framework import generics, status
 from rest_framework_simplejwt import authentication
 from main.apps.object_passport.models.object import Object
 from main.apps.object_passport.serializers import object as object_serializer
-
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 
@@ -19,11 +20,11 @@ class BaseObjectAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
-        return getattr(self, 'serializer_class', object_serializer.ObjectCreateUpdateSerializer)
+        return getattr(self, 'serializer_class', object_serializer.ObjectCreateUpdateSerializer())
 
 
 class ObjectCreateAPIView(BaseObjectAPIView, generics.CreateAPIView):
-    serializer_class = object_serializer.ObjectCreateUpdateSerializer
+    serializer_class = object_serializer.ObjectCreateUpdateSerializer()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -50,7 +51,13 @@ object_create_api_view = ObjectCreateAPIView.as_view()
 
 
 class ObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
-    serializer_class = object_serializer.ObjectSerializer
+    serializer_class = object_serializer.ObjectSerializer()
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("p", openapi.IN_QUERY, description="Pagination parameter", type=openapi.TYPE_STRING),
+        ]
+    )
 
     def get_queryset(self):
         queryset = Object.objects.all()
@@ -115,7 +122,7 @@ object_list_api_view = ObjectListAPIView.as_view()
 
 
 class ObjectDetailAPIView(BaseObjectAPIView, generics.RetrieveAPIView):
-    serializer_class = object_serializer.ObjectSerializer
+    serializer_class = object_serializer.ObjectSerializer()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -133,7 +140,7 @@ object_detail_api_view = ObjectDetailAPIView.as_view()
 
 
 class ObjectUpdateAPIView(BaseObjectAPIView, generics.UpdateAPIView):
-    serializer_class = object_serializer.ObjectCreateUpdateSerializer
+    serializer_class = object_serializer.ObjectCreateUpdateSerializer()
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -163,7 +170,7 @@ object_update_api_view = ObjectUpdateAPIView.as_view()
 
 
 class ObjectDeleteAPIView(BaseObjectAPIView, generics.DestroyAPIView):
-    serializer_class = object_serializer.ObjectSerializer
+    serializer_class = object_serializer.ObjectSerializer()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

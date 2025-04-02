@@ -13,7 +13,7 @@ from main.apps.project_document.serializers import project_section as project_se
 
 class BaseProjectSectionAPIView(generics.GenericAPIView):
     queryset = ProjectSection.objects.all()
-    serializer_class = project_section_serializer.ProjectSectionSerializer
+    serializer_class = project_section_serializer.ProjectSectionSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
