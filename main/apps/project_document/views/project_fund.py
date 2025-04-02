@@ -23,7 +23,7 @@ from rest_framework.response import Response
 
 class BaseConstructionTaskAPIView(generics.GenericAPIView):
     queryset = ConstructionTask.objects.all()
-    serializer_class = construction_task_serializer.ConstructionTaskSerializer
+    serializer_class = construction_task_serializer.ConstructionTaskSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -131,7 +131,7 @@ class BaseMonthlyExpenseAPIView(generics.GenericAPIView):
 
 
 class MonthlyExpenseCreateAPIView(BaseMonthlyExpenseAPIView, generics.CreateAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseCreateSerializer
+    serializer_class = construction_task_serializer.MonthlyExpenseCreateSerializer()
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -144,7 +144,7 @@ monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
 
 
 class MonthlyExpenseListAPIView(BaseMonthlyExpenseAPIView, generics.ListAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer()
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -229,7 +229,7 @@ monthly_expense_list_api_view = MonthlyExpenseListAPIView.as_view()
 
 
 class MonthlyExpenseDetailAPIView(BaseMonthlyExpenseAPIView, generics.RetrieveAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -241,7 +241,7 @@ monthly_expense_detail_api_view = MonthlyExpenseDetailAPIView.as_view()
 
 
 class MonthlyExpenseUpdateAPIView(BaseMonthlyExpenseAPIView, generics.UpdateAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer()
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -256,7 +256,7 @@ monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()
 
 
 class MonthlyExpenseDeleteAPIView(BaseMonthlyExpenseAPIView, generics.DestroyAPIView):
-    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    serializer_class = construction_task_serializer.MonthlyExpenseListSerializer()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

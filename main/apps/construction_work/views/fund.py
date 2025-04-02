@@ -23,7 +23,7 @@ from django.db.models import Sum
 
 class ConstructionInstallationProjectAPIView:
     queryset = ConstructionInstallationProject.objects.all()
-    serializer_class = project_serializer.ConstructionInstallationProjectSerializer
+    serializer_class = project_serializer.ConstructionInstallationProjectSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -86,7 +86,7 @@ construction_installation_project_detail_update_delete_api_view = ConstructionIn
 
 class MonthlyCompletedTaskAPIView:
     queryset = MonthlyCompletedTask.objects.all()
-    serializer_class = project_serializer.MonthlyCompletedTaskSerializer
+    serializer_class = project_serializer.MonthlyCompletedTaskSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
