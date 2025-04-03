@@ -17,7 +17,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from django.utils.dateparse import parse_date
 
-
+from main.apps.dashboard.serializers.dashboard import ObjectCategoryStatisticsSerializer
 
 
 class ObjectCategoryAPIView(APIView):
@@ -115,6 +115,32 @@ class ObjectSubCategoryListAPIView(APIView):
 
 object_subcategory_list_api_view = ObjectSubCategoryListAPIView.as_view()
 
+
+class AllStatisticsData(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        all_statistics = ObjectCategory.objects.only("id", "name")
+        if not all_statistics.exists():
+            return Response(
+                data={"message": "Statistik ma'lumotlar topilmadi."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = ObjectCategoryStatisticsSerializer(all_statistics, many=True)
+
+        formatted_data = {
+            item['name'].lower().replace(" ", "_"): item
+            for item in serializer.data
+        }
+        return Response({
+            "message": "Barcha Statistikalar",
+            'data': formatted_data,
+            'status_code': status.HTTP_200_OK
+        }, status=status.HTTP_200_OK)
+
+
+all_statistics_data_api_view = AllStatisticsData.as_view()
 
 
 # class ObjectAPIView(APIView):

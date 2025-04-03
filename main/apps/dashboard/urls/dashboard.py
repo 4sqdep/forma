@@ -35,6 +35,11 @@ urlpatterns = [
         dashboard.object_subcategory_list_api_view, 
         name='object_subcategory_list'
     ),
+    path(
+        'all-statistics-data/',
+        dashboard.all_statistics_data_api_view,
+        name='all_statistics_data'
+    ),
     # path(
     #     'object-list/<int:sub_category>/', 
     #     dashboard.object_list_api_view, 
