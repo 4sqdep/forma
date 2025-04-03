@@ -40,31 +40,6 @@ urlpatterns = [
         dashboard.all_statistics_data_api_view,
         name='all_statistics_data'
     ),
-    # path(
-    #     'object-list/<int:sub_category>/', 
-    #     dashboard.object_list_api_view, 
-    #     name='object'
-    # ),
-    # path(
-    #     'object-create/', 
-    #     dashboard.object_api_view, 
-    #     name='object_create'
-    # ),
-    # path(
-    #     'object-detail/<int:pk>/', 
-    #     dashboard.object_retrieve_api_view, 
-    #     name='object_detail'
-    # ),
-    # path(
-    #     'object-update/<int:pk>/', 
-    #     dashboard.object_api_view, 
-    #     name='object_update'
-    # ),
-    # path(
-    #     'object-delete/<int:pk>/', 
-    #     dashboard.object_api_view, 
-    #     name='object_delete'
-    # )
 ]
 
 
