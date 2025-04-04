@@ -18,11 +18,12 @@ class BaseProjectDocumentTypeAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
-        return getattr(self, 'serializer_class', document_type_serializer.ProjectDocumentTypeSerializer())
+        serializer_class = getattr(self, 'serializer_class', document_type_serializer.ProjectDocumentTypeSerializer)
+        return serializer_class(*args, **kwargs)
 
 
 class ProjectDocumentTypeCreateAPIView(BaseProjectDocumentTypeAPIView, generics.CreateAPIView):
-    serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer()
+    serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -42,7 +43,7 @@ project_document_type_create_api_view = ProjectDocumentTypeCreateAPIView.as_view
 
 
 class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.ListAPIView):
-    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer()
+    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -150,7 +151,7 @@ project_document_type_update_api_view = ProjectDocumentTypeUpdateAPIView.as_view
 
 
 class ProjectDocumentTypeDeleteAPIView(generics.DestroyAPIView):
-    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer()
+    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

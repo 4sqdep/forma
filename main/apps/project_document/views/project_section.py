@@ -13,7 +13,7 @@ from main.apps.project_document.serializers import project_section as project_se
 
 class BaseProjectSectionAPIView(generics.GenericAPIView):
     queryset = ProjectSection.objects.all()
-    # serializer_class = project_section_serializer.ProjectSectionSerializer()
+    serializer_class = project_section_serializer.ProjectSectionSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -41,11 +41,11 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
         ]
     )
     def get_queryset(self):
-        project_document_file = self.kwargs.get("project_document_file") 
+        project_document_type = self.kwargs.get("project_document_type") 
         queryset = ProjectSection.objects.all()
 
-        if project_document_file:
-            queryset = queryset.filter(project_document_file=project_document_file)
+        if project_document_type:
+            queryset = queryset.filter(project_document_type=project_document_type)
         return queryset
     
     def get_pagination_class(self):
