@@ -9,7 +9,7 @@ class ProjectSectionSerializer(serializers.ModelSerializer):
         model = ProjectSection
         fields = (
             'id', 
-            'project_document_file',
+            'project_document_type',
             'name'
         )
 
