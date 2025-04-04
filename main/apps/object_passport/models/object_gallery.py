@@ -21,7 +21,7 @@ class Gallery(BaseModel):
     name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Nomi")
 
     def __str__(self):
-        return f"{self.object.title}"
+        return f"{self.object}"
 
     class Meta(BaseMeta):
         db_table = "object_gallery"
