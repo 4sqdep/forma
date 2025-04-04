@@ -13,7 +13,7 @@ from main.apps.project_document.serializers import project_section as project_se
 
 class BaseProjectSectionAPIView(generics.GenericAPIView):
     queryset = ProjectSection.objects.all()
-    serializer_class = project_section_serializer.ProjectSectionSerializer()
+    # serializer_class = project_section_serializer.ProjectSectionSerializer()
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -21,7 +21,7 @@ class BaseProjectSectionAPIView(generics.GenericAPIView):
 class ProjectSectionCreateAPIView(BaseProjectSectionAPIView, generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = project_section_serializer.ProjectSectionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "ProjectSection successfully created", "data": serializer.data}, status=status.HTTP_201_CREATED)
@@ -67,7 +67,8 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
             response_data.data["data"] = response_data.data.pop("results", [])
             return Response(response_data.data, status=status.HTTP_200_OK)
 
-        serializer = self.get_serializer(queryset, many=True)
+        # serializer = self.get_serializer(queryset, many=True)
+        serializer = project_section_serializer.ProjectSectionSerializer(queryset, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 project_section_list_api_view = ProjectSectionListAPIView.as_view()

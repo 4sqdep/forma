@@ -17,15 +17,15 @@ class GalleryBaseAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
-        return getattr(self, 'serializer_class', object_gallery_serializer.ObjectGalleryCreateUpdateSerializer())
-
+        return self.serializer_class(*args, **kwargs)
 
 class ObjectGalleryCreateAPIView(GalleryBaseAPIView, generics.CreateAPIView):
-    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer()
+    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
+        serializer = self.serializer_class(data=request.data)
+        print("====================", serializer)
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -40,3 +40,51 @@ class ObjectGalleryCreateAPIView(GalleryBaseAPIView, generics.CreateAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 object_gallery_api_view = ObjectGalleryCreateAPIView.as_view()
+
+
+class ObjectGalleryUpdateAPIView(GalleryBaseAPIView, generics.UpdateAPIView):
+    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+    parser_classes = (MultiPartParser, FormParser)
+
+    def update(self, request, *args, **kwargs):
+        try:
+            instance = Gallery.objects.get(pk=kwargs.get('pk'))
+        except Gallery.DoesNotExist:
+            return Response({
+                "status_code": status.HTTP_404_NOT_FOUND,
+                "message": "Object Gallery not found"
+            }, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.serializer_class(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({
+                "status_code": status.HTTP_200_OK,
+                "message": "Object Gallery updated successfully",
+                "data": serializer.data
+            }, status=status.HTTP_200_OK)
+
+        return Response({
+            "status_code": status.HTTP_400_BAD_REQUEST,
+            "message": "Failed to update Object Gallery",
+            "errors": serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
+
+object_gallery_update_api_view = ObjectGalleryUpdateAPIView.as_view()
+
+
+class ObjectGalleryListAPIView(generics.ListAPIView):
+    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        return Gallery.objects.filter(object_id=pk)
+
+object_gallery_list_api_view = ObjectGalleryListAPIView.as_view()
+
+
+class ObjectGalleryDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+    queryset = Gallery.objects.all()
+    lookup_field = "pk"
+
+object_gallery_delete_api_view = ObjectGalleryDeleteAPIView.as_view()
