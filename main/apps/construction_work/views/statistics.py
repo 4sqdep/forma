@@ -43,13 +43,21 @@ class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallati
             return response
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            'message': "Qurilish o'rnatish statistikasi ro'yxati",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': "Qurilish o'rnatish statistikasi ro'yxati yaratildi..",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
 
 construction_installation_statistics_list_create_api_view = ConstructionInstallationStatisticsListCreateAPIView.as_view()
 
