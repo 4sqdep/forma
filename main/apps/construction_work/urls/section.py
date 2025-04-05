@@ -10,22 +10,22 @@ urlpatterns = [
         name='section_create'
     ),
     path(
-        'list/<int:object>/',
+        '<int:object>/list/',
         section.construction_installation_section_list_create_api_view,
         name='section_list'
     ),
     path(
-        'detail/<int:pk>/',
+        '<int:pk>/detail/',
         section.construction_installation_section_detail_update_delete_api_view,
         name='section_retrieve'
     ),
     path(
-        'update/<int:pk>/',
+        '<int:pk>/update/',
         section.construction_installation_section_detail_update_delete_api_view,
         name='section_update'
     ),
     path(
-        'delete/<int:pk>/',
+        '<int:pk>/delete/',
         section.construction_installation_section_detail_update_delete_api_view,
         name='section_delete'
     )

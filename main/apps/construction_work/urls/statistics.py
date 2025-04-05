@@ -10,22 +10,22 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'list/<int:obj>/',
+        '<int:obj>/list/',
         statistics.construction_installation_statistics_list_create_api_view,
         name='construction_file_list'
     ),
     path(
-        'detail/<int:pk>/',
+        '<int:pk>/detail/',
         statistics.construction_installation_statistics_detail_update_delete_api_view,
         name='construction_file_retrieve'
     ),
     path(
-        'update/<int:pk>/',
+        '<int:pk>/update/',
         statistics.construction_installation_statistics_detail_update_delete_api_view,
         name='construction_file_update'
     ),
     path(
-        'delete/<int:pk>/',
+        '<int:pk>/delete/',
         statistics.construction_installation_statistics_detail_update_delete_api_view,
         name='construction_file_delete'
     ),

@@ -10,22 +10,22 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'construction-project/list/<int:section>/',
+        'construction-project/<int:section>/list/',
         fund.construction_installation_project_list_create_api_view,
         name='construction_file_list'
     ),
     path(
-        'construction-project/detail/<int:pk>/',
+        'construction-project/<int:pk>/detail/',
         fund.construction_installation_project_detail_update_delete_api_view,
         name='construction_file_retrieve'
     ),
     path(
-        'construction-project/update/<int:pk>/',
+        'construction-project/<int:pk>/update/',
         fund.construction_installation_project_detail_update_delete_api_view,
         name='construction_file_update'
     ),
     path(
-        'construction-project/delete/<int:pk>/',
+        'construction-project/<int:pk>/delete/',
         fund.construction_installation_project_detail_update_delete_api_view,
         name='construction_file_delete'
     ),
@@ -37,22 +37,22 @@ urlpatterns = [
         name='construction_file_create'
     ),
     path(
-        'construction-completed-task/list/<int:section>/',
+        'construction-completed-task/<int:section>/list/',
         fund.monthly_completed_task_list_create_api_view,
         name='construction_file_list'
     ),
     path(
-        'construction-completed-task/detail/<int:pk>/',
+        'construction-completed-task/<int:pk>/detail/',
         fund.monthly_completed_task_detail_update_delete_api_view,
         name='construction_file_retrieve'
     ),
     path(
-        'construction-completed-task/update/<int:pk>/',
+        'construction-completed-task/<int:pk>/update/',
         fund.monthly_completed_task_detail_update_delete_api_view,
         name='construction_file_update'
     ),
     path(
-        'construction-completed-task/delete/<int:pk>/',
+        'construction-completed-task/<int:pk>/delete/',
         fund.monthly_completed_task_detail_update_delete_api_view,
         name='construction_file_delete'
     ),

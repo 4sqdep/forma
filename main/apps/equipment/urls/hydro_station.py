@@ -16,17 +16,17 @@ urlpatterns = [
         name='hydro_station_list'
     ),
     path(
-        'detail/<int:object_id>/', 
+        '<int:object_id>/detail/', 
         hydro_station.hydro_station_detail_api_view, 
         name='hydro_station_retrieve'
     ),
     path(
-        'update/<int:pk>/', 
+        '<int:pk>/update/', 
         hydro_station.hydro_station_update_api_view, 
         name='hydro_station_update'
     ),
     path(
-        'delete/<int:pk>/', 
+        '<int:pk>/delete/', 
         hydro_station.hydro_station_delete_api_view, 
         name='hydro_station_delete'
     )
