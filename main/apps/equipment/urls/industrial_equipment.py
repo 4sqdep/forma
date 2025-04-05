@@ -60,7 +60,7 @@ urlpatterns = [
 
     # Industrial Asset
     path(
-        'asset-create/', 
+        'asset/create/', 
         industrial_equipment.industrial_asset_create_api_view, 
         name='industrial_asset_create'
     ),

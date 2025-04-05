@@ -1,7 +1,8 @@
 from django.contrib import admin
-from .models import Currency, Measurement
+from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
 
 
 
-admin.site.register(Currency)
-admin.site.register(Measurement)
+admin.site.register(EmployeeCommunication)
+admin.site.register(FileMessage)
+admin.site.register(TextMessage)
