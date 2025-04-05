@@ -31,8 +31,8 @@ class Object(BaseModel):
     foreign_loan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00', verbose_name="Xorijiy kredit")
     object_file = models.FileField(upload_to=upload_object_files, blank=True, null=True)
     useful_work_coefficient = models.FloatField(max_length=30, null=True, blank=True, verbose_name="Foydali ish koeffitsiyenti")
-    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Kenglik")
-    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Uzunlik")
+    latitude = models.DecimalField(max_digits=30, decimal_places=20, null=True, blank=True, verbose_name="Kenglik")
+    longitude = models.DecimalField(max_digits=30, decimal_places=20, null=True, blank=True, verbose_name="Uzunlik")
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
 

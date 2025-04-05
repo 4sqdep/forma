@@ -69,13 +69,21 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
             return response
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            'message': "Qurilish o'rnatish fayllar ro'yxati...",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': "Qurilish o'rnatish fayllar ro'yxati yaratildi..",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
 
 construction_installation_file_list_create_api_view = ConstructionInstallationFileListCreateAPIView.as_view()
 
@@ -89,7 +97,11 @@ class ConstructionInstallationFileRetrieveUpdateDeleteAPIView(ConstructionInstal
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({"message": "Construction Installation File updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+        return Response({
+            "message": "Construction Installation File updated successfully",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
