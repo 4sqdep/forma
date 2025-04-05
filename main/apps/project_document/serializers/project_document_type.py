@@ -22,15 +22,15 @@ class ProjectDocumentTypeSerializer(serializers.ModelSerializer):
     
     def get_document_file_name(self, obj):
         if obj.is_file:
-            construction_installation_files = ProjectDocumentFile.objects.filter(document=obj)[:4]
+            construction_installation_files = ProjectDocumentFile.objects.filter(project_document_type=obj)[:4]
             file_name_list = [document_file.name for document_file in construction_installation_files]
             return file_name_list if file_name_list else []  
         if obj.is_forma:
-            construction_task = ConstructionTask.objects.filter(next_stage_document=obj)[:4]
+            construction_task = ConstructionTask.objects.filter(project_document_type=obj)[:4]
             construction_task_list = [project_name.title for project_name in construction_task]
             return construction_task_list if construction_task_list else [] 
         if obj.is_section:
-            project_section = ProjectSection.objects.filter(next_stage_documents=obj)[:4]
+            project_section = ProjectSection.objects.filter(project_document_type=obj)[:4]
             section_name_list = [project_name.name for project_name in project_section]
             return section_name_list if section_name_list else [] 
         return []

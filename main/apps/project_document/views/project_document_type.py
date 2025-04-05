@@ -119,7 +119,7 @@ project_document_type_list_api_view = ProjectDocumentTypeListAPIView.as_view()
 
 
 class ProjectDocumentTypeDetailAPIView(BaseProjectDocumentTypeAPIView, generics.RetrieveAPIView):
-    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer()
+    serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
 
     def retrieve(self, request, *args, **kwargs):
@@ -131,8 +131,8 @@ project_document_type_detail_api_view = ProjectDocumentTypeDetailAPIView.as_view
 
 
 
-class ProjectDocumentTypeUpdateAPIView(generics.UpdateAPIView):
-    serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer()
+class ProjectDocumentTypeUpdateAPIView(BaseProjectDocumentTypeAPIView, generics.UpdateAPIView):
+    serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
@@ -150,7 +150,7 @@ project_document_type_update_api_view = ProjectDocumentTypeUpdateAPIView.as_view
 
 
 
-class ProjectDocumentTypeDeleteAPIView(generics.DestroyAPIView):
+class ProjectDocumentTypeDeleteAPIView(BaseProjectDocumentTypeAPIView, generics.DestroyAPIView):
     serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
     def destroy(self, request, *args, **kwargs):
