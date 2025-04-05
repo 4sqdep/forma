@@ -13,7 +13,7 @@ from rest_framework.response import Response
 
 class ConstructionInstallationSectionAPIView:
     queryset = ConstructionInstallationSection.objects.all()
-    serializer_class = section_serializer.ConstructionInstallationSectionSerializer()
+    serializer_class = section_serializer.ConstructionInstallationSectionSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 

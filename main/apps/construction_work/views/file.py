@@ -14,7 +14,7 @@ from django.db.models import Q
 
 class ConstructionInstallationFileAPIView:
     queryset = ConstructionInstallationFile.objects.all().order_by('file_code')
-    serializer_class = file_serializer.ConstructionInstallationFileSerializer()
+    serializer_class = file_serializer.ConstructionInstallationFileSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 

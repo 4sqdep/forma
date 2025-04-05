@@ -39,15 +39,16 @@ class WorkProgress(BaseModel):
 
 
 
-class DailyVolume(BaseModel):
+class MonthlyWorkVolume(BaseModel):
     work_progress = models.ForeignKey(WorkProgress, on_delete=models.SET_NULL, null=True, blank=True)
     plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    date = models.DateField()
 
     def __str__(self):
         return self.work_progress.title
 
     class Meta(BaseMeta):
-        db_table = "daily_volume"
-        verbose_name = "Daily Volume"
-        verbose_name_plural = "Daily Volumes"
+        db_table = "monthly_volume"
+        verbose_name = "Monthly Volume"
+        verbose_name_plural = "Monthly Volumes"

@@ -1,13 +1,18 @@
+import os
+from django.utils.timezone import now
 from django.db import models
 from main.apps.account.models.user import User
 from main.apps.common.models import BaseModel, BaseMeta
-import os
-from django.utils.timezone import now
+
+
+
+
+
 
 
 class ProblemStatus(models.TextChoices):
     NEW = "new", "New"
-    DONE = "done", "Done",
+    DONE = "done", "Done"
     IN_CORFIRMATION = "in confirmation", "In confirmation"
     IN_PROGRESS = "in progress", "In progress"
     INCOMPLETE = "incomplete", "Incomplete"

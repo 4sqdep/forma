@@ -11,22 +11,22 @@ urlpatterns = [
         name='equipment_category_create'
     ),
     path(
-        'category/list/<int:hydro_station_id>/', 
+        'category/<int:hydro_station_id>/list/', 
         industrial_equipment.equipment_category_list_api_view, 
         name='equipment_category_list'
     ),
     path(
-        'category/detail/<int:pk>/', 
+        'category/<int:pk>/detail/', 
         industrial_equipment.equipment_category_detail_api_view, 
         name='equipment_category_retrieve'
     ),
     path(
-        'category/update/<int:pk>/', 
+        'category/<int:pk>/update/', 
         industrial_equipment.equipment_category_update_api_view, 
         name='equipment_category_update'
     ),
     path(
-        'subcategory/delete/<int:pk>/', 
+        'category/<int:pk>/delete/', 
         industrial_equipment.equipment_category_delete_api_view, 
         name='equipment_category_delete'
     ),
@@ -38,22 +38,22 @@ urlpatterns = [
         name='equipment_subcategory_create'
     ),
     path(
-        'subcategory/list/<int:equipment_category>/', 
+        'subcategory/<int:equipment_category>/list/', 
         industrial_equipment.equipment_subcategory_list_api_view, 
         name='equipment_subcategory_list'
     ),
     path(
-        'subcategory/detail/<int:pk>/', 
+        'subcategory/<int:pk>/detail/', 
         industrial_equipment.equipment_subcategory_detail_api_view, 
         name='equipment_subcategory_retrieve'
     ),
     path(
-        'subcategory/update/<int:pk>/', 
+        'subcategory/<int:pk>/update/', 
         industrial_equipment.equipment_subcategory_update_api_view, 
         name='equipment_subcategory_update'
     ),
     path(
-        'subcategory/delete/<int:pk>/', 
+        'subcategory/<int:pk>/delete/', 
         industrial_equipment.equipment_subcategory_delete_api_view, 
         name='equipment_subcategory_delete'
     ),
@@ -65,27 +65,27 @@ urlpatterns = [
         name='industrial_asset_create'
     ),
     path(
-        'asset-list/<int:equipment_category>/', 
+        'asset/<int:equipment_category>/list/', 
         industrial_equipment.industrial_asset_list_api_view, 
         name='industrial_asset_list'
     ),
     path(
-        'asset-detail/<int:pk>/', 
+        'asset/<int:pk>/detail/', 
         industrial_equipment.industrial_asset_detail_api_view, 
         name='industrial_asset_retrieve'
     ),
     path(
-        'asset-update/<int:pk>/', 
+        'asset/<int:pk>/update/', 
         industrial_equipment.industrial_asset_update_api_view, 
         name='industrial_asset_update'
     ),
     path(
-        'asset-delete/<int:pk>/', 
+        'asset/<int:pk>/delete/', 
         industrial_equipment.industrial_asset_delete_api_view, 
         name='industrial_asset_delete'
     ),
     path(
-        'all-asset-list/<int:obj>/', 
+        'all-asset/<int:obj>/list/', 
         industrial_equipment.all_industrial_asset_list_api_view, 
         name='all_industrial_asset_list'
     ),
