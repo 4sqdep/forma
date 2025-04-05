@@ -5,56 +5,30 @@ from . import views
 
 urlpatterns = [
     path(
-        'currency/create/', 
-        views.currency_create_api_view, 
-        name='currency_create'
+        'employee-communication/create/', 
+        views.employee_communication_create_api_view, 
+        name='employee_communication_create'
     ),
     path(
-        'currency/list/', 
-        views.currency_list_api_view, 
-        name='currency_list'
+        'employee-communication/list/', 
+        views.employee_communication_list_api_view, 
+        name='employee_communication_list'
     ),
     path(
-        'currency/<int:pk>/detail/', 
-        views.currency_detail_api_view, 
-        name='currency_retrieve'
+        'employee-communication/<int:pk>/detail/', 
+        views.employee_communication_detail_api_view, 
+        name='employee_communication_retrieve'
     ),
     path(
-        'currency/<int:pk>/update/', 
-        views.currency_update_api_view, 
-        name='currency_update'
+        'employee-communication/<int:pk>/update/', 
+        views.employee_communication_update_api_view, 
+        name='employee_communication_update'
     ),
     path(
-        'currency/<int:pk>/delete/', 
-        views.currency_delete_api_view, 
-        name='currency_delete'
-    ),
-    path(
-        'measurement/create/', 
-        views.measurement_create_api_view, 
-        name='measurement_create'
-    ),
-    path(
-        'measurement/list/', 
-        views.measurement_list_api_view, 
-        name='measurement_list'
-    ),
-    path(
-        'measurement/<int:pk>/detail/', 
-        views.measurement_detail_api_view, 
-        name='measurement_retrieve'
-    ),
-    path(
-        'measurement/<int:pk>/update/', 
-        views.measurement_update_api_view, 
-        name='measurement_update'
-    ),
-    path(
-        'measurement/<int:pk>/delete/', 
-        views.measurement_delete_api_view, 
-        name='measurement_delete'
-    ),
-    
+        'employee-communication/<int:pk>/delete/', 
+        views.employee_communication_delete_api_view, 
+        name='employee_communication_delete'
+    ),   
 ]
 
 

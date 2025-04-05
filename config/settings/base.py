@@ -57,6 +57,7 @@ LOCAL_APPS = [
     "main.apps.project_document.apps.ProjectDocumentConfig",
     "main.apps.construction_work.apps.ConstructionWorkConfig",
     "main.apps.equipment.apps.EquipmentConfig",
+    "main.apps.employee_communication.apps.EmployeeCommunicationConfig",
     
 ]
 

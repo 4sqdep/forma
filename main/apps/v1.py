@@ -51,6 +51,13 @@ urlpatterns = [
             ("main.apps.common.urls", "main.apps.common.urls"),
             namespace="common",
         ),
+    ),
+    path(
+        "employee-communication/",
+        include(
+            ("main.apps.employee_communication.urls", "main.apps.employee_communication.urls"),
+            namespace="employee_communication",
+        ),
     )
 ]
 
