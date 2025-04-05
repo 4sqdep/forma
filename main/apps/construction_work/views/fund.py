@@ -59,7 +59,11 @@ class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationP
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+        return Response({
+            'message': "Qurilish o'rnatish loyihalari ro'yxati saqlandi...",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data,
+        }, status=status.HTTP_201_CREATED)
     
 construction_installation_project_list_create_api_view = ConstructionInstallationProjectListCreateAPIView.as_view()
 
@@ -173,7 +177,11 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response({'data': serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({
+                'message': "Oylik bajarilgan vazifalar ro'yxati saqlandi..",
+                'status_code': status.HTTP_201_CREATED,
+                'data': serializer.data
+            }, status=status.HTTP_201_CREATED)
         return Response(data={"message": "Failed to create Completed Task", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_completed_task_list_create_api_view = MonthlyCompletedTaskListCreateAPIView.as_view()
