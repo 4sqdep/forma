@@ -226,10 +226,12 @@ CORS_ALLOW_METHODS = [
 
 
 CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:4200',
     'http://localhost:5174',
     "http://127.0.0.1:8000",
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
+    "http://192.168.2.1:8000",
     "https://forma.hccs.uz",
     "https://hccs.uz",
     "http://forma.hccs.uz",
@@ -240,10 +242,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:4200',
     'http://localhost:5174',
     "http://127.0.0.1:8000",
     "http://192.168.0.178:5174",
     "http://192.168.0.184:5173",
+    "http://192.168.2.1:8000",
     "https://forma.hccs.uz",
     "https://hccs.uz",
     "http://forma.hccs.uz",

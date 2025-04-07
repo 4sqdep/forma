@@ -17,6 +17,7 @@ class Gallery(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name="Obyekt nomi")
     file = models.FileField(upload_to=upload_object_files, blank=True, null=True, verbose_name="Rasm yoki Video")
+    file_type = models.CharField(max_length=20, blank=True, null=True, verbose_name="Fayl turi")
 
     name = models.CharField(max_length=100, blank=True, null=True, verbose_name="Nomi")
 
