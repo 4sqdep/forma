@@ -25,7 +25,6 @@ class ObjectGalleryCreateAPIView(GalleryBaseAPIView, generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
-        print("====================", serializer)
         if serializer.is_valid():
             serializer.save()
             return Response({
