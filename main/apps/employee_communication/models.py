@@ -38,10 +38,6 @@ class EmployeeCommunication(BaseModel):
         User, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='sent_communications'
     )
-    receiver = models.ForeignKey(
-        User, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='received_communications'
-    )
     title = models.CharField(max_length=255, null=True, blank=True)
     comment = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to=upload_communication_files, null=True, blank=True)
@@ -49,12 +45,10 @@ class EmployeeCommunication(BaseModel):
         User, blank=True, related_name='assigned_communications'
     )
     deadline = models.DateField()
-
     status = models.CharField(
         max_length=255, null=True, blank=True,
         choices=ProblemStatus.choices, default=ProblemStatus.NEW 
     )
-
     content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     section = GenericForeignKey('content_type', 'object_id')

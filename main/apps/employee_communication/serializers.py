@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from main.apps.employee_communication.models import EmployeeCommunication
+from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -9,9 +9,9 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     content_type = serializers.SlugRelatedField(
         queryset=ContentType.objects.filter(
             model__in=[
-                'ProjectDocumentType',
-                'ConstructionInstallationSection',
-                'HydroStation'
+                'projectdocumenttype',
+                'constructioninstallationsection',
+                'hydrostation'
             ]
         ),
         slug_field='model'
@@ -23,7 +23,6 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'sender',
-            'receiver',
             'title',
             'comment',
             'file',
@@ -44,4 +43,32 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
         return data 
     
     def create(self, validated_data):
-        return EmployeeCommunication.objects.create(**validated_data)
+        employee_data = validated_data.pop('employee', [])
+        employee_communication = EmployeeCommunication.objects.create(**validated_data)
+        if employee_data:
+            employee_communication.employee.set(employee_data)
+        return employee_communication
+
+
+
+class FileMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FileMessage
+        fields = (
+            'employee_communication',
+            'sender',
+            'receiver',
+            'file'
+        )
+
+
+
+class TextMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TextMessage
+        fields = (
+            'employee_communication',
+            'sender',
+            'receiver',
+            'text'
+        )

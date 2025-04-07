@@ -6,22 +6,22 @@ app_name = 'object-gallery'
 
 urlpatterns = [
     path(
-        'object/gallery/create/',
+        'create/',
         object_gallery.object_gallery_api_view,
         name='object_gallery_create'
     ),
     path(
-        'object/gallery/<int:pk>/update/',
+        '<int:pk>/update/',
         object_gallery.object_gallery_update_api_view,
         name='object_gallery_update'
     ),
     path(
-        'object/gallery/<int:pk>/list/',
+        '<int:pk>/list/',
         object_gallery.object_gallery_list_api_view,
         name='object_gallery_list'
     ),
     path(
-        'object/gallery/<int:pk>/delete/',
+        '<int:pk>/delete/',
         object_gallery.object_gallery_delete_api_view,
         name='object_gallery_delete'
     )
