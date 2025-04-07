@@ -1,38 +1,35 @@
-from rest_framework import generics, status, permissions 
-from rest_framework_simplejwt import authentication
-from main.apps.common.models import Currency, Measurement
+from rest_framework import generics, status 
 from main.apps.common.pagination import CustomPagination
-from . import serializers as common_serializers
+from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
+from . import serializers as employee_serializers
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.core.cache import cache
-
-
-CACHE_TIMEOUT = 60 * 5 
+from django.db.models import Q
 
 
 
-class BaseCurrencyAPIView(generics.GenericAPIView):
-    queryset = Currency.objects.all()
-    serializer_class = common_serializers.CurrencySerializer
+
+class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
+    queryset = EmployeeCommunication.objects.all()
+    serializer_class = employee_serializers.EmployeeCommunicationSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
 
-class CurrencyCreateAPIView(BaseCurrencyAPIView, generics.CreateAPIView):
+class EmployeeCommunicationCreateAPIView(BaseEmployeeCommunicationAPIView, generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(sender=self.request.user)
             return Response(
             {
                 "status_code": status.HTTP_201_CREATED,
-                "message": "Currency created successfully",
+                "message": "Employee Communication created successfully",
                 "data": serializer.data
             },
             status=status.HTTP_201_CREATED
@@ -40,16 +37,17 @@ class CurrencyCreateAPIView(BaseCurrencyAPIView, generics.CreateAPIView):
         return Response(
             {
                 "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "Failed to create Currency",
+                "message": "Failed to create Employee Communication",
                 "errors": serializer.errors
             },
             status=status.HTTP_400_BAD_REQUEST
         )
 
-currency_create_api_view = CurrencyCreateAPIView.as_view()
+employee_communication_create_api_view = EmployeeCommunicationCreateAPIView.as_view()
 
 
-class CurrencyListAPIView(BaseCurrencyAPIView, generics.ListAPIView):
+
+class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generics.ListAPIView):
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -62,7 +60,12 @@ class CurrencyListAPIView(BaseCurrencyAPIView, generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Currency.objects.all()
+        queryset = EmployeeCommunication.objects.filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        )
+        model_name = self.request.query_params.get('model')
+        if model_name:
+            queryset = queryset.filter(content_type__model=model_name.lower())
         return queryset
     
     def get_pagination_class(self):
@@ -86,35 +89,45 @@ class CurrencyListAPIView(BaseCurrencyAPIView, generics.ListAPIView):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({
-            'message': "Currency list successfully",
+            'message': "Employee Communication list successfully",
             "data": serializer.data,
             "status_code": status.HTTP_200_OK,
             }, 
             status=status.HTTP_200_OK)
 
-currency_list_api_view = CurrencyListAPIView.as_view()
+employee_communication_list_api_view = EmployeeCommunicationListAPIView.as_view()
 
 
 
-class CurrencyDetailAPIView(BaseCurrencyAPIView, generics.RetrieveAPIView):
+class EmployeeCommunicationDetailAPIView(BaseEmployeeCommunicationAPIView, generics.RetrieveAPIView):
+
+    def get_queryset(self):
+        return EmployeeCommunication.objects.select_related("sender").filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(
             {
-                'message': "Currency detail successfully",
+                'message': "Employee Communication detail successfully",
                 "status_code": status.HTTP_200_OK,
                 "data": serializer.data
             },
             status=status.HTTP_200_OK
         )
 
-currency_detail_api_view = CurrencyDetailAPIView.as_view()
+employee_communication_detail_api_view = EmployeeCommunicationDetailAPIView.as_view()
 
 
 
-class CurrencyUpdateAPIView(BaseCurrencyAPIView, generics.UpdateAPIView):
+class EmployeeCommunicationUpdateAPIView(BaseEmployeeCommunicationAPIView, generics.UpdateAPIView):
+
+    def get_queryset(self):
+        return EmployeeCommunication.objects.select_related("sender").filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        )
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -125,7 +138,7 @@ class CurrencyUpdateAPIView(BaseCurrencyAPIView, generics.UpdateAPIView):
             return Response(
                 {
                     "status_code": status.HTTP_200_OK,
-                    "message": "Currency updated successfully",
+                    "message": "Employee Communication updated successfully",
                     "data": serializer.data
                 },
                 status=status.HTTP_200_OK
@@ -133,17 +146,22 @@ class CurrencyUpdateAPIView(BaseCurrencyAPIView, generics.UpdateAPIView):
         return Response(
                 {
                     "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Failed to update Currency",
+                    "message": "Failed to update Employee Communication",
                     "errors": serializer.errors,
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-currency_update_api_view = CurrencyUpdateAPIView.as_view()
+employee_communication_update_api_view = EmployeeCommunicationUpdateAPIView.as_view()
 
 
 
-class CurrencyDeleteAPIView(BaseCurrencyAPIView, generics.DestroyAPIView):
+class EmployeeCommunicationDeleteAPIView(BaseEmployeeCommunicationAPIView, generics.DestroyAPIView):
+
+    def get_queryset(self):
+        return EmployeeCommunication.objects.select_related("sender").filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        )
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -151,51 +169,50 @@ class CurrencyDeleteAPIView(BaseCurrencyAPIView, generics.DestroyAPIView):
         return Response(
             {
                 "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "Currency deleted successfully"
+                "message": "EmployeeCommunication deleted successfully"
             },
             status=status.HTTP_204_NO_CONTENT
         )
 
-currency_delete_api_view = CurrencyDeleteAPIView.as_view()
+employee_communication_delete_api_view = EmployeeCommunicationDeleteAPIView.as_view()
 
 
 
-class BaseMeasurementAPIView(generics.GenericAPIView):
-    queryset = Currency.objects.all()
-    serializer_class = common_serializers.CurrencySerializer
+class BaseFileMessageAPIView(generics.GenericAPIView):
+    queryset = FileMessage.objects.all()
+    serializer_class = employee_serializers.FileMessageSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
-
-class MeasurementCreateAPIView(BaseMeasurementAPIView, generics.CreateAPIView):
+class FileMessageCreateAPIView(BaseFileMessageAPIView, generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(sender=self.request.user)
             return Response(
-                {
-                    "status_code": status.HTTP_201_CREATED,
-                    "message": "Measurement created successfully",
-                    "data": serializer.data
-                },
-                status=status.HTTP_201_CREATED
-            )
+            {
+                "status_code": status.HTTP_201_CREATED,
+                "message": "File Message created successfully",
+                "data": serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )
         return Response(
             {
                 "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "Failed to create Measurement",
+                "message": "Failed to create File Message",
                 "errors": serializer.errors
             },
             status=status.HTTP_400_BAD_REQUEST
         )
 
-measurement_create_api_view = MeasurementCreateAPIView.as_view()
+file_message_create_api_view = FileMessageCreateAPIView.as_view()
 
 
 
-class MeasurementListAPIView(BaseMeasurementAPIView, generics.ListAPIView):
+class FileMessageListAPIView(BaseFileMessageAPIView, generics.ListAPIView):
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -208,7 +225,15 @@ class MeasurementListAPIView(BaseMeasurementAPIView, generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = Measurement.objects.all()
+        employee_communication = self.kwargs.get('employee_communication')
+        queryset = FileMessage.objects.filter(
+            Q(employee_communication=employee_communication) &
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
+        model_name = self.request.query_params.get('model')
+        if model_name:
+            queryset = queryset.filter(content_type__model=model_name.lower())
         return queryset
     
     def get_pagination_class(self):
@@ -231,35 +256,48 @@ class MeasurementListAPIView(BaseMeasurementAPIView, generics.ListAPIView):
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
-        return Response(
-            {   
-                "status_code": status.HTTP_200_OK,
-                "data":serializer.data
+        return Response({
+            'message': "File Message list successfully",
+            "data": serializer.data,
+            "status_code": status.HTTP_200_OK,
             }, 
             status=status.HTTP_200_OK)
 
-measurement_list_api_view = MeasurementListAPIView.as_view()
+file_message_list_api_view = FileMessageListAPIView.as_view()
 
 
 
-class MeasurementDetailAPIView(BaseMeasurementAPIView, generics.RetrieveAPIView):
+class FileMessageDetailAPIView(BaseFileMessageAPIView, generics.RetrieveAPIView):
+
+    def get_queryset(self):
+        return FileMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(
             {
+                'message': "File Message detail successfully",
                 "status_code": status.HTTP_200_OK,
                 "data": serializer.data
             },
             status=status.HTTP_200_OK
         )
 
-measurement_detail_api_view = MeasurementDetailAPIView.as_view()
+file_message_detail_api_view = FileMessageDetailAPIView.as_view()
 
 
 
-class MeasurementUpdateAPIView(BaseMeasurementAPIView, generics.UpdateAPIView):
+class FileMessageUpdateAPIView(BaseFileMessageAPIView, generics.UpdateAPIView):
+
+    def get_queryset(self):
+        return FileMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -270,25 +308,31 @@ class MeasurementUpdateAPIView(BaseMeasurementAPIView, generics.UpdateAPIView):
             return Response(
                 {
                     "status_code": status.HTTP_200_OK,
-                    "message": "Measurement updated successfully",
+                    "message": "File Message updated successfully",
                     "data": serializer.data
                 },
                 status=status.HTTP_200_OK
             )
         return Response(
-            {
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "Failed to update Measurement",
-                "errors": serializer.errors,
-            },
-            status=status.HTTP_400_BAD_REQUEST
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Failed to update File Message",
+                    "errors": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+file_message_update_api_view = FileMessageUpdateAPIView.as_view()
+
+
+
+class FileMessageDeleteAPIView(BaseFileMessageAPIView, generics.DestroyAPIView):
+
+    def get_queryset(self):
+        return FileMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
         )
-
-measurement_update_api_view = MeasurementUpdateAPIView.as_view()
-
-
-
-class MeasurementDeleteAPIView(BaseMeasurementAPIView, generics.DestroyAPIView):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -296,9 +340,178 @@ class MeasurementDeleteAPIView(BaseMeasurementAPIView, generics.DestroyAPIView):
         return Response(
             {
                 "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "Measurement deleted successfully"
+                "message": "File Message deleted successfully"
             },
             status=status.HTTP_204_NO_CONTENT
         )
 
-measurement_delete_api_view = MeasurementDeleteAPIView.as_view()
+file_message_delete_api_view = FileMessageDeleteAPIView.as_view()
+
+
+
+class BaseTextMessageAPIView(generics.GenericAPIView):
+    queryset = TextMessage.objects.all()
+    serializer_class = employee_serializers.TextMessageSerializer
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+
+class TextMessageCreateAPIView(BaseTextMessageAPIView, generics.CreateAPIView):
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(sender=self.request.user)
+            return Response(
+            {
+                "status_code": status.HTTP_201_CREATED,
+                "message": "Text Message created successfully",
+                "data": serializer.data
+            },
+            status=status.HTTP_201_CREATED
+        )
+        return Response(
+            {
+                "status_code": status.HTTP_400_BAD_REQUEST,
+                "message": "Failed to create Text Message",
+                "errors": serializer.errors
+            },
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+text_message_create_api_view = TextMessageCreateAPIView.as_view()
+
+
+
+class TextMessageListAPIView(BaseTextMessageAPIView, generics.ListAPIView):
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
+            ),
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        employee_communication = self.kwargs.get('employee_communication')
+        queryset = TextMessage.objects.filter(
+            Q(employee_communication=employee_communication) &
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
+        return queryset
+    
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        paginator_class = self.get_pagination_class()
+
+        if paginator_class:
+            paginator = paginator_class()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", [])
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'message': "Text Message list successfully",
+            "data": serializer.data,
+            "status_code": status.HTTP_200_OK,
+            }, 
+            status=status.HTTP_200_OK)
+
+text_message_list_api_view = TextMessageListAPIView.as_view()
+
+
+
+class TextMessageDetailAPIView(BaseTextMessageAPIView, generics.RetrieveAPIView):
+
+    def get_queryset(self):
+        return TextMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(
+            {
+                'message': "Text Message detail successfully",
+                "status_code": status.HTTP_200_OK,
+                "data": serializer.data
+            },
+            status=status.HTTP_200_OK
+        )
+
+text_message_detail_api_view = TextMessageDetailAPIView.as_view()
+
+
+
+class TextMessageUpdateAPIView(BaseTextMessageAPIView, generics.UpdateAPIView):
+
+    def get_queryset(self):
+        return TextMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {
+                    "status_code": status.HTTP_200_OK,
+                    "message": "Text Message updated successfully",
+                    "data": serializer.data
+                },
+                status=status.HTTP_200_OK
+            )
+        return Response(
+                {
+                    "status_code": status.HTTP_400_BAD_REQUEST,
+                    "message": "Failed to update Text Message",
+                    "errors": serializer.errors,
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+text_message_update_api_view = TextMessageUpdateAPIView.as_view()
+
+
+
+class TextMessageDeleteAPIView(BaseTextMessageAPIView, generics.DestroyAPIView):
+
+    def get_queryset(self):
+        return TextMessage.objects.filter(
+            Q(sender=self.request.user) |
+            Q(receiver=self.request.user) 
+        )
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "Text Message deleted successfully"
+            },
+            status=status.HTTP_204_NO_CONTENT
+        )
+
+text_message_delete_api_view = TextMessageDeleteAPIView.as_view()

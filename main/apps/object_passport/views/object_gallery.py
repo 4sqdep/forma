@@ -7,20 +7,20 @@ from rest_framework_simplejwt import authentication
 from rest_framework.parsers import MultiPartParser, FormParser
 from main.apps.object_passport.models.object_gallery import Gallery
 from main.apps.object_passport.serializers import object_gallery as object_gallery_serializer
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 
-class GalleryBaseAPIView(generics.GenericAPIView):
+
+
+class BaseGalleryAPIView(generics.GenericAPIView):
     queryset = Gallery.objects.all()
+    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_serializer(self, *args, **kwargs):
         return self.serializer_class(*args, **kwargs)
 
-class ObjectGalleryCreateAPIView(GalleryBaseAPIView, generics.CreateAPIView):
-    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+class ObjectGalleryCreateAPIView(BaseGalleryAPIView, generics.CreateAPIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def create(self, request, *args, **kwargs):
@@ -41,8 +41,8 @@ class ObjectGalleryCreateAPIView(GalleryBaseAPIView, generics.CreateAPIView):
 object_gallery_api_view = ObjectGalleryCreateAPIView.as_view()
 
 
-class ObjectGalleryUpdateAPIView(GalleryBaseAPIView, generics.UpdateAPIView):
-    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+
+class ObjectGalleryUpdateAPIView(BaseGalleryAPIView, generics.UpdateAPIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def update(self, request, *args, **kwargs):
@@ -71,8 +71,8 @@ class ObjectGalleryUpdateAPIView(GalleryBaseAPIView, generics.UpdateAPIView):
 object_gallery_update_api_view = ObjectGalleryUpdateAPIView.as_view()
 
 
-class ObjectGalleryListAPIView(generics.ListAPIView):
-    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
+
+class ObjectGalleryListAPIView(BaseGalleryAPIView, generics.ListAPIView):
 
     def get_queryset(self):
         pk = self.kwargs.get('pk')
@@ -94,9 +94,17 @@ class ObjectGalleryListAPIView(generics.ListAPIView):
 object_gallery_list_api_view = ObjectGalleryListAPIView.as_view()
 
 
+
 class ObjectGalleryDeleteAPIView(generics.DestroyAPIView):
-    serializer_class = object_gallery_serializer.ObjectGalleryCreateUpdateSerializer
-    queryset = Gallery.objects.all()
-    lookup_field = "pk"
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(
+            {
+                "status_code": status.HTTP_204_NO_CONTENT,
+                "message": "Object Gallery deleted successfully"
+            },
+            status=status.HTTP_204_NO_CONTENT
+        )
 
 object_gallery_delete_api_view = ObjectGalleryDeleteAPIView.as_view()

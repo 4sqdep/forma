@@ -4,57 +4,86 @@ from . import views
 
 
 urlpatterns = [
+    # Employee Communication
     path(
-        'currency/create/', 
-        views.currency_create_api_view, 
-        name='currency_create'
+        'create/', 
+        views.employee_communication_create_api_view, 
+        name='employee_communication_create'
     ),
     path(
-        'currency/list/', 
-        views.currency_list_api_view, 
-        name='currency_list'
+        'list/', 
+        views.employee_communication_list_api_view, 
+        name='employee_communication_list'
     ),
     path(
-        'currency/<int:pk>/detail/', 
-        views.currency_detail_api_view, 
-        name='currency_retrieve'
+        '<int:pk>/detail/', 
+        views.employee_communication_detail_api_view, 
+        name='employee_communication_retrieve'
     ),
     path(
-        'currency/<int:pk>/update/', 
-        views.currency_update_api_view, 
-        name='currency_update'
+        '<int:pk>/update/', 
+        views.employee_communication_update_api_view, 
+        name='employee_communication_update'
     ),
     path(
-        'currency/<int:pk>/delete/', 
-        views.currency_delete_api_view, 
-        name='currency_delete'
+        '<int:pk>/delete/', 
+        views.employee_communication_delete_api_view, 
+        name='employee_communication_delete'
+    ), 
+
+    # File Message
+    path(
+        'file-message/create/', 
+        views.file_message_create_api_view, 
+        name='file_message_create'
     ),
     path(
-        'measurement/create/', 
-        views.measurement_create_api_view, 
-        name='measurement_create'
+        'file-message/<int:employee_communication>/list/', 
+        views.file_message_list_api_view, 
+        name='file_message_list'
     ),
     path(
-        'measurement/list/', 
-        views.measurement_list_api_view, 
-        name='measurement_list'
+        'file-message/<int:pk>/detail/', 
+        views.file_message_detail_api_view, 
+        name='file_message_retrieve'
     ),
     path(
-        'measurement/<int:pk>/detail/', 
-        views.measurement_detail_api_view, 
-        name='measurement_retrieve'
+        'file-message/<int:pk>/update/', 
+        views.file_message_update_api_view, 
+        name='file_message_update'
     ),
     path(
-        'measurement/<int:pk>/update/', 
-        views.measurement_update_api_view, 
-        name='measurement_update'
+        'file-message/<int:pk>/delete/', 
+        views.file_message_delete_api_view, 
+        name='file_message_delete'
+    ), 
+
+    # Text Message
+    path(
+        'text-message/create/', 
+        views.text_message_create_api_view, 
+        name='text_message_create'
     ),
     path(
-        'measurement/<int:pk>/delete/', 
-        views.measurement_delete_api_view, 
-        name='measurement_delete'
+        'text-message/<int:employee_communication>/list/', 
+        views.text_message_list_api_view, 
+        name='text_message_list'
     ),
-    
+    path(
+        'text-message/<int:pk>/detail/', 
+        views.text_message_detail_api_view, 
+        name='text_message_retrieve'
+    ),
+    path(
+        'text-message/<int:pk>/update/', 
+        views.text_message_update_api_view, 
+        name='text_message_update'
+    ),
+    path(
+        'text-message/<int:pk>/delete/', 
+        views.text_message_delete_api_view, 
+        name='text_message_delete'
+    ),   
 ]
 
 

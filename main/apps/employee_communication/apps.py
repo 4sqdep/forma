@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class CommonConfig(AppConfig):
+class EmployeeCommunicationConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'main.apps.common'
+    name = 'main.apps.employee_communication'
