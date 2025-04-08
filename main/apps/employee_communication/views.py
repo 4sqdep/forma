@@ -8,6 +8,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
+from django.utils.timezone import now
 
 
 
@@ -17,7 +18,6 @@ class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
     serializer_class = employee_serializers.EmployeeCommunicationSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-
 
 
 class EmployeeCommunicationCreateAPIView(BaseEmployeeCommunicationAPIView, generics.CreateAPIView):
@@ -60,12 +60,39 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
+        status = self.request.query_params.get('status')
+        search = self.request.query_params.get('search')
+        start_date = self.request.query_params.get('start_date')
+        end_date = self.request.query_params.get('end_date')
+        new = self.request.query_params.get('new')
+        old = self.request.query_params.get('old')
+
         queryset = EmployeeCommunication.objects.filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
         )
         model_name = self.request.query_params.get('model')
         if model_name:
             queryset = queryset.filter(content_type__model=model_name.lower())
+
+        if status:
+            queryset = queryset.filter(status=status)
+
+        if search:
+            queryset = queryset.filter(title__icontains=search)
+
+        if start_date:
+            queryset = queryset.filter(created_at__date__gte=start_date)
+
+        if end_date:
+            queryset = queryset.filter(created_at__date__lte=end_date)
+
+        elif end_date:
+            queryset = queryset.filter(end_date=end_date)
+
+        if new and new.lower() == 'true':
+            queryset = queryset.order_by('-created_at')
+        elif old and old.lower() == 'true':
+            queryset = queryset.order_by('created_at')
         return queryset
     
     def get_pagination_class(self):
@@ -108,6 +135,14 @@ class EmployeeCommunicationDetailAPIView(BaseEmployeeCommunicationAPIView, gener
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
+
+        if instance.employee.filter(id=user.id).exists():
+            if not instance.is_read:
+                instance.is_read = True
+                instance.read_time = now()
+            instance.view_count += 1
+            instance.save(update_fields=['is_read', 'read_time', 'view_count'])
         serializer = self.get_serializer(instance)
         return Response(
             {
@@ -277,6 +312,12 @@ class FileMessageDetailAPIView(BaseFileMessageAPIView, generics.RetrieveAPIView)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
+        if instance.receiver == user:
+            if not instance.is_read:
+                instance.is_read = True
+                instance.read_time = now()
+            instance.save(update_fields=['is_read', 'read_time'])
         serializer = self.get_serializer(instance)
         return Response(
             {
@@ -446,6 +487,13 @@ class TextMessageDetailAPIView(BaseTextMessageAPIView, generics.RetrieveAPIView)
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
+        user = request.user
+
+        if instance.receiver == user:
+            if not instance.is_read:
+                instance.is_read = True
+                instance.read_time = now()
+            instance.save(update_fields['is_read', 'read_time'])
         serializer = self.get_serializer(instance)
         return Response(
             {

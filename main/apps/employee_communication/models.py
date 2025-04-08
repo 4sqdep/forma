@@ -9,13 +9,13 @@ from django.contrib.contenttypes.models import ContentType
 
 
 
-
 class ProblemStatus(models.TextChoices):
     NEW = "new", "New"
     DONE = "done", "Done"
     IN_CORFIRMATION = "in confirmation", "In confirmation"
     IN_PROGRESS = "in progress", "In progress"
     INCOMPLETE = "incomplete", "Incomplete"
+    COMPLETED_LATE = "completed late", "Completed late"
 
 
 def upload_communication_files(instance, filename):
@@ -52,6 +52,9 @@ class EmployeeCommunication(BaseModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     section = GenericForeignKey('content_type', 'object_id')
+    is_read = models.BooleanField(default=False)
+    read_time = models.DateTimeField(null=True, blank=True)
+    view_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -74,6 +77,8 @@ class FileMessage(BaseModel):
         related_name='received_file_messages'
     )
     file = models.FileField(upload_to=upload_message_files, null=True, blank=True)
+    is_read = models.BooleanField(default=False)
+    read_time = models.DateTimeField(null=True, blank=True)
 
     class Meta(BaseMeta):
         db_table = "file_message"
@@ -93,6 +98,8 @@ class TextMessage(BaseModel):
         related_name='received_text_messages'
     )
     text = models.TextField(null=True, blank=True)
+    is_read = models.BooleanField(default=False)
+    read_time = models.DateTimeField(null=True, blank=True)
 
     class Meta(BaseMeta):
         db_table = "text_message"
