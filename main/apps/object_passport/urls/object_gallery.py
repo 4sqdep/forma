@@ -21,7 +21,7 @@ urlpatterns = [
         name='object_gallery_list'
     ),
     path(
-        '<int:pk>/delete/',
+        'delete/',
         object_gallery.object_gallery_delete_api_view,
         name='object_gallery_delete'
     )

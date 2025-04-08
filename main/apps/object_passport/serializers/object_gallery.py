@@ -7,12 +7,6 @@ class ObjectGalleryCreateUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gallery
 
-        fields = ('id', 'object', 'name', 'file', 'file_type')
+        fields = ('id', 'object', 'name', 'file', 'size', 'file_type')
 
-        fields = (
-            'id', 
-            'object', 
-            'name', 
-            'file'
-        )
 
