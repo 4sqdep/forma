@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 
+
 class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     content_type = serializers.SlugRelatedField(
         queryset=ContentType.objects.filter(
@@ -17,6 +18,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
         slug_field='model'
     )
     object_id = serializers.IntegerField()
+    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
     class Meta:
         model = EmployeeCommunication 
@@ -30,7 +32,15 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'deadline',
             'status',
             'content_type',
-            'object_id'
+            'object_id',
+            'is_read',
+            'read_time',
+            'view_count'
+        )
+        read_only_fields = (
+            'is_read',
+            'read_time',
+            'view_count'
         )
 
 
@@ -52,23 +62,37 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
 
 
 class FileMessageSerializer(serializers.ModelSerializer):
+    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     class Meta:
         model = FileMessage
         fields = (
             'employee_communication',
             'sender',
             'receiver',
-            'file'
+            'file',
+            'is_read',
+            'read_time'
+        )
+        read_only_fields = (
+            'is_read',
+            'read_time'
         )
 
 
 
 class TextMessageSerializer(serializers.ModelSerializer):
+    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     class Meta:
         model = TextMessage
         fields = (
             'employee_communication',
             'sender',
             'receiver',
-            'text'
+            'text',
+            'is_read',
+            'read_time'
+        )
+        read_only_fields = (
+            'is_read',
+            'read_time'
         )
