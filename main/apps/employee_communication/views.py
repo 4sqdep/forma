@@ -54,7 +54,6 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
 
     @swagger_auto_schema(manual_parameters=[
         openapi.Parameter('p', openapi.IN_QUERY, description='Enable Pagination', type=openapi.TYPE_STRING),
-        openapi.Parameter('model', openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('status', openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('search', openapi.IN_QUERY, type=openapi.TYPE_STRING),
         openapi.Parameter('start_date', openapi.IN_QUERY, type=openapi.TYPE_STRING),
