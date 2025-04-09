@@ -33,6 +33,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'status',
             'content_type',
             'object_id',
+            'obj',
             'is_read',
             'read_time',
             'view_count'
@@ -53,11 +54,10 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
         return data 
     
     def create(self, validated_data):
-        employee_data = validated_data.pop('employee', [])
-        employee_communication = EmployeeCommunication.objects.create(**validated_data)
-        if employee_data:
-            employee_communication.employee.set(employee_data)
-        return employee_communication
+        employees = validated_data.pop('employee', [])
+        communication = EmployeeCommunication.objects.create(**validated_data)
+        communication.employee.set(employees)
+        return communication
 
 
 

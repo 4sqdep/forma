@@ -6,6 +6,8 @@ from main.apps.common.models import BaseModel, BaseMeta
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from main.apps.object_passport.models.object import Object
+
 
 
 
@@ -52,6 +54,7 @@ class EmployeeCommunication(BaseModel):
     content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
     object_id = models.PositiveIntegerField(null=True, blank=True)
     section = GenericForeignKey('content_type', 'object_id')
+    obj = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     read_time = models.DateTimeField(null=True, blank=True)
     view_count = models.PositiveIntegerField(default=0)
