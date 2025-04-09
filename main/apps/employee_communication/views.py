@@ -1,6 +1,7 @@
 from rest_framework import generics, status 
 from main.apps.common.pagination import CustomPagination
-from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
+from main.apps.employee_communication.filters import EmployeeCommunicationFilter
+from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, ProblemStatus, TextMessage
 from . import serializers as employee_serializers
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -9,12 +10,12 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
 from django.utils.timezone import now
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
-    queryset = EmployeeCommunication.objects.all()
+    queryset = EmployeeCommunication.objects.select_related("sender").prefetch_related("employee")
     serializer_class = employee_serializers.EmployeeCommunicationSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -48,52 +49,26 @@ employee_communication_create_api_view = EmployeeCommunicationCreateAPIView.as_v
 
 
 class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generics.ListAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = EmployeeCommunicationFilter
 
-    @swagger_auto_schema(
-        manual_parameters=[
-            openapi.Parameter(
-                'p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING
-            ),
-        ]
-    )
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('p', openapi.IN_QUERY, description='Enable Pagination', type=openapi.TYPE_STRING),
+        openapi.Parameter('model', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('status', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('search', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('start_date', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('end_date', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+    ])
+    
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        status = self.request.query_params.get('status')
-        search = self.request.query_params.get('search')
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
-        new = self.request.query_params.get('new')
-        old = self.request.query_params.get('old')
-
-        queryset = EmployeeCommunication.objects.filter(
+        queryset = super().get_queryset()
+        return queryset.filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
         )
-        model_name = self.request.query_params.get('model')
-        if model_name:
-            queryset = queryset.filter(content_type__model=model_name.lower())
-
-        if status:
-            queryset = queryset.filter(status=status)
-
-        if search:
-            queryset = queryset.filter(title__icontains=search)
-
-        if start_date:
-            queryset = queryset.filter(created_at__date__gte=start_date)
-
-        if end_date:
-            queryset = queryset.filter(created_at__date__lte=end_date)
-
-        elif end_date:
-            queryset = queryset.filter(end_date=end_date)
-
-        if new and new.lower() == 'true':
-            queryset = queryset.order_by('-created_at')
-        elif old and old.lower() == 'true':
-            queryset = queryset.order_by('created_at')
-        return queryset
     
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -102,8 +77,18 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
         return None
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         paginator_class = self.get_pagination_class()
+
+        counts = {
+            "all": queryset.count(),
+            "new": queryset.filter(status=ProblemStatus.NEW).count(),
+            "done": queryset.filter(status=ProblemStatus.DONE).count(),
+            "in_confirmation": queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
+            "in_progress": queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
+            "incomplete": queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
+            "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
+        }
 
         if paginator_class:
             paginator = paginator_class()
@@ -112,15 +97,18 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
+            response_data.data['counts'] = counts
             return response_data
 
         serializer = self.get_serializer(queryset, many=True)
         return Response({
+            "status_code": status.HTTP_200_OK,
             'message': "Employee Communication list successfully",
             "data": serializer.data,
-            "status_code": status.HTTP_200_OK,
+            "counts": counts
             }, 
-            status=status.HTTP_200_OK)
+            status=status.HTTP_200_OK
+            )
 
 employee_communication_list_api_view = EmployeeCommunicationListAPIView.as_view()
 

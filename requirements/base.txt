@@ -38,3 +38,4 @@ drf-spectacular==0.24.1
 django-filter==23.2
 pytest==8.3.4
 django-redis
+django-filter
