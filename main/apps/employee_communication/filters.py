@@ -6,7 +6,7 @@ from main.apps.object_passport.models.object import Object
 
 
 class EmployeeCommunicationFilter(django_filters.FilterSet):
-    model = django_filters.CharFilter(field_name='content_type__model', lookup_expr='iexact')
+    section_type = django_filters.CharFilter(field_name='section_type', lookup_expr='iexact')
     obj = django_filters.ModelChoiceFilter(queryset=Object.objects.all(), field_name='obj')
     status = django_filters.CharFilter(field_name='status', lookup_expr='iexact')
     search = django_filters.CharFilter(method='filter_by_search')
@@ -17,7 +17,14 @@ class EmployeeCommunicationFilter(django_filters.FilterSet):
 
     class Meta:
         model = EmployeeCommunication
-        fields = ['status', 'model', 'start_date', 'end_date', 'new', 'old']
+        fields = (
+            'status', 
+            'section_type', 
+            'start_date', 
+            'end_date', 
+            'new', 
+            'old'
+        )
 
     def filter_by_search(self, queryset, name, value):
         return queryset.filter(title__icontains=value)

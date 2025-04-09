@@ -3,9 +3,6 @@ from django.utils.timezone import now
 from django.db import models
 from main.apps.account.models.user import User
 from main.apps.common.models import BaseModel, BaseMeta
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-
 from main.apps.object_passport.models.object import Object
 
 
@@ -18,6 +15,13 @@ class ProblemStatus(models.TextChoices):
     IN_PROGRESS = "in progress", "In progress"
     INCOMPLETE = "incomplete", "Incomplete"
     COMPLETED_LATE = "completed late", "Completed late"
+
+
+class SectionType(models.TextChoices):
+    CONSTRUCTION_WORK = "construction work", "Construction work"
+    PROJECT_DOCUMENT = "project document", "Project document"
+    EQUIPMENT = "equipment", "Equipment"
+    ACCOUNTING = "accounting", "Accounting"
 
 
 def upload_communication_files(instance, filename):
@@ -51,9 +55,7 @@ class EmployeeCommunication(BaseModel):
         max_length=255, null=True, blank=True,
         choices=ProblemStatus.choices, default=ProblemStatus.NEW 
     )
-    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL, null=True, blank=True)
-    object_id = models.PositiveIntegerField(null=True, blank=True)
-    section = GenericForeignKey('content_type', 'object_id')
+    section_type = models.CharField(max_length=255, null=True, blank=True, choices=SectionType.choices)
     obj = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     read_time = models.DateTimeField(null=True, blank=True)
