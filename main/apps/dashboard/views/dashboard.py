@@ -17,6 +17,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import generics, status
 from django.utils.dateparse import parse_date
 from main.apps.dashboard.serializers.dashboard import ObjectCategoryStatisticsSerializer
+from main.apps.object_passport.models.object import Object
 
 
 

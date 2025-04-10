@@ -69,9 +69,10 @@ class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
             subcategory_title = ObjectSubCategory.objects.get(id=subcategory_id).name if subcategory_id else None
 
             # Ushbu subkategoriya ichidagi barcha obyektlarni olish
-            related_objects = Object.objects.filter(object_subcategory_id=subcategory_id).values(
+            related_objects = (
+                Object.objects.filter(object_subcategory_id=subcategory_id).values(
                 'id', 'title', 'total_price', 'currency__title', 'object_power'
-            )
+            ))
 
             result.append({
                 "object_subcategory_id": subcategory_id,
