@@ -1,13 +1,14 @@
 from rest_framework import generics, status, permissions 
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
+from main.apps.construction_work.filters.file import ConstructionInstallationFileFilter
 from main.apps.construction_work.models.file import ConstructionInstallationFile
 from ..serializers import file as file_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from django.db.models import Q
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -20,6 +21,8 @@ class ConstructionInstallationFileAPIView:
 
 
 class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFileAPIView, generics.ListCreateAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ConstructionInstallationFileFilter
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -29,35 +32,14 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
     )
 
     def get_queryset(self):
-        document = self.kwargs.get("document") 
         queryset = ConstructionInstallationFile.objects.all()
         section = self.kwargs.get('section')
-        search = self.request.query_params.get('search')
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
-
-        if document:
-            queryset = queryset.filter(document=document)
-        
+    
         if section:
             queryset = queryset.filter(section=section)
 
-        if search:
-            queryset = queryset.filter(
-                Q(title__icontains=search) | 
-                Q(file_code__icontains=search) 
-            )
-        
-        if start_date and end_date:
-            queryset = queryset.filter(date__range=[start_date, end_date])
-
-        elif start_date:
-            queryset = queryset.filter(date=start_date)
-
-        return queryset
-
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:

@@ -2,12 +2,13 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from django.utils.dateparse import parse_date
+from main.apps.construction_work.filters.section import ConstructionInstallationSectionFilter
 from main.apps.construction_work.models.section import ConstructionInstallationSection
 from ..serializers import section as section_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -19,8 +20,9 @@ class ConstructionInstallationSectionAPIView:
 
 
 class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ConstructionInstallationSectionFilter
     
-
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
@@ -33,48 +35,14 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
     )
     def get_queryset(self):
         queryset = ConstructionInstallationSection.objects.all()
-
         object_id = self.kwargs.get("object")
-        search = self.request.query_params.get("search")
-        is_forma = self.request.query_params.get("is_forma")
-        is_file = self.request.query_params.get("is_file")
-        new = self.request.query_params.get('new')
-        old = self.request.query_params.get('old')
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
 
         if object_id:
             queryset = queryset.filter(object_id=object_id)
-
-        if search:
-            queryset = queryset.filter(title__icontains=search)
-
-        if is_forma:
-            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1"])
-
-        if is_file:
-            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1"])
-
-        if start_date:
-            start_date_parsed = parse_date(start_date)
-            if start_date_parsed:
-                queryset = queryset.filter(created_at__date__gte=start_date_parsed)
-
-        if end_date:
-            end_date_parsed = parse_date(end_date)
-            if end_date_parsed:
-                queryset = queryset.filter(created_at__date__lte=end_date_parsed)
-
-        if new and new.lower() == 'true':
-            queryset = queryset.order_by('-created_at')
-
-        if old and old.lower() == 'true':
-            queryset = queryset.order_by('created_at')
-
         return queryset
 
     def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:

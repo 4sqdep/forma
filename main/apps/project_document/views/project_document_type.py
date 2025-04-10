@@ -5,8 +5,10 @@ from rest_framework_simplejwt import authentication
 from rest_framework import generics, status, permissions 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from main.apps.project_document.filters.project_document_type import ProjectDocumentTypeFilter
 from main.apps.project_document.models.project_document_type import ProjectDocumentType
 from main.apps.project_document.serializers import project_document_type as document_type_serializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -43,6 +45,8 @@ project_document_type_create_api_view = ProjectDocumentTypeCreateAPIView.as_view
 
 
 class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.ListAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProjectDocumentTypeFilter
     serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
     @swagger_auto_schema(
@@ -57,39 +61,9 @@ class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.Li
     def get_queryset(self):
         queryset = ProjectDocumentType.objects.all()
         object = self.kwargs.get("object")  
-        search = self.request.query_params.get("search")
-        is_forma = self.request.query_params.get("is_forma")
-        is_section = self.request.query_params.get("is_section")
-        is_file = self.request.query_params.get("is_file")
-        new = self.request.query_params.get('new')
-        old = self.request.query_params.get('old')
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
 
         if object:
             queryset = queryset.filter(object_id=object)
-
-        if search:
-            queryset = queryset.filter(name__icontains=search)
-        if is_forma:
-            queryset = queryset.filter(is_forma=is_forma.lower() in ["true", "1"])
-        if is_section:
-            queryset = queryset.filter(is_section=is_section.lower() in ["true", "1"])
-        if is_file:
-            queryset = queryset.filter(is_file=is_file.lower() in ["true", "1"])
-        
-        if start_date:
-            queryset = queryset.filter(created_at__date__gte=start_date)
-
-        if end_date:
-            queryset = queryset.filter(created_at__date__lte=end_date)
-
-        if new and new.lower() == 'true':
-            queryset = queryset.order_by('-created_at')
-
-        if old and old.lower() == 'true':
-            queryset = queryset.order_by('created_at')
-
         return queryset
     
     def get_pagination_class(self):
@@ -99,7 +73,7 @@ class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.Li
         return None
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         paginator_class = self.get_pagination_class()
 
         if paginator_class:
