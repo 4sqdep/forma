@@ -52,7 +52,6 @@ LOCAL_APPS = [
     "main.apps.common.apps.CommonConfig",
     "main.apps.account.apps.AccountConfig",
     "main.apps.dashboard.apps.DashboardConfig",
-    "main.apps.main.apps.MainConfig",
     "main.apps.object_passport.apps.ObjectPassportConfig",
     "main.apps.project_document.apps.ProjectDocumentConfig",
     "main.apps.construction_work.apps.ConstructionWorkConfig",
