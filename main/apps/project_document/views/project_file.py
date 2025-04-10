@@ -1,3 +1,4 @@
+from main.apps.project_document.filters.project_file import ProjectDocumentFileFilter
 from main.apps.project_document.serializers import project_file as document_serializer
 from rest_framework.response import Response
 from rest_framework import permissions, status
@@ -7,6 +8,7 @@ from rest_framework import generics, status, permissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.project_document.models.project_file import ProjectDocumentFile
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -32,6 +34,8 @@ project_document_file_create_api_view = ProjectDocumentFileCreateAPIView.as_view
 
 
 class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.ListAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProjectDocumentFileFilter
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -43,27 +47,9 @@ class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.Li
     def get_queryset(self):
         document = self.kwargs.get("document") 
         queryset = ProjectDocumentFile.objects.all()
-        project_section = self.request.query_params.get("project_section")
-        name = self.request.query_params.get("name")
-        file_code = self.request.query_params.get("file_code")
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
 
         if document:
             queryset = queryset.filter(document=document)
-        
-        if project_section:
-            queryset = queryset.filter(project_section=project_section)
-        if name:
-            queryset = queryset.filter(name__icontains=name)
-        if file_code:
-            queryset = queryset.filter(file_code__icontains=file_code)
-        
-        if start_date and end_date:
-            queryset = queryset.filter(calendar__range=[start_date, end_date])
-
-        elif start_date:
-            queryset = queryset.filter(calendar=start_date)
 
         return queryset
     
@@ -74,7 +60,7 @@ class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.Li
         return None
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         paginator_class = self.get_pagination_class()
 
         if paginator_class:

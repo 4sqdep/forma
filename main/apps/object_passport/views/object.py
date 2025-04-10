@@ -5,10 +5,12 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics, status
 from rest_framework_simplejwt import authentication
+from main.apps.object_passport.filters import ObjectFilter
 from main.apps.object_passport.models.object import Object
 from main.apps.object_passport.serializers import object as object_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -48,6 +50,8 @@ object_create_api_view = ObjectCreateAPIView.as_view()
 
 
 class ObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ObjectFilter
     serializer_class = object_serializer.ObjectSerializer
 
     @swagger_auto_schema(
@@ -59,47 +63,13 @@ class ObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
     def get_queryset(self):
         queryset = Object.objects.all()
         sub_category = self.kwargs.get('sub_category')
-        search = self.request.query_params.get('search')
-        start_date = self.request.query_params.get('start_date')
-        end_date = self.request.query_params.get('end_date')
-        new = self.request.query_params.get('new')
-        old = self.request.query_params.get('old')
-        expensive = self.request.query_params.get('expensive')
-        cheap = self.request.query_params.get('cheap')
-        high_energy = self.request.query_params.get('high_energy')
-        low_energy = self.request.query_params.get('low_energy')
 
         if sub_category:
             queryset = queryset.filter(object_subcategory=sub_category)
-        if search:
-            queryset = queryset.filter(title__icontains=search)
-
-        if start_date and end_date:
-            queryset = queryset.filter(start_date__gte=start_date, end_date__lte=end_date)
-        elif start_date:
-            queryset = queryset.filter(start_date=start_date)
-        elif end_date:
-            queryset = queryset.filter(end_date=end_date)
-
-        if new and new.lower() == 'true':
-            queryset = queryset.order_by('-created_at')
-        elif old and old.lower() == 'true':
-            queryset = queryset.order_by('created_at')
-
-        if expensive and expensive.lower() == 'true':
-            queryset = queryset.order_by('-total_price')
-        elif cheap and cheap.lower() == 'true':
-            queryset = queryset.order_by('total_price')
-
-        if high_energy and high_energy.lower() == 'true':
-            queryset = queryset.order_by('-object_power')
-        elif low_energy and low_energy.lower() == 'true':
-            queryset = queryset.order_by('object_power')
-
         return queryset
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         p = self.request.query_params.get('p')
 
         if p:

@@ -10,7 +10,7 @@ import debug_toolbar
 
 schema_view = get_schema_view(
     openapi.Info(
-    title="Swagger Doc for Hydro construction",
+    title="Swagger Doc for Hydro construction project",
     default_version='v1',
     description="This is Hydro construction project API",
     terms_of_service="example.uz",
