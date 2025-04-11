@@ -63,7 +63,7 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
         return f"{self.first_name} {self.last_name}"
 
     def __str__(self):
-        return f"{self.first_name}"
+        return f"{self.username}"
 
 
 
