@@ -11,9 +11,14 @@ urlpatterns = [
         name='employee_communication_create'
     ),
     path(
-        'list/', 
+        '<int:object>/list/', 
         views.employee_communication_list_api_view, 
-        name='employee_communication_list'
+        name='all_employee_communication_list'
+    ),
+    path(
+        'list/', 
+        views.all_employee_communication_list_api_view, 
+        name='all_employee_communication_list'
     ),
     path(
         '<int:pk>/detail/', 
