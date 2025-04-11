@@ -33,8 +33,6 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         token['id'] = user.id
         token['is_download'] = user.is_download
-        # token['department_name'] = getattr(user.department, 'name', None)  
-        # token['role'] = user.department.name if user.department else None  
         if permission:
             token['permissions'] = {
                 'can_get': permission.can_get,

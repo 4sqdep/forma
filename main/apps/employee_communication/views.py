@@ -16,12 +16,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
     queryset = EmployeeCommunication.objects.select_related("sender").prefetch_related("employee")
-    serializer_class = employee_serializers.EmployeeCommunicationSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
 class EmployeeCommunicationCreateAPIView(BaseEmployeeCommunicationAPIView, generics.CreateAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -49,6 +49,7 @@ employee_communication_create_api_view = EmployeeCommunicationCreateAPIView.as_v
 
 
 class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generics.ListAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = EmployeeCommunicationFilter
 
@@ -114,6 +115,7 @@ employee_communication_list_api_view = EmployeeCommunicationListAPIView.as_view(
 
 
 class EmployeeCommunicationDetailAPIView(BaseEmployeeCommunicationAPIView, generics.RetrieveAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationSerializer
 
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
@@ -145,6 +147,7 @@ employee_communication_detail_api_view = EmployeeCommunicationDetailAPIView.as_v
 
 
 class EmployeeCommunicationUpdateAPIView(BaseEmployeeCommunicationAPIView, generics.UpdateAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationCreateSerializer
 
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
@@ -179,6 +182,7 @@ employee_communication_update_api_view = EmployeeCommunicationUpdateAPIView.as_v
 
 
 class EmployeeCommunicationDeleteAPIView(BaseEmployeeCommunicationAPIView, generics.DestroyAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationSerializer
 
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
