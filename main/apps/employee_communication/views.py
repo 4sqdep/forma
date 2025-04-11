@@ -68,7 +68,7 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
         queryset = super().get_queryset()
         return queryset.filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
-        )
+        ).distinct()
     
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
