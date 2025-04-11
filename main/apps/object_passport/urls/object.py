@@ -1,5 +1,5 @@
 from django.urls import path
-from ..views import object
+from main.apps.object_passport.views import object
 
 app_name = 'object'
 
@@ -32,7 +32,7 @@ urlpatterns = [
     ),
     path(
         'all/list/', 
-        object.all_object_list_api_view, 
+        object.all_object_list_api_view,
         name='all_object_list'
     ),
 ]
