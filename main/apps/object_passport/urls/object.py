@@ -29,7 +29,12 @@ urlpatterns = [
         '<int:pk>/delete/', 
         object.object_delete_api_view, 
         name='object_delete'
-    )
+    ),
+    path(
+        'all/list/', 
+        object.all_object_list_api_view, 
+        name='all_object_list'
+    ),
 ]
 
 
