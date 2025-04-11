@@ -66,7 +66,10 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
     
     def get_queryset(self):
         queryset = super().get_queryset()
+        object = self.kwargs.get('object')
         return queryset.filter(
+            obj=object
+            ).filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
         ).distinct()
     
@@ -201,6 +204,73 @@ class EmployeeCommunicationDeleteAPIView(BaseEmployeeCommunicationAPIView, gener
         )
 
 employee_communication_delete_api_view = EmployeeCommunicationDeleteAPIView.as_view()
+
+
+
+
+class AllEmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generics.ListAPIView):
+    serializer_class = employee_serializers.EmployeeCommunicationSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = EmployeeCommunicationFilter
+
+    @swagger_auto_schema(manual_parameters=[
+        openapi.Parameter('p', openapi.IN_QUERY, description='Enable Pagination', type=openapi.TYPE_STRING),
+        openapi.Parameter('status', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('search', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('start_date', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+        openapi.Parameter('end_date', openapi.IN_QUERY, type=openapi.TYPE_STRING),
+    ])
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        ).distinct()
+    
+    def get_pagination_class(self):
+        p = self.request.query_params.get('p')
+        if p:
+            return CustomPagination
+        return None
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        paginator_class = self.get_pagination_class()
+
+        counts = {
+            "all": queryset.count(),
+            "new": queryset.filter(status=ProblemStatus.NEW).count(),
+            "done": queryset.filter(status=ProblemStatus.DONE).count(),
+            "in_confirmation": queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
+            "in_progress": queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
+            "incomplete": queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
+            "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
+        }
+
+        if paginator_class:
+            paginator = paginator_class()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", [])
+            response_data.data['counts'] = counts
+            return response_data
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            "status_code": status.HTTP_200_OK,
+            'message': "Employee Communication list successfully",
+            "data": serializer.data,
+            "counts": counts
+            }, 
+            status=status.HTTP_200_OK
+            )
+
+all_employee_communication_list_api_view = AllEmployeeCommunicationListAPIView.as_view()
 
 
 
