@@ -19,8 +19,23 @@ class WorkCategory(BaseModel):
 
 
 
+class WorkSubCategory(BaseModel):
+    work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.title
+
+    class Meta(BaseMeta):
+        db_table = "work_subcategory"
+        verbose_name = "Work SubCategory"
+        verbose_name_plural = "Work SubCategories"
+
+
+
 class WorkProgress(BaseModel):
     work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    work_subcategory = models.ForeignKey(WorkSubCategory, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=True)
     total_volume = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')

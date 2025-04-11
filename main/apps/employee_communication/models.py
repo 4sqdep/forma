@@ -11,15 +11,15 @@ from main.apps.object_passport.models.object import Object
 class ProblemStatus(models.TextChoices):
     NEW = "new", "New"
     DONE = "done", "Done"
-    IN_CORFIRMATION = "in confirmation", "In confirmation"
-    IN_PROGRESS = "in progress", "In progress"
+    IN_CORFIRMATION = "in_confirmation", "In confirmation"
+    IN_PROGRESS = "in_progress", "In progress"
     INCOMPLETE = "incomplete", "Incomplete"
-    COMPLETED_LATE = "completed late", "Completed late"
+    COMPLETED_LATE = "completed_late", "Completed late"
 
 
 class SectionType(models.TextChoices):
-    CONSTRUCTION_WORK = "construction work", "Construction work"
-    PROJECT_DOCUMENT = "project document", "Project document"
+    CONSTRUCTION_WORK = "construction_work", "Construction work"
+    PROJECT_DOCUMENT = "project_document", "Project document"
     EQUIPMENT = "equipment", "Equipment"
     ACCOUNTING = "accounting", "Accounting"
 
