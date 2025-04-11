@@ -1,10 +1,10 @@
 from rest_framework import serializers
+from main.apps.account.models.user import User
+from main.apps.account.serializers.user import UserAllSerializer
 from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
 
 
-
-
-class EmployeeCommunicationSerializer(serializers.ModelSerializer):
+class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
     read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
     class Meta:
@@ -28,12 +28,40 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'read_time',
             'view_count'
         )
-    
+
     def create(self, validated_data):
         employees = validated_data.pop('employee', [])
         communication = EmployeeCommunication.objects.create(**validated_data)
         communication.employee.set(employees)
         return communication
+    
+
+
+class EmployeeCommunicationSerializer(serializers.ModelSerializer):
+    employee = UserAllSerializer(many=True)
+    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    
+    class Meta:
+        model = EmployeeCommunication 
+        fields = (
+            'id',
+            'sender',
+            'title',
+            'comment',
+            'file',
+            'employee',
+            'deadline',
+            'status',
+            'obj',
+            'is_read',
+            'read_time',
+            'view_count'
+        )
+        read_only_fields = (
+            'is_read',
+            'read_time',
+            'view_count'
+        )
 
 
 
