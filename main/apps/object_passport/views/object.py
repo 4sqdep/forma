@@ -151,3 +151,36 @@ class ObjectDeleteAPIView(BaseObjectAPIView, generics.DestroyAPIView):
         )
 
 object_delete_api_view = ObjectDeleteAPIView.as_view()
+
+
+
+
+class AllObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
+    serializer_class = object_serializer.ObjectSerializer
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter("p", openapi.IN_QUERY, description="Pagination parameter", type=openapi.TYPE_STRING),
+        ]
+    )
+
+    def get_queryset(self):
+        return Object.objects.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        p = self.request.query_params.get('p')
+
+        if p:
+            paginator = CustomPagination()
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response_data = paginator.get_paginated_response(serializer.data)
+            response_data.data["status_code"] = status.HTTP_200_OK
+            response_data.data["data"] = response_data.data.pop("results", None)
+            return Response({'data': response_data.data}, status=status.HTTP_200_OK)
+        else:
+            serializer = self.get_serializer(queryset, many=True)
+            return Response({"data": serializer.data}, status=status.HTTP_200_OK)
+
+all_object_list_api_view = AllObjectListAPIView.as_view()
