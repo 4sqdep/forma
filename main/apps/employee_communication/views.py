@@ -12,6 +12,8 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
+from itertools import chain
+from operator import attrgetter
 
 
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
@@ -635,3 +637,39 @@ text_message_delete_api_view = TextMessageDeleteAPIView.as_view()
 
 class FilterEmployeeCommunicationApiView(APIView):
     pass
+
+
+
+class CombinedMessagesAPIView(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        employee_communication = self.kwargs.get('employee_communication')
+        text_messages = TextMessage.objects.filter(employee_communication=employee_communication)
+        file_messages = FileMessage.objects.filter(employee_communication=employee_communication)
+
+        combined_messages = sorted(
+            chain(text_messages, file_messages),
+            key=attrgetter('created_at'),
+            reverse=True
+        )
+
+        serialized_combined = []
+        for message in combined_messages:
+            if isinstance(message, TextMessage):
+                serialized = employee_serializers.TextMessageSerializer(message).data
+                serialized["type"] = "text"
+            else:
+                serialized = employee_serializers.FileMessageSerializer(message).data
+                serialized["type"] = "file"
+            serialized_combined.append(serialized)
+        
+
+        return Response({
+            "messages": serialized_combined,
+            "status_code": status.HTTP_200_OK,
+            "message": "Successfully fetched combined messages",
+        }, status=status.HTTP_200_OK)
+
+combined_message_list_api_view = CombinedMessagesAPIView.as_view()
