@@ -5,6 +5,7 @@ from main.apps.employee_communication.models import EmployeeCommunication, FileM
 from main.apps.object_passport.models.object import Object
 from django.db.models import Count
 from main.apps.object_passport.models.object import Object
+from collections import OrderedDict
 
 
 class ObjectTitleSerializer(serializers.ModelSerializer):
@@ -135,26 +136,48 @@ class TextMessageSerializer(serializers.ModelSerializer):
 class FilterEmployeeCommunicationSerialize(serializers.ModelSerializer):
     class Meta:
         model = EmployeeCommunication
-        fields = ['id', 'title', 'comment',]
+        fields = ['id', 'title']
 
 
-class ObjectListSerializer(serializers.ModelSerializer):
+class ObjectWithCommunicationsSerializer(serializers.ModelSerializer):
     communications = serializers.SerializerMethodField()
-    status_counts = serializers.SerializerMethodField()
+    counts = serializers.SerializerMethodField()
 
     class Meta:
         model = Object
-        fields = ['id', 'title', 'communications', 'status_counts']
+        fields = ['id', 'title', 'communications', 'counts']
 
     def get_communications(self, obj):
         comms = EmployeeCommunication.objects.filter(obj=obj)
-        return EmployeeCommunicationSerializer(comms, many=True).data
+        return FilterEmployeeCommunicationSerialize(comms, many=True).data
 
-    def get_status_counts(self, obj):
-        statuses = (
-            EmployeeCommunication.objects
-            .filter(obj=obj)
+    def get_counts(self, obj):
+        # 1. Belgilangan tartibda statuslar
+        status_order = [
+            'new',
+            'done',
+            'in_confirmation',
+            'in_progress',
+            'incomplete',
+            'completed_late'
+        ]
+
+        # 2. Umumiy muammo soni
+        all_communications = EmployeeCommunication.objects.filter(obj=obj)
+        total = all_communications.count()
+
+        # 3. Guruhlab sanash
+        raw_counts = (
+            all_communications
             .values('status')
             .annotate(count=Count('status'))
         )
-        return {item['status']: item['count'] for item in statuses}
+        counted = {item['status']: item['count'] for item in raw_counts}
+
+        # 4. To‘liq tartibli dict hosil qilish
+        ordered_counts = OrderedDict()
+        ordered_counts['all'] = total
+        for status in status_order:
+            ordered_counts[status] = counted.get(status, 0)
+
+        return ordered_counts

@@ -12,6 +12,9 @@ from django.db.models import Q
 from django.utils.timezone import now
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
+from main.apps.object_passport.models.object import Object
+from django.db.models import Count
+from collections import OrderedDict
 
 
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
@@ -634,4 +637,34 @@ text_message_delete_api_view = TextMessageDeleteAPIView.as_view()
 
 
 class FilterEmployeeCommunicationApiView(APIView):
-    pass
+    def get(self, request):
+        objects = Object.objects.all()
+        serializer = employee_serializers.ObjectWithCommunicationsSerializer(objects, many=True)
+        status_order = [
+            'new',
+            'done',
+            'in_confirmation',
+            'in_progress',
+            'incomplete',
+            'completed_late'
+        ]
+        all_communications = EmployeeCommunication.objects.all()
+        total = all_communications.count()
+        raw_counts = (
+            all_communications
+            .values('status')
+            .annotate(count=Count('status'))
+        )
+        counted = {item['status']: item['count'] for item in raw_counts}
+
+        ordered_counts = OrderedDict()
+        ordered_counts['all'] = total
+        for status_key in status_order:
+            ordered_counts[status_key] = counted.get(status_key, 0)
+        return Response({
+            "status": "success",
+            "data": serializer.data,
+            "total_counts": ordered_counts
+        }, status=status.HTTP_200_OK)
+
+filter_employee_list_api_view = FilterEmployeeCommunicationApiView.as_view()
