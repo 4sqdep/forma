@@ -13,6 +13,9 @@ class ObjectTitleSerializer(serializers.ModelSerializer):
         fields = ['id', 'title']
 
 
+
+
+
 class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
     read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
@@ -94,8 +97,7 @@ class FileMessageSerializer(serializers.ModelSerializer):
 
 
 
-class TextMessageSerializer(serializers.ModelSerializer):
-    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+class TextMessageCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextMessage
         fields = (
@@ -107,11 +109,30 @@ class TextMessageSerializer(serializers.ModelSerializer):
             'read_time'
         )
         read_only_fields = (
+            'sender',
             'is_read',
             'read_time'
         )
 
 
+<<<<<<< HEAD
+
+class TextMessageSerializer(serializers.ModelSerializer):
+    # read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    sender = UserAllSerializer()
+    class Meta:
+        model = TextMessage
+        fields = (
+            'employee_communication',
+            'sender',
+            # 'receiver',
+            'text',
+            # 'is_read',
+            # 'read_time',
+            'created_at'
+        )
+=======
 class FilterEmployeeCommunicationSerialize(serializers.ModelSerializer):
     class Meta:
         model = EmployeeCommunication
@@ -138,3 +159,4 @@ class ObjectListSerializer(serializers.ModelSerializer):
             .annotate(count=Count('status'))
         )
         return {item['status']: item['count'] for item in statuses}
+>>>>>>> e40422085bc259d999d3c555b22334f3e65e0032

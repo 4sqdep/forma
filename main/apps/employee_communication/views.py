@@ -453,13 +453,13 @@ file_message_delete_api_view = FileMessageDeleteAPIView.as_view()
 
 class BaseTextMessageAPIView(generics.GenericAPIView):
     queryset = TextMessage.objects.all()
-    serializer_class = employee_serializers.TextMessageSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
 
 class TextMessageCreateAPIView(BaseTextMessageAPIView, generics.CreateAPIView):
+    serializer_class = employee_serializers.TextMessageCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -487,6 +487,7 @@ text_message_create_api_view = TextMessageCreateAPIView.as_view()
 
 
 class TextMessageListAPIView(BaseTextMessageAPIView, generics.ListAPIView):
+    serializer_class = employee_serializers.TextMessageSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -499,13 +500,16 @@ class TextMessageListAPIView(BaseTextMessageAPIView, generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        employee_communication = self.kwargs.get('employee_communication')
-        queryset = TextMessage.objects.filter(
-            Q(employee_communication=employee_communication) &
-            Q(sender=self.request.user) |
-            Q(receiver=self.request.user) 
-        )
-        return queryset
+        employee_communication_id = self.kwargs.get('employee_communication')
+        try:
+            communication = EmployeeCommunication.objects.get(id=employee_communication_id)
+        except EmployeeCommunication.DoesNotExist:
+            return TextMessage.objects.none()
+
+        if self.request.user == communication.sender or communication.employee.filter(id=self.request.user.id).exists():
+            return TextMessage.objects.filter(employee_communication=communication)
+        return TextMessage.objects.none()
+
     
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -539,6 +543,7 @@ text_message_list_api_view = TextMessageListAPIView.as_view()
 
 
 class TextMessageDetailAPIView(BaseTextMessageAPIView, generics.RetrieveAPIView):
+    serializer_class = employee_serializers.TextMessageSerializer
 
     def get_queryset(self):
         return TextMessage.objects.filter(
@@ -570,6 +575,7 @@ text_message_detail_api_view = TextMessageDetailAPIView.as_view()
 
 
 class TextMessageUpdateAPIView(BaseTextMessageAPIView, generics.UpdateAPIView):
+    serializer_class = employee_serializers.TextMessageCreateSerializer
 
     def get_queryset(self):
         return TextMessage.objects.filter(
@@ -605,6 +611,7 @@ text_message_update_api_view = TextMessageUpdateAPIView.as_view()
 
 
 class TextMessageDeleteAPIView(BaseTextMessageAPIView, generics.DestroyAPIView):
+    serializer_class = employee_serializers.TextMessageSerializer
 
     def get_queryset(self):
         return TextMessage.objects.filter(

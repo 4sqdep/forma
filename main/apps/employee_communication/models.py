@@ -71,6 +71,17 @@ class EmployeeCommunication(BaseModel):
 
 
 
+# class ChatRoom(BaseModel):
+#     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
+#     participants = models.ManyToManyField(User, related_name='chatrooms')
+
+#     class Meta(BaseMeta):
+#         db_table = "chat_room"
+#         verbose_name = "Chat Room"
+#         verbose_name_plural = "Chat Rooms"
+
+
+
 class FileMessage(BaseModel):
     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
     sender = models.ForeignKey(
