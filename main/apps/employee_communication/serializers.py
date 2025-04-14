@@ -4,6 +4,9 @@ from main.apps.account.serializers.user import UserAllSerializer
 from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
 
 
+
+
+
 class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
     read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
@@ -84,8 +87,7 @@ class FileMessageSerializer(serializers.ModelSerializer):
 
 
 
-class TextMessageSerializer(serializers.ModelSerializer):
-    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+class TextMessageCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = TextMessage
         fields = (
@@ -97,6 +99,25 @@ class TextMessageSerializer(serializers.ModelSerializer):
             'read_time'
         )
         read_only_fields = (
+            'sender',
             'is_read',
             'read_time'
+        )
+
+
+
+class TextMessageSerializer(serializers.ModelSerializer):
+    # read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    sender = UserAllSerializer()
+    class Meta:
+        model = TextMessage
+        fields = (
+            'employee_communication',
+            'sender',
+            # 'receiver',
+            'text',
+            # 'is_read',
+            # 'read_time',
+            'created_at'
         )
