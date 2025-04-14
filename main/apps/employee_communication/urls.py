@@ -89,6 +89,11 @@ urlpatterns = [
         views.text_message_delete_api_view, 
         name='text_message_delete'
     ),   
+    path(
+        'message/<int:employee_communication>/list/', 
+        views.combined_message_list_api_view, 
+        name='message_list'
+    ),
 ]
 
 
