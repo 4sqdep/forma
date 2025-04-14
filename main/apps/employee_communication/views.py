@@ -11,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db.models import Q
 from django.utils.timezone import now
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.views import APIView
 
 
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
@@ -631,3 +631,7 @@ class TextMessageDeleteAPIView(BaseTextMessageAPIView, generics.DestroyAPIView):
         )
 
 text_message_delete_api_view = TextMessageDeleteAPIView.as_view()
+
+
+class FilterEmployeeCommunicationApiView(APIView):
+    pass
