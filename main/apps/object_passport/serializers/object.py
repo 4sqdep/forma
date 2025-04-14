@@ -60,9 +60,3 @@ class ObjectSerializer(serializers.ModelSerializer):
             'end_date',
         )
 
-
-
-
-
-
-

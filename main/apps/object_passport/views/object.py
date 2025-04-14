@@ -11,7 +11,7 @@ from main.apps.object_passport.serializers import object as object_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.views import APIView
 
 
 
@@ -184,3 +184,4 @@ class AllObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
             return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
 all_object_list_api_view = AllObjectListAPIView.as_view()
+

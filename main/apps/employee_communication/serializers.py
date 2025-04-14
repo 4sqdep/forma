@@ -3,6 +3,8 @@ from main.apps.account.models.user import User
 from main.apps.account.serializers.user import UserAllSerializer
 from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
 from main.apps.object_passport.models.object import Object
+from django.db.models import Count
+from main.apps.object_passport.models.object import Object
 
 
 class ObjectTitleSerializer(serializers.ModelSerializer):
@@ -108,3 +110,31 @@ class TextMessageSerializer(serializers.ModelSerializer):
             'is_read',
             'read_time'
         )
+
+
+class FilterEmployeeCommunicationSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeCommunication
+        fields = ['id', 'title', 'comment',]
+
+
+class ObjectListSerializer(serializers.ModelSerializer):
+    communications = serializers.SerializerMethodField()
+    status_counts = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Object
+        fields = ['id', 'title', 'communications', 'status_counts']
+
+    def get_communications(self, obj):
+        comms = EmployeeCommunication.objects.filter(obj=obj)
+        return EmployeeCommunicationSerializer(comms, many=True).data
+
+    def get_status_counts(self, obj):
+        statuses = (
+            EmployeeCommunication.objects
+            .filter(obj=obj)
+            .values('status')
+            .annotate(count=Count('status'))
+        )
+        return {item['status']: item['count'] for item in statuses}
