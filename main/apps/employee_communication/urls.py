@@ -88,12 +88,18 @@ urlpatterns = [
         'text-message/<int:pk>/delete/', 
         views.text_message_delete_api_view, 
         name='text_message_delete'
+
     ),
     path(
         'filter/employee/',
         views.filter_employee_list_api_view,
         name="filter_employee_list"
-    )
+    ),   
+    path(
+        'message/<int:employee_communication>/list/', 
+        views.combined_message_list_api_view, 
+        name='message_list'
+    ),
 ]
 
 
