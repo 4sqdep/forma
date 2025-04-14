@@ -2,6 +2,13 @@ from rest_framework import serializers
 from main.apps.account.models.user import User
 from main.apps.account.serializers.user import UserAllSerializer
 from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
+from main.apps.object_passport.models.object import Object
+
+
+class ObjectTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Object
+        fields = ['id', 'title']
 
 
 class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
@@ -39,6 +46,7 @@ class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
 
 class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     employee = UserAllSerializer(many=True)
+    obj = ObjectTitleSerializer()
     read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
     class Meta:
