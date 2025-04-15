@@ -279,12 +279,12 @@ all_employee_communication_list_api_view = AllEmployeeCommunicationListAPIView.a
 
 class BaseFileMessageAPIView(generics.GenericAPIView):
     queryset = FileMessage.objects.all()
-    serializer_class = employee_serializers.FileMessageSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
 class FileMessageCreateAPIView(BaseFileMessageAPIView, generics.CreateAPIView):
+    serializer_class = employee_serializers.FileMessageCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -312,6 +312,7 @@ file_message_create_api_view = FileMessageCreateAPIView.as_view()
 
 
 class FileMessageListAPIView(BaseFileMessageAPIView, generics.ListAPIView):
+    serializer_class = employee_serializers.FileMessageSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -367,6 +368,7 @@ file_message_list_api_view = FileMessageListAPIView.as_view()
 
 
 class FileMessageDetailAPIView(BaseFileMessageAPIView, generics.RetrieveAPIView):
+    serializer_class = employee_serializers.FileMessageSerializer
 
     def get_queryset(self):
         return FileMessage.objects.filter(
@@ -397,6 +399,7 @@ file_message_detail_api_view = FileMessageDetailAPIView.as_view()
 
 
 class FileMessageUpdateAPIView(BaseFileMessageAPIView, generics.UpdateAPIView):
+    serializer_class = employee_serializers.FileMessageCreateSerializer
 
     def get_queryset(self):
         return FileMessage.objects.filter(
@@ -432,6 +435,7 @@ file_message_update_api_view = FileMessageUpdateAPIView.as_view()
 
 
 class FileMessageDeleteAPIView(BaseFileMessageAPIView, generics.DestroyAPIView):
+    serializer_class = employee_serializers.FileMessageSerializer
 
     def get_queryset(self):
         return FileMessage.objects.filter(

@@ -78,18 +78,28 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
         )
 
 
+class FileMessageCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FileMessage
+        fields = (
+            'employee_communication',
+            'sender',
+            'file'
+        )
+
 
 class FileMessageSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    sender = UserAllSerializer()
     class Meta:
         model = FileMessage
         fields = (
             'employee_communication',
             'sender',
             'file',
+            'created_at'
         )
         
-
 
 
 class TextMessageCreateSerializer(serializers.ModelSerializer):
@@ -101,7 +111,6 @@ class TextMessageCreateSerializer(serializers.ModelSerializer):
             'text',
         )
         
-
 
 
 class TextMessageSerializer(serializers.ModelSerializer):
