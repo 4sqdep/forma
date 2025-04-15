@@ -271,9 +271,7 @@ class AllEmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, gene
             'message': "Employee Communication list successfully",
             "data": serializer.data,
             "counts": counts
-            }, 
-            status=status.HTTP_200_OK
-            )
+            }, status=status.HTTP_200_OK)
 
 all_employee_communication_list_api_view = AllEmployeeCommunicationListAPIView.as_view()
 
@@ -462,7 +460,6 @@ class BaseTextMessageAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
 
-
 class TextMessageCreateAPIView(BaseTextMessageAPIView, generics.CreateAPIView):
     serializer_class = employee_serializers.TextMessageCreateSerializer
 
@@ -636,6 +633,7 @@ class TextMessageDeleteAPIView(BaseTextMessageAPIView, generics.DestroyAPIView):
         )
 
 text_message_delete_api_view = TextMessageDeleteAPIView.as_view()
+
 
 
 class FilterEmployeeCommunicationApiView(APIView):

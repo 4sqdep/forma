@@ -116,6 +116,14 @@ class TextMessageSerializer(serializers.ModelSerializer):
             'created_at'
         )
 
+        
+
+class FilterEmployeeCommunicationSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeCommunication
+        fields = ['id', 'title']
+
+
 
 class ObjectWithCommunicationsSerializer(serializers.ModelSerializer):
     communications = serializers.SerializerMethodField()
