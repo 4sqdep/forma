@@ -10,6 +10,10 @@ from main.apps.object_passport.serializers.object import ObjectTitleSerializer
 
 
 
+class BaseEmployeeCommunicationSerialize(serializers.ModelSerializer):
+    class Meta:
+        model = EmployeeCommunication
+        fields = ['id', 'title']
 
 
 
@@ -129,11 +133,6 @@ class TextMessageSerializer(serializers.ModelSerializer):
             'created_at'
         )
 
-class FilterEmployeeCommunicationSerialize(serializers.ModelSerializer):
-    class Meta:
-        model = EmployeeCommunication
-        fields = ['id', 'title']
-
 
 class ObjectWithCommunicationsSerializer(serializers.ModelSerializer):
     communications = serializers.SerializerMethodField()
@@ -145,7 +144,7 @@ class ObjectWithCommunicationsSerializer(serializers.ModelSerializer):
 
     def get_communications(self, obj):
         comms = EmployeeCommunication.objects.filter(obj=obj)
-        return FilterEmployeeCommunicationSerialize(comms, many=True).data
+        return BaseEmployeeCommunicationSerialize(comms, many=True).data
 
     def get_counts(self, obj):
         # 1. Belgilangan tartibda statuslar
