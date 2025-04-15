@@ -57,7 +57,8 @@ LOCAL_APPS = [
     "main.apps.construction_work.apps.ConstructionWorkConfig",
     "main.apps.equipment.apps.EquipmentConfig",
     "main.apps.employee_communication.apps.EmployeeCommunicationConfig",
-    
+    "main.apps.contract.apps.ContractConfig",
+
 ]
 
 INSTALLED_APPS = THIRD_PARTY_APPS + LOCAL_APPS + DJANGO_APPS
