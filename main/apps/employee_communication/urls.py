@@ -91,7 +91,7 @@ urlpatterns = [
 
     ),
     path(
-        'filter/employee/',
+        'filter/employee/communication/',
         views.filter_employee_list_api_view,
         name="filter_employee_list"
     ),   

@@ -60,3 +60,9 @@ class ObjectSerializer(serializers.ModelSerializer):
             'end_date',
         )
 
+
+
+class ObjectTitleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Object
+        fields = ['id', 'title']
