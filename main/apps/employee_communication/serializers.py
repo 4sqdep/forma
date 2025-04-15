@@ -80,21 +80,15 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
 
 
 class FileMessageSerializer(serializers.ModelSerializer):
-    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     class Meta:
         model = FileMessage
         fields = (
             'employee_communication',
             'sender',
-            'receiver',
             'file',
-            'is_read',
-            'read_time'
         )
-        read_only_fields = (
-            'is_read',
-            'read_time'
-        )
+        
 
 
 
@@ -104,21 +98,13 @@ class TextMessageCreateSerializer(serializers.ModelSerializer):
         fields = (
             'employee_communication',
             'sender',
-            'receiver',
             'text',
-            'is_read',
-            'read_time'
         )
-        read_only_fields = (
-            'sender',
-            'is_read',
-            'read_time'
-        )
+        
 
 
 
 class TextMessageSerializer(serializers.ModelSerializer):
-    # read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     sender = UserAllSerializer()
     class Meta:
@@ -126,10 +112,7 @@ class TextMessageSerializer(serializers.ModelSerializer):
         fields = (
             'employee_communication',
             'sender',
-            # 'receiver',
             'text',
-            # 'is_read',
-            # 'read_time',
             'created_at'
         )
 
