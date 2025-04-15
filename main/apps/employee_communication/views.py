@@ -19,6 +19,7 @@ from itertools import chain
 from operator import attrgetter
 
 
+
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
     queryset = EmployeeCommunication.objects.select_related("sender").prefetch_related("employee")
     authentication_classes = [JWTAuthentication]
