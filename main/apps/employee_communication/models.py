@@ -70,6 +70,7 @@ class EmployeeCommunication(BaseModel):
         verbose_name_plural = "Employee Communications"
 
 
+
 class FileMessage(BaseModel):
     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
     sender = models.ForeignKey(
