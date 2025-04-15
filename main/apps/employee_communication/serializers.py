@@ -6,12 +6,8 @@ from main.apps.object_passport.models.object import Object
 from django.db.models import Count
 from main.apps.object_passport.models.object import Object
 from collections import OrderedDict
+from main.apps.object_passport.serializers.object import ObjectTitleSerializer
 
-
-class ObjectTitleSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Object
-        fields = ['id', 'title']
 
 
 
