@@ -55,6 +55,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     employee = UserAllSerializer(many=True)
     obj = ObjectTitleSerializer()
     read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    sender = UserAllSerializer()
     
     class Meta:
         model = EmployeeCommunication 
