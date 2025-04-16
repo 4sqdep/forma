@@ -129,7 +129,7 @@ class EmployeeCommunicationDetailAPIView(BaseEmployeeCommunicationAPIView, gener
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
-        )
+        ).distinct()
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
