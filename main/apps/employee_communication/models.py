@@ -42,9 +42,9 @@ def upload_message_files(instance, filename):
 class EmployeeCommunication(BaseModel):
     sender = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='sent_communications'
+        related_name='sent_communications', verbose_name="Yuboruvchi"
     )
-    title = models.CharField(max_length=255, null=True, blank=True)
+    title = models.CharField(max_length=255, null=True, blank=True, verbose_name="Sarlavha")
     comment = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to=upload_communication_files, null=True, blank=True)
     employee = models.ManyToManyField(
@@ -58,7 +58,7 @@ class EmployeeCommunication(BaseModel):
         choices=ProblemStatus.choices, default=ProblemStatus.NEW 
     )
     section_type = models.CharField(max_length=255, null=True, blank=True, choices=SectionType.choices)
-    obj = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
+    obj = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True, verbose_name='Obyekt nomi')
 
     def __str__(self):
         return self.title
@@ -86,8 +86,7 @@ class FileMessage(BaseModel):
     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
     sender = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='sent_file_messages'
-    )
+        related_name='sent_file_messages', verbose_name="Yuboruvchi")
     receiver = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
         related_name='received_file_messages'
@@ -107,7 +106,7 @@ class TextMessage(BaseModel):
     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
     sender = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
-        related_name='sent_text_messages'
+        related_name='sent_text_messages', verbose_name="Yuboruvchi"
     )
     receiver = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True,
