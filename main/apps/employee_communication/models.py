@@ -48,7 +48,9 @@ class EmployeeCommunication(BaseModel):
     comment = models.TextField(null=True, blank=True)
     file = models.FileField(upload_to=upload_communication_files, null=True, blank=True)
     employee = models.ManyToManyField(
-        User, blank=True, related_name='assigned_communications'
+        User, 
+        through='EmployeeCommunicationRecipient', 
+        related_name='employee_assigned'
     )
     deadline = models.DateField()
     status = models.CharField(
@@ -57,9 +59,6 @@ class EmployeeCommunication(BaseModel):
     )
     section_type = models.CharField(max_length=255, null=True, blank=True, choices=SectionType.choices)
     obj = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
-    is_read = models.BooleanField(default=False)
-    read_time = models.DateTimeField(null=True, blank=True)
-    view_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.title
@@ -68,6 +67,19 @@ class EmployeeCommunication(BaseModel):
         db_table = "employee_communication"
         verbose_name = "Employee Communication"
         verbose_name_plural = "Employee Communications"
+
+
+
+class EmployeeCommunicationRecipient(models.Model):
+    communication = models.ForeignKey('EmployeeCommunication', on_delete=models.CASCADE)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_read = models.BooleanField(default=False)
+    read_time = models.DateTimeField(null=True, blank=True)
+    view_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('communication', 'employee')
+
 
 
 

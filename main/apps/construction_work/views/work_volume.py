@@ -1,0 +1,223 @@
+from rest_framework import generics, status, permissions 
+from rest_framework_simplejwt import authentication
+from main.apps.common.pagination import CustomPagination
+from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkCategory, WorkType
+from ..serializers import work_volume as work_volume_serializer
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework.response import Response
+
+
+
+
+
+class BaseWorkTypeAPIView:
+    queryset = WorkType.objects.all()
+    serializer_class = work_volume_serializer.WorkTypeSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView):
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
+            openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        obj = self.kwargs.get('obj')
+
+        if obj:
+            queryset = queryset.filter(object_id=obj)
+
+        paginator = CustomPagination() if request.query_params.get('p') else None
+        if paginator:
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            response.data["status_code"] = status.HTTP_200_OK
+            response.data["data"] = response.data.pop("results", [])
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'message': "Work Type ro'yxati",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'message': "Work Type successfully created",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+work_type_list_create_api_view = WorkTypeListCreateAPIView.as_view()
+
+
+
+class WorkTypeRetrieveUpdateDeleteAPIView(BaseWorkTypeAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Work Type updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Work Type deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+work_type_detail_update_delete_api_view = WorkTypeRetrieveUpdateDeleteAPIView.as_view()
+
+
+
+class BaseWorkCategoryAPIView:
+    queryset = WorkCategory.objects.all()
+    serializer_class = work_volume_serializer.WorkCategorySerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class WorkCategoryListCreateAPIView(BaseWorkCategoryAPIView, generics.ListCreateAPIView):
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
+            openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        obj = self.kwargs.get('obj')
+
+        if obj:
+            queryset = queryset.filter(object_id=obj)
+
+        paginator = CustomPagination() if request.query_params.get('p') else None
+        if paginator:
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            response.data["status_code"] = status.HTTP_200_OK
+            response.data["data"] = response.data.pop("results", [])
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'message': "Work Category ro'yxati",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'message': "Work Category successfully created",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+work_category_list_create_api_view = WorkCategoryListCreateAPIView.as_view()
+
+
+
+class WorkCategoryRetrieveUpdateDeleteAPIView(BaseWorkCategoryAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Work Category updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Work Category deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+work_category_detail_update_delete_api_view = WorkCategoryRetrieveUpdateDeleteAPIView.as_view()
+
+
+
+class BaseMonthlyWorkVolumeAPIView:
+    queryset = MonthlyWorkVolume.objects.all()
+    serializer_class = work_volume_serializer.MonthlyWorkVolumeSerializer
+    authentication_classes = [authentication.JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.ListCreateAPIView):
+
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
+            openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
+        ]
+    )
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        obj = self.kwargs.get('obj')
+
+        if obj:
+            queryset = queryset.filter(object_id=obj)
+
+        paginator = CustomPagination() if request.query_params.get('p') else None
+        if paginator:
+            page = paginator.paginate_queryset(queryset, request)
+            serializer = self.get_serializer(page, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            response.data["status_code"] = status.HTTP_200_OK
+            response.data["data"] = response.data.pop("results", [])
+            return response
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response({
+            'message': "Work Category ro'yxati",
+            'status_code': status.HTTP_200_OK,
+            "data": serializer.data,
+        }, status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({
+            'message': "Work Category successfully created",
+            'status_code': status.HTTP_201_CREATED,
+            'data': serializer.data
+        }, status=status.HTTP_201_CREATED)
+
+month_work_volume__list_create_api_view = MonthlyWorkVolumeListCreateAPIView.as_view()
+
+
+
+class MonthlyWorkVolumeRetrieveUpdateDeleteAPIView(BaseMonthlyWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop("partial", False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response({"message": "Work Category updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response({"message": "Work Category deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+month_work_volume_detail_update_delete_api_view = MonthlyWorkVolumeRetrieveUpdateDeleteAPIView.as_view()

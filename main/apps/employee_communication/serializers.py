@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from main.apps.account.models.user import User
 from main.apps.account.serializers.user import UserAllSerializer
-from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, TextMessage
+from main.apps.employee_communication.models import EmployeeCommunication, EmployeeCommunicationRecipient, FileMessage, TextMessage
 from main.apps.object_passport.models.object import Object
 from django.db.models import Count
 from main.apps.object_passport.models.object import Object
@@ -19,42 +19,33 @@ class BaseEmployeeCommunicationSerialize(serializers.ModelSerializer):
 
 
 class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
-    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    
+    employee = serializers.ListField(
+        child=serializers.IntegerField(), write_only=True
+    )
+
     class Meta:
-        model = EmployeeCommunication 
-        fields = (
-            'id',
-            'sender',
-            'title',
-            'comment',
-            'file',
-            'employee',
-            'deadline',
-            'status',
-            'obj',
-            'is_read',
-            'read_time',
-            'view_count'
-        )
-        read_only_fields = (
-            'is_read',
-            'read_time',
-            'view_count'
-        )
+        model = EmployeeCommunication
+        fields = [
+            'title', 'comment', 'file', 'deadline', 'status',
+            'section_type', 'obj', 'employee'
+        ]
 
     def create(self, validated_data):
-        employees = validated_data.pop('employee', [])
+        employee = validated_data.pop('employee', [])
         communication = EmployeeCommunication.objects.create(**validated_data)
-        communication.employee.set(employees)
+
+        for emp_id in employee:
+            EmployeeCommunicationRecipient.objects.create(
+                communication=communication,
+                employee_id=emp_id
+            )
         return communication
-    
+
 
 
 class EmployeeCommunicationSerializer(serializers.ModelSerializer):
-    employee = UserAllSerializer(many=True)
+    recipients = serializers.SerializerMethodField()
     obj = ObjectTitleSerializer()
-    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     sender = UserAllSerializer()
     
     class Meta:
@@ -65,19 +56,26 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'title',
             'comment',
             'file',
-            'employee',
+            'recipients',  
             'deadline',
             'status',
             'obj',
-            'is_read',
-            'read_time',
-            'view_count'
         )
-        read_only_fields = (
-            'is_read',
-            'read_time',
-            'view_count'
-        )
+
+    def get_recipients(self, obj):
+        recipient_qs = EmployeeCommunicationRecipient.objects.filter(communication=obj)
+        return EmployeeCommunicationRecipientSerializer(recipient_qs, many=True).data
+
+
+
+class EmployeeCommunicationRecipientSerializer(serializers.ModelSerializer):
+    read_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+    employee = UserAllSerializer()
+
+    class Meta:
+        model = EmployeeCommunicationRecipient
+        fields = ['employee', 'is_read', 'read_time', 'view_count']
+
 
 
 class FileMessageCreateSerializer(serializers.ModelSerializer):
