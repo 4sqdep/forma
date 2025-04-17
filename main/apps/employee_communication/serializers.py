@@ -47,6 +47,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     recipients = serializers.SerializerMethodField()
     obj = ObjectTitleSerializer()
     sender = UserAllSerializer()
+    is_read = serializers.SerializerMethodField()
     
     class Meta:
         model = EmployeeCommunication 
@@ -60,11 +61,18 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'deadline',
             'status',
             'obj',
+            'is_read'
         )
 
     def get_recipients(self, obj):
         recipient_qs = EmployeeCommunicationRecipient.objects.filter(communication=obj)
         return EmployeeCommunicationRecipientSerializer(recipient_qs, many=True).data
+    
+    def get_is_read(self, obj):
+        return EmployeeCommunicationRecipient.objects.filter(
+            communication=obj,
+            is_read=True
+        ).exists()
 
 
 

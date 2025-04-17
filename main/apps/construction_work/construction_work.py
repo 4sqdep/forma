@@ -32,4 +32,11 @@ urlpatterns = [
             namespace="statistics",
         ),
     ),
+    path(
+        "work-volume/",
+        include(
+            ("main.apps.construction_work.urls.work_volume", "main.apps.construction_work.urls.work_volume"),
+            namespace="work_volume",
+        ),
+    ),
 ]
