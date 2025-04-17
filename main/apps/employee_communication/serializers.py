@@ -47,6 +47,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     recipients = serializers.SerializerMethodField()
     obj = ObjectTitleSerializer()
     sender = UserAllSerializer()
+    created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
     class Meta:
         model = EmployeeCommunication 
@@ -60,6 +61,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'deadline',
             'status',
             'obj',
+            'created_at'
         )
 
     def get_recipients(self, obj):
