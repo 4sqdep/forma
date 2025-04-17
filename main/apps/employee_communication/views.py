@@ -1,7 +1,7 @@
 from rest_framework import generics, status 
 from main.apps.common.pagination import CustomPagination
 from main.apps.employee_communication.filters import EmployeeCommunicationFilter
-from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, ProblemStatus, TextMessage
+from main.apps.employee_communication.models import EmployeeCommunication, FileMessage, ProblemStatus, TextMessage, EmployeeCommunicationRecipient
 from . import serializers as employee_serializers
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -135,12 +135,18 @@ class EmployeeCommunicationDetailAPIView(BaseEmployeeCommunicationAPIView, gener
         instance = self.get_object()
         user = request.user
 
-        if instance.employee.filter(id=user.id).exists():
-            if not instance.is_read:
-                instance.is_read = True
-                instance.read_time = now()
-            instance.view_count += 1
-            instance.save(update_fields=['is_read', 'read_time', 'view_count'])
+        try:
+            recipient = EmployeeCommunicationRecipient.objects.get(
+                communication=instance, employee=user
+            )
+            if not recipient.is_read:
+                recipient.is_read = True
+                recipient.read_time = now()
+            recipient.view_count += 1
+            recipient.save(update_fields=['is_read', 'read_time', 'view_count'])
+        except EmployeeCommunicationRecipient.DoesNotExist:
+            pass 
+
         serializer = self.get_serializer(instance)
         return Response(
             {
@@ -161,7 +167,7 @@ class EmployeeCommunicationUpdateAPIView(BaseEmployeeCommunicationAPIView, gener
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
-        )
+        ).distinct()
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
@@ -196,7 +202,7 @@ class EmployeeCommunicationDeleteAPIView(BaseEmployeeCommunicationAPIView, gener
     def get_queryset(self):
         return EmployeeCommunication.objects.select_related("sender").filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
-        )
+        ).distinct()
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
