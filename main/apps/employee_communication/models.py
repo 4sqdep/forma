@@ -82,7 +82,6 @@ class EmployeeCommunicationRecipient(models.Model):
 
 
 
-
 class FileMessage(BaseModel):
     employee_communication = models.ForeignKey(EmployeeCommunication, on_delete=models.SET_NULL, null=True, blank=True)
     sender = models.ForeignKey(

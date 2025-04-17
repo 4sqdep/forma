@@ -47,6 +47,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     recipients = serializers.SerializerMethodField()
     obj = ObjectTitleSerializer()
     sender = UserAllSerializer()
+    is_read = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     
     class Meta:
@@ -61,12 +62,19 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'deadline',
             'status',
             'obj',
+            'is_read'
             'created_at'
         )
 
     def get_recipients(self, obj):
         recipient_qs = EmployeeCommunicationRecipient.objects.filter(communication=obj)
         return EmployeeCommunicationRecipientSerializer(recipient_qs, many=True).data
+    
+    def get_is_read(self, obj):
+        return EmployeeCommunicationRecipient.objects.filter(
+            communication=obj,
+            is_read=True
+        ).exists()
 
 
 

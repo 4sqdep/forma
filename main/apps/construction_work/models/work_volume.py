@@ -1,11 +1,12 @@
 from django.db import models
 from main.apps.common.models import BaseModel, BaseMeta, Measurement
+from main.apps.object_passport.models.object import Object
 
 
 
 
 class WorkType(BaseModel):
-    object = models.ForeignKey(object, on_delete=models.SET_NULL, null=True, blank=True)
+    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=True)
     # plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
@@ -23,7 +24,7 @@ class WorkType(BaseModel):
 
 
 class WorkCategory(BaseModel):
-    object = models.ForeignKey(object, on_delete=models.SET_NULL, null=True, blank=True)
+    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
@@ -33,6 +34,19 @@ class WorkCategory(BaseModel):
         db_table = "work_category"
         verbose_name = "Work Category"
         verbose_name_plural = "Work Categories"
+
+
+
+class WorkVolume(BaseModel):
+    work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True)
+    plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+
+    class Meta(BaseMeta):
+        db_table = "work_volume"
+        verbose_name = "Work Volume"
+        verbose_name_plural = "Work Volumes"
 
 
 
