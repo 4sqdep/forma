@@ -53,6 +53,13 @@ urlpatterns = [
         ),
     ),
     path(
+        "contract/",
+        include(
+            ("main.apps.contract.urls", "main.apps.contract.urls"),
+            namespace="contract",
+        ),
+    ),
+    path(
         "employee-communication/",
         include(
             ("main.apps.employee_communication.urls", "main.apps.employee_communication.urls"),
