@@ -62,7 +62,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             'deadline',
             'status',
             'obj',
-            'is_read'
+            'is_read',
             'created_at'
         )
 
