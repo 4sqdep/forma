@@ -50,9 +50,11 @@ class EmployeeCommunication(BaseModel):
     employee = models.ManyToManyField(
         User, 
         through='EmployeeCommunicationRecipient', 
-        related_name='employee_assigned'
+        related_name='employee_assigned',
+        null=True,
+        blank=True
     )
-    deadline = models.DateField()
+    deadline = models.DateField(null=True, blank=True)
     status = models.CharField(
         max_length=255, null=True, blank=True,
         choices=ProblemStatus.choices, default=ProblemStatus.NEW 
@@ -72,7 +74,7 @@ class EmployeeCommunication(BaseModel):
 
 class EmployeeCommunicationRecipient(models.Model):
     communication = models.ForeignKey('EmployeeCommunication', on_delete=models.CASCADE)
-    employee = models.ForeignKey(User, on_delete=models.CASCADE)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     read_time = models.DateTimeField(null=True, blank=True)
     view_count = models.PositiveIntegerField(default=0)
