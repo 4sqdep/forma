@@ -61,3 +61,5 @@ class MonthlyWorkVolume(BaseModel):
         db_table = "monthly_work_volume"
         verbose_name = "Monthly Work Volume"
         verbose_name_plural = "Monthly Work Volumes"
+
+    

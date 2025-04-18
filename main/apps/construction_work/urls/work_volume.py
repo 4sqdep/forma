@@ -64,7 +64,7 @@ urlpatterns = [
         name='work_category_create'
     ),
     path(
-        '<int:obj>/list/',
+        '<int:work_category>/list/',
         work_volume.work_volume_list_create_api_view,
         name='work_category_list'
     ),

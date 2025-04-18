@@ -6,7 +6,7 @@ from ..serializers import work_volume as work_volume_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
-
+from django.db.models import Sum 
 
 
 
@@ -166,19 +166,28 @@ class BaseWorkVolumeAPIView:
 
 class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIView):
 
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return work_volume_serializer.WorkVolumeCreateSerializer
+        return work_volume_serializer.WorkVolumeSerializer
+
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter('p', openapi.IN_QUERY, description='Pagination Parameter', type=openapi.TYPE_STRING),
             openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
         ]
     )
+    
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         work_category = self.kwargs.get('work_category')
 
         if work_category:
             queryset = queryset.filter(work_category=work_category)
-
+        
+        total_plan = queryset.aggregate(Sum('plan'))['plan__sum'] or 0
+        total_fact = queryset.aggregate(Sum('fact'))['fact__sum'] or 0
+        
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
             page = paginator.paginate_queryset(queryset, request)
@@ -186,6 +195,8 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             response = paginator.get_paginated_response(serializer.data)
             response.data["status_code"] = status.HTTP_200_OK
             response.data["data"] = response.data.pop("results", [])
+            response.data['total_plan'] = total_plan
+            response.data['total_fact'] = total_fact
             return response
 
         serializer = self.get_serializer(queryset, many=True)
@@ -193,6 +204,8 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             'message': "Work volume ro'yxati",
             'status_code': status.HTTP_200_OK,
             "data": serializer.data,
+            "total_plan": total_plan,
+            "total_fact": total_fact
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -210,6 +223,11 @@ work_volume_list_create_api_view = WorkVolumeListCreateAPIView.as_view()
 
 
 class WorkVolumeRetrieveUpdateDeleteAPIView(BaseWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return work_volume_serializer.WorkVolumeCreateSerializer
+        return work_volume_serializer.WorkVolumeSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
