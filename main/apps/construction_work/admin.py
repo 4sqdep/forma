@@ -3,6 +3,7 @@ from main.apps.construction_work.models.file import ConstructionInstallationFile
 from main.apps.construction_work.models.fund import ConstructionInstallationProject, MonthlyCompletedTask
 from main.apps.construction_work.models.section import ConstructionInstallationSection
 from main.apps.construction_work.models.statistics import ConstructionInstallationStatistics
+from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkVolume
 
 
 
@@ -46,3 +47,7 @@ class AdminMonthlyCompletedTask(admin.ModelAdmin):
     search_fields = ['date']
 
 admin.site.register(MonthlyCompletedTask, AdminMonthlyCompletedTask)
+
+
+admin.site.register(WorkVolume)
+admin.site.register(MonthlyWorkVolume)

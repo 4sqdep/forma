@@ -4,6 +4,8 @@ from django.db.models import Sum
 
 
 
+
+
 class WorkTypeSerializer(serializers.ModelSerializer):
     plan = serializers.SerializerMethodField()
     fact = serializers.SerializerMethodField()
@@ -41,8 +43,6 @@ class WorkTypeSerializer(serializers.ModelSerializer):
         
 
 
-
-
 class WorkCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkCategory
@@ -54,7 +54,7 @@ class WorkCategorySerializer(serializers.ModelSerializer):
 
 
 
-class WorkVolumeSerializer(serializers.ModelSerializer):
+class WorkVolumeCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = WorkVolume
         fields = (
@@ -64,6 +64,35 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'plan',
             'fact'
         )
+
+
+
+class WorkVolumeSerializer(serializers.ModelSerializer):
+    plan = serializers.SerializerMethodField()
+    fact = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkVolume
+        fields = (
+            'id',
+            'work_category',
+            'work_type',
+            'plan',
+            'fact'
+        )
+    
+    def get_plan(self, obj):
+        return MonthlyWorkVolume.objects.filter(
+            work_category=obj.work_category,
+            work_type=obj.work_type
+        ).aggregate(total=Sum('plan'))['total'] or 0
+    
+    def get_fact(self, obj):
+        return MonthlyWorkVolume.objects.filter(
+            work_category=obj.work_category,
+            work_type=obj.work_type
+        ).aggregate(total=Sum('fact'))['total'] or 0
+    
 
 
 
@@ -78,3 +107,21 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'fact',
             'date'
         )
+    
+    # def create(self, validated_data):
+    #     monthly_instance = MonthlyWorkVolume.objects.create(**validated_data)
+
+    #     work_category = validated_data.get('work_category')
+    #     work_type = validated_data.get('work_type')
+
+    #     if work_category and work_type:
+    #         work_volume, created = WorkVolume.objects.get_or_create(
+    #             work_category=work_category,
+    #             work_type=work_type,
+    #             defaults={'plan': 0, 'fact':0}
+    #         )
+
+    #         work_volume.plan += validated_data.get('plan', 0)
+    #         work_volume.fact += validated_data.get('fact', 0)
+    #         work_volume.save()
+    #     return monthly_instance
