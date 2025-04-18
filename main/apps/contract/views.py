@@ -150,7 +150,7 @@ class ContractFileCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
-    def  create(self, request):
+    def create(self, request):
         serializer = ContractSectionFileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
