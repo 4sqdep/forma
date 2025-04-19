@@ -6,6 +6,7 @@ from main.apps.construction_work.models.statistics import ConstructionInstallati
 
 class ConstructionInstallationStatisticsSerializer(serializers.ModelSerializer):
     currency_slug = serializers.CharField(source='object.currency.slug_title', read_only=True)
+    date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     class Meta:
         model = ConstructionInstallationStatistics
         fields = (

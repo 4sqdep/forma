@@ -10,6 +10,7 @@ class ContractSectionSerializer(serializers.ModelSerializer):
 
 
 class ContractSectionFileSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     class Meta:
         model = ContractFile
         fields = ['id', 'section', 'title', 'date', 'file_code', 'file']
