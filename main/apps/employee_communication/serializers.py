@@ -20,15 +20,21 @@ class BaseEmployeeCommunicationSerialize(serializers.ModelSerializer):
 
 class EmployeeCommunicationCreateSerializer(serializers.ModelSerializer):
     employee = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True
+        child=serializers.IntegerField(), write_only=True, required=False
     )
 
     class Meta:
         model = EmployeeCommunication
-        fields = [
-            'title', 'comment', 'file', 'deadline', 'status',
-            'section_type', 'obj', 'employee'
-        ]
+        fields = (
+            'title', 
+            'comment', 
+            'file', 
+            'deadline', 
+            'status',
+            'section_type', 
+            'obj', 
+            'employee'
+        )
 
     def create(self, validated_data):
         employee = validated_data.pop('employee', [])

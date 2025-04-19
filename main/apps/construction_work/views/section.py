@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-
+from django.db.models import Case, When, Value, IntegerField
 
 
 class ConstructionInstallationSectionAPIView:
@@ -39,6 +39,20 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
 
         if object_id:
             queryset = queryset.filter(object_id=object_id)
+
+        priority_titles = [
+            "Bajarilgan ishlar dalolatnoma F-3 F-2",
+            "Ijro hujjatlari",
+            "Yig'ma jadvat",
+            "Kerakli ma'lumotlar",
+        ]
+        queryset = queryset.annotate(
+            custom_order=Case(
+                *[When(title=title, then=Value(i)) for i, title in enumerate(priority_titles)],
+                default=Value(100),  # qolganlar keyin
+                output_field=IntegerField()
+            )
+        ).order_by("custom_order", "id")
         return queryset
 
     def get(self, request, *args, **kwargs):
