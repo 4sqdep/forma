@@ -22,6 +22,7 @@ class ConstructionInstallationProjectSerializer(serializers.ModelSerializer):
 
 
 class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
+    date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     class Meta:
         model = MonthlyCompletedTask
         fields = (

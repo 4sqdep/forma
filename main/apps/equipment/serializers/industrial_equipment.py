@@ -75,6 +75,7 @@ class IndustrialAssetListSerializer(serializers.ModelSerializer):
     remaining_in_percent = serializers.SerializerMethodField()
     measurement = MeasurementSerializer()
     currency_slug = serializers.CharField(source='equipment_category.hydro_station.currency.title')
+    date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     class Meta:
         model = IndustrialAsset
         fields = (
