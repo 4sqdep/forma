@@ -9,6 +9,7 @@ from main.apps.project_document.filters.project_document_type import ProjectDocu
 from main.apps.project_document.models.project_document_type import ProjectDocumentType
 from main.apps.project_document.serializers import project_document_type as document_type_serializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Case, When, Value, IntegerField
 
 
 
@@ -60,10 +61,23 @@ class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.Li
 
     def get_queryset(self):
         queryset = ProjectDocumentType.objects.all()
-        object = self.kwargs.get("object")  
+        object_id = self.kwargs.get("object")
 
         if object:
-            queryset = queryset.filter(object_id=object)
+            queryset = queryset.filter(object_id=object_id)
+        priority_names = [
+            "Birlamchi hujjatlar",
+            "Loyiha-smeta hujjatlari",
+            "Yig'ma jadvat",
+            "Kerakli ma'lumotlar",
+        ]
+        queryset = queryset.annotate(
+            custom_order=Case(
+                *[When(name=name, then=Value(i)) for i, name in enumerate(priority_names)],
+                default=Value(100),  # qolganlar keyin
+                output_field=IntegerField()
+            )
+        ).order_by("custom_order", "id")
         return queryset
     
     def get_pagination_class(self):
