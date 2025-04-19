@@ -10,14 +10,20 @@ from django.db.models import Sum
 
 
 
+
+
 class BaseWorkTypeAPIView:
     queryset = WorkType.objects.all()
-    serializer_class = work_volume_serializer.WorkTypeSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
 class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView):
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return work_volume_serializer.WorkTypeCreateSerializer
+        return work_volume_serializer.WorkTypeSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -68,6 +74,11 @@ work_type_list_create_api_view = WorkTypeListCreateAPIView.as_view()
 
 
 class WorkTypeRetrieveUpdateDeleteAPIView(BaseWorkTypeAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return work_volume_serializer.WorkTypeCreateSerializer
+        return work_volume_serializer.WorkTypeSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)

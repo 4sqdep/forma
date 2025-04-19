@@ -9,9 +9,6 @@ class WorkType(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=True)
-    # plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    # fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
-    # remain = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
     def __str__(self):
         return self.title
