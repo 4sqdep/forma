@@ -124,7 +124,6 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
         remain = plan - fact
         remain_percent = (remain / plan) * 100
         return round(remain_percent, 2)
-    
 
 
 

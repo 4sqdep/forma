@@ -170,7 +170,6 @@ work_category_detail_update_delete_api_view = WorkCategoryRetrieveUpdateDeleteAP
 
 class BaseWorkVolumeAPIView:
     queryset = WorkVolume.objects.all()
-    serializer_class = work_volume_serializer.WorkVolumeSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -259,12 +258,16 @@ work_volume_detail_update_delete_api_view = WorkVolumeRetrieveUpdateDeleteAPIVie
 
 class BaseMonthlyWorkVolumeAPIView:
     queryset = MonthlyWorkVolume.objects.all()
-    serializer_class = work_volume_serializer.MonthlyWorkVolumeSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
 class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.ListCreateAPIView):
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return work_volume_serializer.MonthlyWorkVolumeCreateSerializer
+        return work_volume_serializer.MonthlyWorkVolumeSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -310,6 +313,11 @@ monthly_work_volume_list_create_api_view = MonthlyWorkVolumeListCreateAPIView.as
 
 
 class MonthlyWorkVolumeRetrieveUpdateDeleteAPIView(BaseMonthlyWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+
+    def get_serializer_class(self):
+        if self.request.method in ['PUT', 'PATCH']:
+            return work_volume_serializer.MonthlyWorkVolumeCreateSerializer
+        return work_volume_serializer.MonthlyWorkVolumeSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
