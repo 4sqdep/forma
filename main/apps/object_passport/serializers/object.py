@@ -33,6 +33,8 @@ class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
 
 class ObjectSerializer(serializers.ModelSerializer):
     currency_slug = serializers.CharField(source='currency.slug_title', read_only=True)
+    start_date = serializers.DateField(format="%d-%m-%Y", read_only=True)
+    end_date = serializers.DateField(format="%d-%m-%Y", read_only=True)
     class Meta:
         model = Object
         fields = (
