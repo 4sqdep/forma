@@ -43,6 +43,7 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
     def get_queryset(self):
         project_document_type = self.kwargs.get("project_document_type") 
         queryset = ProjectSection.objects.all()
+        print(project_document_type)
 
         if project_document_type:
             queryset = queryset.filter(project_document_type=project_document_type)
@@ -67,7 +68,6 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
             response_data.data["data"] = response_data.data.pop("results", [])
             return Response(response_data.data, status=status.HTTP_200_OK)
 
-        # serializer = self.get_serializer(queryset, many=True)
         serializer = project_section_serializer.ProjectSectionSerializer(queryset, many=True)
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 

@@ -10,7 +10,7 @@ urlpatterns = [
         name='project_section_create'
     ),
     path(
-        '<int:project_document_file>/list/', 
+        '<int:project_document_type>/list/', 
         project_section.project_section_list_api_view,
         name='project_section_list'
     ),
