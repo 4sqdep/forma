@@ -21,7 +21,7 @@ class ObjectFilter(django_filters.FilterSet):
         model = Object
         fields = ['start_date', 'end_date']
 
-    def filter_by_search(self, queryset, value):
+    def filter_by_search(self, queryset, name, value):
         return queryset.filter(Q(title__icontains=value))
 
     def order_by_newest(self, queryset, value):
