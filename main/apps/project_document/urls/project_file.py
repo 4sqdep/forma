@@ -10,7 +10,7 @@ urlpatterns = [
         name='project_document_file_create'
     ),
     path(
-        'project-document-file/<int:object>/list/', 
+        'project-document-file/<int:document>/list/', 
         project_file.project_document_file_list_api_view,
         name='project_document_file_list'
     ),

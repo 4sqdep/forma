@@ -151,6 +151,7 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
 class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     work_category = WorkCategorySerializer()
     work_type = WorkTypeSerializer()
+    remained_percent = serializers.SerializerMethodField()
 
     class Meta:
         model = MonthlyWorkVolume
@@ -160,6 +161,16 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'work_type',
             'plan',
             'fact',
-            'date'
+            'date',
+            'remained_percent'
         )
+    
+    def get_remained_percent(self, obj):
+        plan = obj.plan
+        fact = obj.fact
+        if plan == 0:
+            return 0
+        remain = plan - fact
+        remain_percent = (remain / plan) * 100
+        return round(remain_percent, 2)
 
