@@ -18,6 +18,16 @@ class WorkTypeCreateSerializer(serializers.ModelSerializer):
             'measurement'
         )
 
+class BaseWorkTypeSerializer(serializers.ModelSerializer):
+    measurement = MeasurementSerializer()
+    class Meta:
+        model = WorkType
+        fields = (
+            'id',
+            'object',
+            'title',
+            'measurement',
+        )
 
 
 class WorkTypeSerializer(serializers.ModelSerializer):
@@ -86,9 +96,7 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
     plan = serializers.SerializerMethodField()
     fact = serializers.SerializerMethodField()
     work_category = WorkCategorySerializer()
-    work_type = WorkTypeSerializer()
-    # work_type_title = serializers.CharField(source='work_type.title')
-    # measurement = MeasurementSerializer(source='work_type.measurement')
+    work_type = BaseWorkTypeSerializer()
     remain_percent = serializers.SerializerMethodField()
 
     class Meta:
@@ -99,9 +107,7 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'work_type',
             'plan',
             'fact',
-            'remain_percent',
-            # 'work_type_title',
-            # 'measurement'
+            'remain_percent'
         )
     
     def get_plan(self, obj):
