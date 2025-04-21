@@ -44,12 +44,13 @@ class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.Li
             openapi.Parameter("file_code", openapi.IN_QUERY, description="Filter by file code", type=openapi.TYPE_STRING),
         ]
     )
+
     def get_queryset(self):
-        document = self.kwargs.get("document") 
+        document_id = self.kwargs.get("document")
         queryset = ProjectDocumentFile.objects.all()
 
-        if document:
-            queryset = queryset.filter(document=document)
+        if document_id:
+            queryset = queryset.filter(project_document_type=document_id)
 
         return queryset
     

@@ -21,8 +21,8 @@ admin.site.register(ProjectDocumentType, ProjectDocumentTypeAdmin)
 
 
 class ProjectDocumentFileAdmin(admin.ModelAdmin):
-    list_display = ['id', 'project_document_type', 'project_section', 'name', 'full_name', 'calendar']
-    list_display_links = ['project_document_type', 'project_section', 'name', 'full_name', 'calendar']
+    list_display = ['id', 'project_document_type', 'project_section', 'name', 'calendar']
+    list_display_links = ['project_document_type', 'project_section', 'name', 'calendar']
     search_fields = ['name']
 
 
