@@ -50,5 +50,10 @@ urlpatterns = [
         'file/<int:pk>/delete/',
         views.delete_contract_file_api_view,
         name='delete'
+    ),
+    path(
+        'search/',
+        views.search_contract_section_api_view,
+        name='search'
     )
 ]

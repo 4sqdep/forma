@@ -8,6 +8,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.contract.models import ContractSection, ContractFile
 from main.apps.contract.serializers import ContractSectionSerializer, ContractSectionFileSerializer
+from rest_framework.views import APIView
 
 
 
@@ -253,4 +254,16 @@ class ContractFilesDelete(generics.DestroyAPIView):
         return Response({"message": "File successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 
 delete_contract_file_api_view = ContractFilesDelete.as_view()
+
+
+class SearchContractAPIView(APIView):
+    def get(self, request):
+        queryset = ContractSection.objects.all()
+        search_query = request.query_params.get('search', None)
+        if search_query:
+            queryset = queryset.filter(title__incontains=search_query)
+        serializer = ContractSectionSerializer(queryset, many=True)
+        return Response({'message': "Siz izlagan malumot", 'data': serializer.data}, status=status.HTTP_200_OK)
+
+search_contract_section_api_view = SearchContractAPIView.as_view()
 
