@@ -49,6 +49,7 @@ class ObjectCreateAPIView(BaseObjectAPIView, generics.CreateAPIView):
 object_create_api_view = ObjectCreateAPIView.as_view() 
 
 
+
 class ObjectListAPIView(BaseObjectAPIView, generics.ListAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ObjectFilter
