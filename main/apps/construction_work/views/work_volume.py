@@ -37,6 +37,12 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
 
         if object:
             queryset = queryset.filter(object=object)
+        
+        serializer = self.get_serializer(queryset, many=True)
+        data = serializer.data 
+        total_plan = sum(item.get('plan') for item in data)
+        total_fact = sum(item.get('fact') for item in data)
+        total_remained_percent = (total_fact / total_plan) * 100 if total_plan else 0
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -45,18 +51,18 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
             response = paginator.get_paginated_response(serializer.data)
             response.data["status_code"] = status.HTTP_200_OK
             response.data["data"] = response.data.pop("results", [])
+            response.data["total_plan"] = total_plan
+            response.data["total_fact"] = total_fact
+            response.data["total_remained_percent"] = round(total_remained_percent, 2)
             return response
 
-        serializer = self.get_serializer(queryset, many=True)
-        data = serializer.data 
-        total_plan = sum(item.get('plan') for item in data)
-        total_fact = sum(item.get('fact') for item in data)
         return Response({
             'message': "Work Type ro'yxati",
             'status_code': status.HTTP_200_OK,
             "data": serializer.data,
             "total_plan": total_plan,
-            "total_fact": total_fact
+            "total_fact": total_fact,
+            "total_remained_percent": round(total_remained_percent, 2)
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -197,6 +203,7 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
         
         total_plan = queryset.aggregate(Sum('plan'))['plan__sum'] or 0
         total_fact = queryset.aggregate(Sum('fact'))['fact__sum'] or 0
+        total_remained_percent = (total_fact / total_plan) * 100 if total_plan else 0
         
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -207,6 +214,7 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             response.data["data"] = response.data.pop("results", [])
             response.data['total_plan'] = total_plan
             response.data['total_fact'] = total_fact
+            response.data['total_remained_percent'] = round(total_remained_percent, 2)
             return response
 
         serializer = self.get_serializer(queryset, many=True)
@@ -215,7 +223,8 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             'status_code': status.HTTP_200_OK,
             "data": serializer.data,
             "total_plan": total_plan,
-            "total_fact": total_fact
+            "total_fact": total_fact,
+            "total_remained_percent": round(total_remained_percent, 2)
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
@@ -282,6 +291,21 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
         if work_category:
             queryset = queryset.filter(work_category=work_category)
 
+        summary_data = queryset.values(
+            'work_category_id',
+            'work_category__title',
+            'work_type_id',
+            'work_type__title'
+        ).annotate(
+            total_plan=(Sum('plan')),
+            total_fact=(Sum('fact'))
+        )
+
+        for item in summary_data:
+            plan = item['total_plan'] or 0
+            fact = item['total_fact'] or 0
+            item['remained_percent'] = round(((plan - fact) / plan * 100), 2) if plan else 0
+
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
             page = paginator.paginate_queryset(queryset, request)
@@ -289,6 +313,7 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
             response = paginator.get_paginated_response(serializer.data)
             response.data["status_code"] = status.HTTP_200_OK
             response.data["data"] = response.data.pop("results", [])
+            response.data['summary'] = summary_data
             return response
 
         serializer = self.get_serializer(queryset, many=True)
@@ -296,6 +321,7 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
             'message': "Monthly Work volume ro'yxati",
             'status_code': status.HTTP_200_OK,
             "data": serializer.data,
+            "summary": summary_data
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
