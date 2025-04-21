@@ -37,6 +37,7 @@ class ConstructionInstallationFileListCreateAPIView(ConstructionInstallationFile
     
         if section:
             queryset = queryset.filter(section=section)
+        return queryset
 
     def get(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
