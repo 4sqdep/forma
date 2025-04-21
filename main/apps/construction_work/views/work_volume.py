@@ -204,6 +204,10 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
         total_plan = queryset.aggregate(Sum('plan'))['plan__sum'] or 0
         total_fact = queryset.aggregate(Sum('fact'))['fact__sum'] or 0
         total_remained_percent = (total_fact / total_plan) * 100 if total_plan else 0
+
+        plan = WorkVolume.objects.all().aggregate(Sum('plan'))['plan__sum']
+        completed_volume = WorkVolume.objects.all().aggregate(Sum('fact'))['fact__sum']
+        remained_volume = plan - completed_volume
         
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -215,6 +219,9 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             response.data['total_plan'] = total_plan
             response.data['total_fact'] = total_fact
             response.data['total_remained_percent'] = round(total_remained_percent, 2)
+            response.data['plan'] = plan
+            response.data['fact'] = fact
+            response.data['remain'] = remain
             return response
 
         serializer = self.get_serializer(queryset, many=True)
@@ -224,7 +231,9 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             "data": serializer.data,
             "total_plan": total_plan,
             "total_fact": total_fact,
-            "total_remained_percent": round(total_remained_percent, 2)
+            "total_remained_percent": round(total_remained_percent, 2),
+            "completed_volume": completed_volume,
+            "remained_volume": remained_volume
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
