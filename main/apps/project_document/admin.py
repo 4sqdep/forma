@@ -1,6 +1,7 @@
 from django.contrib import admin
 from main.apps.project_document.models.project_section import ProjectSection
 from main.apps.project_document.models.project_document_type import ProjectDocumentType
+from main.apps.project_document.models.project_file import ProjectDocumentFile
 
 
 class ProjectSectionAdmin(admin.ModelAdmin):
@@ -17,3 +18,12 @@ class ProjectDocumentTypeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ProjectDocumentType, ProjectDocumentTypeAdmin)
+
+
+class ProjectDocumentFileAdmin(admin.ModelAdmin):
+    list_display = ['id', 'project_document_type', 'project_section', 'name', 'full_name', 'calendar']
+    list_display_links = ['project_document_type', 'project_section', 'name', 'full_name', 'calendar']
+    search_fields = ['name']
+
+
+admin.site.register(ProjectDocumentFile, ProjectDocumentFileAdmin)
