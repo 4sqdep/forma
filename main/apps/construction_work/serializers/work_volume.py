@@ -89,6 +89,26 @@ class WorkVolumeCreateSerializer(serializers.ModelSerializer):
             'plan',
             'fact'
         )
+    
+    def create(self, validated_data):
+        monthly_volume = MonthlyWorkVolume.objects.create(**validated_data)
+
+        work_category = validated_data.get('work_category')
+        work_type = validated_data.get('work_type')
+        plan = validated_data.get('plan')
+        fact = validated_data.get('fact')
+
+        work_volume, created = WorkVolume.objects.get_or_create(
+            work_category=work_category,
+            work_type=work_type,
+            defaults={'plan': 0, 'fact': 0}
+        )
+
+        work_volume.plan += plan
+        work_volume.fact += fact
+        work_volume.save()
+
+        return monthly_volume
 
 
 
