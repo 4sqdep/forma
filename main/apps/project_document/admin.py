@@ -2,6 +2,7 @@ from django.contrib import admin
 from main.apps.project_document.models.project_section import ProjectSection
 from main.apps.project_document.models.project_document_type import ProjectDocumentType
 from main.apps.project_document.models.project_file import ProjectDocumentFile
+from main.apps.project_document.models.project_fund import ConstructionTask, MonthlyExpense
 
 
 class ProjectSectionAdmin(admin.ModelAdmin):
@@ -27,3 +28,19 @@ class ProjectDocumentFileAdmin(admin.ModelAdmin):
 
 
 admin.site.register(ProjectDocumentFile, ProjectDocumentFileAdmin)
+
+
+class ConstructionTaskAdmin(admin.ModelAdmin):
+    list_display = ['id', 'project_document_type', 'currency', 'title', 'total_cost']
+    list_display_links = ['id', 'project_document_type', 'currency', 'title', 'total_cost']
+    search_fields = ['title']
+
+admin.site.register(ConstructionTask, ConstructionTaskAdmin)
+
+
+class MonthlyExpenseAdmin(admin.ModelAdmin):
+    list_display = ['id', 'construction_task', 'spent_amount', 'date']
+    list_display_links = ['id', 'construction_task', 'spent_amount', 'date']
+    search_fields = ['construction_task_title']
+
+admin.site.register(MonthlyExpense, MonthlyExpenseAdmin)
