@@ -111,13 +111,13 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
         )
     
     def get_plan(self, obj):
-        return MonthlyWorkVolume.objects.filter(
+        return WorkVolume.objects.filter(
             work_category=obj.work_category,
             work_type=obj.work_type
         ).aggregate(total=Sum('plan'))['total'] or 0
     
     def get_fact(self, obj):
-        return MonthlyWorkVolume.objects.filter(
+        return WorkVolume.objects.filter(
             work_category=obj.work_category,
             work_type=obj.work_type
         ).aggregate(total=Sum('fact'))['total'] or 0
