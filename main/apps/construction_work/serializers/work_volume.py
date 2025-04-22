@@ -93,8 +93,6 @@ class WorkVolumeCreateSerializer(serializers.ModelSerializer):
 
 
 class WorkVolumeSerializer(serializers.ModelSerializer):
-    # plan = serializers.SerializerMethodField()
-    # fact = serializers.SerializerMethodField()
     work_category = WorkCategorySerializer()
     work_type = BaseWorkTypeSerializer()
     remain_percent = serializers.SerializerMethodField()
@@ -109,18 +107,6 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'fact',
             'remain_percent'
         )
-    
-    # def get_plan(self, obj):
-    #     return WorkVolume.objects.filter(
-    #         work_category=obj.work_category,
-    #         work_type=obj.work_type
-    #     ).aggregate(total=Sum('plan'))['total'] or 0
-    
-    # def get_fact(self, obj):
-    #     return WorkVolume.objects.filter(
-    #         work_category=obj.work_category,
-    #         work_type=obj.work_type
-    #     ).aggregate(total=Sum('fact'))['total'] or 0
     
     def get_remain_percent(self, obj):
         plan = obj.plan
