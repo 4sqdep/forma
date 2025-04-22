@@ -89,32 +89,12 @@ class WorkVolumeCreateSerializer(serializers.ModelSerializer):
             'plan',
             'fact'
         )
-    
-    def create(self, validated_data):
-        monthly_volume = MonthlyWorkVolume.objects.create(**validated_data)
-
-        work_category = validated_data.get('work_category')
-        work_type = validated_data.get('work_type')
-        plan = validated_data.get('plan')
-        fact = validated_data.get('fact')
-
-        work_volume, created = WorkVolume.objects.get_or_create(
-            work_category=work_category,
-            work_type=work_type,
-            defaults={'plan': 0, 'fact': 0}
-        )
-
-        work_volume.plan += plan
-        work_volume.fact += fact
-        work_volume.save()
-
-        return monthly_volume
 
 
 
 class WorkVolumeSerializer(serializers.ModelSerializer):
-    plan = serializers.SerializerMethodField()
-    fact = serializers.SerializerMethodField()
+    # plan = serializers.SerializerMethodField()
+    # fact = serializers.SerializerMethodField()
     work_category = WorkCategorySerializer()
     work_type = BaseWorkTypeSerializer()
     remain_percent = serializers.SerializerMethodField()
@@ -130,21 +110,21 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'remain_percent'
         )
     
-    def get_plan(self, obj):
-        return WorkVolume.objects.filter(
-            work_category=obj.work_category,
-            work_type=obj.work_type
-        ).aggregate(total=Sum('plan'))['total'] or 0
+    # def get_plan(self, obj):
+    #     return WorkVolume.objects.filter(
+    #         work_category=obj.work_category,
+    #         work_type=obj.work_type
+    #     ).aggregate(total=Sum('plan'))['total'] or 0
     
-    def get_fact(self, obj):
-        return WorkVolume.objects.filter(
-            work_category=obj.work_category,
-            work_type=obj.work_type
-        ).aggregate(total=Sum('fact'))['total'] or 0
+    # def get_fact(self, obj):
+    #     return WorkVolume.objects.filter(
+    #         work_category=obj.work_category,
+    #         work_type=obj.work_type
+    #     ).aggregate(total=Sum('fact'))['total'] or 0
     
     def get_remain_percent(self, obj):
-        plan = self.get_plan(obj)
-        fact = self.get_fact(obj)
+        plan = obj.plan
+        fact = obj.fact
         if plan == 0:
             return 0
         remain = plan - fact
@@ -165,6 +145,26 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
             'fact',
             'date'
         )
+    
+    def create(self, validated_data):
+        monthly_volume = MonthlyWorkVolume.objects.create(**validated_data)
+
+        work_category = validated_data.get('work_category')
+        work_type = validated_data.get('work_type')
+        plan = validated_data.get('plan')
+        fact = validated_data.get('fact')
+
+        work_volume, created = WorkVolume.objects.get_or_create(
+            work_category=work_category,
+            work_type=work_type,
+            defaults={'plan': 0, 'fact': 0}
+        )
+
+        work_volume.plan += plan
+        work_volume.fact += fact
+        work_volume.save()
+
+        return monthly_volume
 
 
 
