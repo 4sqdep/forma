@@ -17,6 +17,7 @@ class ConstructionTaskSerializer(serializers.ModelSerializer):
             'total_cost'
         )
 
+from decimal import Decimal, ROUND_DOWN
 
 class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -31,6 +32,9 @@ class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
         construction_task = data.get('construction_task')
         spent_amount = data.get('spent_amount')
         date = data.get('date')
+
+        if spent_amount:
+            data['spent_amount'] = spent_amount.quantize(Decimal('1.'), rounding=ROUND_DOWN)
         
         if construction_task and spent_amount and date:
             existing_expense = MonthlyExpense.objects.filter(
