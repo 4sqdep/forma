@@ -2,8 +2,7 @@ from rest_framework import serializers
 from main.apps.construction_work.models.fund import ConstructionInstallationProject, MonthlyCompletedTask
 from django.db.models import Sum, Value as V
 from django.db.models.functions import Coalesce
-from decimal import Decimal
-
+from decimal import Decimal, ROUND_DOWN
 
 
 
@@ -18,6 +17,16 @@ class ConstructionInstallationProjectSerializer(serializers.ModelSerializer):
             "currency", 
             "allocated_amount", 
         )
+    
+    def validate(self, attrs):
+        allocated_amount = attrs.get('allocated_amount')
+
+        if allocated_amount is not None:
+            if allocated_amount < 0:
+                raise serializers.ValidationError({"allocated_amount": "Cannot be negative."})
+
+            attrs['allocated_amount'] = allocated_amount.quantize(Decimal('1.'), rounding=ROUND_DOWN)
+        return attrs
 
 
 
@@ -36,6 +45,9 @@ class MonthlyCompletedTaskSerializer(serializers.ModelSerializer):
         construction_installation_project = data.get('construction_installation_project')
         monthly_amount = data.get('monthly_amount')
         date = data.get('date')
+
+        if monthly_amount:
+            data['monthly_amount'] = monthly_amount.quantize(Decimal('1.'), rounding=ROUND_DOWN)
 
         if construction_installation_project and monthly_amount and date:
             existing_completed_task = MonthlyCompletedTask.objects.filter(

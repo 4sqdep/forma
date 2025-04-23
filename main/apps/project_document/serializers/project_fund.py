@@ -3,6 +3,8 @@ from django.db.models import Sum, Value as V
 from django.db.models.functions import Coalesce
 from decimal import Decimal
 from main.apps.project_document.models.project_fund import ConstructionTask, MonthlyExpense
+from decimal import Decimal, ROUND_DOWN
+
 
 
 
@@ -16,6 +18,18 @@ class ConstructionTaskSerializer(serializers.ModelSerializer):
             'title',
             'total_cost'
         )
+
+    
+    def validate(self, attrs):
+        total_cost = attrs.get('total_cost')
+
+        if total_cost is not None:
+            if total_cost < 0:
+                raise serializers.ValidationError({"total_cost": "Cannot be negative."})
+
+            attrs['total_cost'] = total_cost.quantize(Decimal('1.'), rounding=ROUND_DOWN)
+        return attrs
+
 
 
 class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
@@ -31,6 +45,9 @@ class MonthlyExpenseCreateSerializer(serializers.ModelSerializer):
         construction_task = data.get('construction_task')
         spent_amount = data.get('spent_amount')
         date = data.get('date')
+
+        if spent_amount:
+            data['spent_amount'] = spent_amount.quantize(Decimal('1.'), rounding=ROUND_DOWN)
         
         if construction_task and spent_amount and date:
             existing_expense = MonthlyExpense.objects.filter(
