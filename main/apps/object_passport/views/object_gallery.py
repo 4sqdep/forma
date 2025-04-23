@@ -80,14 +80,10 @@ class ObjectGalleryListAPIView(BaseGalleryAPIView, generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        if not queryset.exists():
-            return Response({'message': "Rasmlar topilmadi",
-                             'status_code': status.HTTP_404_NOT_FOUND,
-                             'data': []}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(queryset, many=True)
         return Response({
             'status_code': status.HTTP_200_OK,
-            'message': "Rasmlar Muvaffaqiyatli topildi",
+            'message': "Rasmlar Muvaffaqiyatli topildi" if not queryset.exists() else "Rasmlar muvaffaqiyatli topildi",
             'data': serializer.data
         }, status=status.HTTP_200_OK)
 
