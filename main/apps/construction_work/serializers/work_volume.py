@@ -80,8 +80,11 @@ class WorkTypeSerializer(serializers.ModelSerializer):
     def get_completed_percent(self, obj):
         plan = self.get_plan(obj)
         fact = self.get_fact(obj)
-        completed_percent = fact / plan * 100
+        if plan is None or plan == 0:
+            return 0.0
+        completed_percent = (fact / plan) * 100
         return round(completed_percent, 2)
+
     
         
 
@@ -131,6 +134,8 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
     def get_completed_percent(self, obj):
         plan = obj.plan
         fact = obj.fact
+        if plan is None or plan == 0:
+            return 0.0
         completed_percent = fact / plan * 100
         return round(completed_percent, 2)
     
@@ -197,6 +202,8 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     def get_completed_percent(self, obj):
         plan = obj.plan
         fact = obj.fact
+        if plan is None or plan == 0:
+            return 0.0
         completed_percent = fact / plan * 100
         return round(completed_percent, 2)
     
