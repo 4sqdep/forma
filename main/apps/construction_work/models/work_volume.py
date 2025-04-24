@@ -48,8 +48,6 @@ class WorkVolume(BaseModel):
 
 
 class MonthlyWorkVolume(BaseModel):
-    # work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    # work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True)
     work_volume = models.ForeignKey(WorkVolume, on_delete=models.CASCADE, null=True, blank=True)
     plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')

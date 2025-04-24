@@ -65,8 +65,8 @@ admin.site.register(WorkCategory, WorkCategoryAdmin)
 
 
 class MonthlyWorkVolumeAdmin(admin.ModelAdmin):
-    list_display = ['id', 'work_category', 'work_type', 'plan', 'fact', 'date']
-    list_display_links = ['work_category', 'work_type']
+    list_display = ['id', 'work_volume', 'plan', 'fact', 'date']
+    list_display_links = ['work_volume',]
     search_fields = ['plan']
 
 admin.site.register(MonthlyWorkVolume, MonthlyWorkVolumeAdmin)
