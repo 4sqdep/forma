@@ -36,8 +36,10 @@ class BaseWorkTypeSerializer(serializers.ModelSerializer):
 class WorkTypeSerializer(serializers.ModelSerializer):
     plan = serializers.SerializerMethodField()
     fact = serializers.SerializerMethodField()
-    remain_percent = serializers.SerializerMethodField()
+    completed_percent = serializers.SerializerMethodField()
+    remained_volume = serializers.SerializerMethodField()
     measurement = MeasurementSerializer()
+
     class Meta:
         model = WorkType
         fields = (
@@ -47,7 +49,8 @@ class WorkTypeSerializer(serializers.ModelSerializer):
             'measurement',
             'plan',
             'fact',
-            'remain_percent'
+            'remained_volume',
+            'completed_percent'
         )
     
     def get_plan(self, obj):
@@ -60,14 +63,26 @@ class WorkTypeSerializer(serializers.ModelSerializer):
         monthly_work_volume_fact = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
         return float(work_volume_fact) + float(monthly_work_volume_fact)
 
-    def get_remain_percent(self, obj):
+    # def get_completed_percent(self, obj):
+    #     plan = self.get_plan(obj)
+    #     fact = self.get_fact(obj)
+    #     if plan == 0:
+    #         return 0
+    #     remain = plan - fact
+    #     remain_percent = (remain / plan) * 100
+    #     return round(remain_percent, 2)
+
+    def get_remained_volume(self, obj):
         plan = self.get_plan(obj)
         fact = self.get_fact(obj)
-        if plan == 0:
-            return 0
-        remain = plan - fact
-        remain_percent = (remain / plan) * 100
-        return round(remain_percent, 2)
+        return plan - fact
+    
+    def get_completed_percent(self, obj):
+        plan = self.get_plan(obj)
+        fact = self.get_fact(obj)
+        completed_percent = fact / plan * 100
+        return round(completed_percent, 2)
+    
         
 
 
@@ -98,7 +113,8 @@ class WorkVolumeCreateSerializer(serializers.ModelSerializer):
 class WorkVolumeSerializer(serializers.ModelSerializer):
     work_category = WorkCategorySerializer()
     work_type = BaseWorkTypeSerializer()
-    remain_percent = serializers.SerializerMethodField()
+    remained_volume = serializers.SerializerMethodField()
+    completed_percent = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkVolume
@@ -108,17 +124,20 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'work_type',
             'plan',
             'fact',
-            'remain_percent'
+            'remained_volume',
+            'completed_percent'
         )
     
-    def get_remain_percent(self, obj):
+    def get_completed_percent(self, obj):
         plan = obj.plan
         fact = obj.fact
-        if plan == 0:
-            return 0
-        remain = plan - fact
-        remain_percent = (remain / plan) * 100
-        return round(remain_percent, 2)
+        completed_percent = fact / plan * 100
+        return round(completed_percent, 2)
+    
+    def get_remained_volume(self, obj):
+        plan = obj.plan
+        fact = obj.fact
+        return plan - fact
 
 
 
@@ -158,7 +177,8 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
 class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     work_category = serializers.CharField(source='work_category.title')
     work_type = serializers.CharField(source='work_type.title')
-    remained_percent = serializers.SerializerMethodField()
+    remained_volume = serializers.SerializerMethodField()
+    completed_percent = serializers.SerializerMethodField()
 
     class Meta:
         model = MonthlyWorkVolume
@@ -170,15 +190,18 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'plan',
             'fact',
             'date',
-            'remained_percent'
+            'remained_volume',
+            'completed_percent'
         )
     
-    def get_remained_percent(self, obj):
+    def get_completed_percent(self, obj):
         plan = obj.plan
         fact = obj.fact
-        if plan == 0:
-            return 0
-        remain = plan - fact
-        remain_percent = (remain / plan) * 100
-        return round(remain_percent, 2)
+        completed_percent = fact / plan * 100
+        return round(completed_percent, 2)
+    
+    def get_remained_volume(self, obj):
+        plan = obj.plan
+        fact = obj.fact
+        return plan - fact
 

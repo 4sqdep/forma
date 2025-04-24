@@ -1,10 +1,13 @@
 import django_filters
 from main.apps.project_document.models.project_file import ProjectDocumentFile
+from django.db.models import Q
+
 
 
 
 
 class ProjectDocumentFileFilter(django_filters.FilterSet):
+    search = django_filters.CharFilter(method='filter_by_search')
     name = django_filters.CharFilter(field_name='name', lookup_expr='icontains')
     file_code = django_filters.CharFilter(field_name='file_code', lookup_expr='icontains')
     project_section = django_filters.NumberFilter(field_name='project_section')
@@ -13,4 +16,12 @@ class ProjectDocumentFileFilter(django_filters.FilterSet):
 
     class Meta:
         model = ProjectDocumentFile
-        fields = ['project_section', 'name', 'file_code', 'start_date', 'end_date']
+        fields = ['project_section', 'name', 'file_code', 'start_date', 'end_date', 'search']
+
+    
+    def filter_by_search(self, queryset, name, value):
+        return queryset.filter(
+            Q(name__icontains=value) |
+            Q(file_code__icontains=value)
+        )
+
