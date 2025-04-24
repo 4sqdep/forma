@@ -99,6 +99,16 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
             "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
         }
 
+        counts_by_status = {
+            "all": queryset.count(),
+            "new": queryset.filter(status=ProblemStatus.NEW).count(),
+            "done": queryset.filter(status=ProblemStatus.DONE).count(),
+            "in_confirmation": queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
+            "in_progress": queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
+            "incomplete": queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
+            "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
+        }
+
         if paginator_class:
             paginator = paginator_class()
             page = paginator.paginate_queryset(queryset, request)
@@ -241,6 +251,7 @@ class AllEmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, gene
         return queryset.filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
         ).distinct()
+        
     
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -249,35 +260,48 @@ class AllEmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, gene
         return None
 
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
         paginator_class = self.get_pagination_class()
+        base_queryset = self.get_queryset()
+        filtered_queryset = self.filter_queryset(base_queryset)
 
         counts = {
-            "all": queryset.count(),
-            "new": queryset.filter(status=ProblemStatus.NEW).count(),
-            "done": queryset.filter(status=ProblemStatus.DONE).count(),
-            "in_confirmation": queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
-            "in_progress": queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
-            "incomplete": queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
-            "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
+            "all": filtered_queryset.count(),
+            "new": filtered_queryset.filter(status=ProblemStatus.NEW).count(),
+            "done": filtered_queryset.filter(status=ProblemStatus.DONE).count(),
+            "in_confirmation": filtered_queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
+            "in_progress": filtered_queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
+            "incomplete": filtered_queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
+            "completed_late": filtered_queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
+        }
+
+        counts_by_status = {
+            "all": base_queryset.count(),
+            "new": base_queryset.filter(status=ProblemStatus.NEW).count(),
+            "done": base_queryset.filter(status=ProblemStatus.DONE).count(),
+            "in_confirmation": base_queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
+            "in_progress": base_queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
+            "incomplete": base_queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
+            "completed_late": base_queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
         }
 
         if paginator_class:
             paginator = paginator_class()
-            page = paginator.paginate_queryset(queryset, request)
+            page = paginator.paginate_queryset(filtered_queryset, request)
             serializer = self.get_serializer(page, many=True)
             response_data = paginator.get_paginated_response(serializer.data)
             response_data.data["status_code"] = status.HTTP_200_OK
             response_data.data["data"] = response_data.data.pop("results", [])
             response_data.data['counts'] = counts
+            response_data.data['counts_by_status'] = counts_by_status
             return response_data
 
-        serializer = self.get_serializer(queryset, many=True)
+        serializer = self.get_serializer(filtered_queryset, many=True)
         return Response({
             "status_code": status.HTTP_200_OK,
             'message': "Employee Communication list successfully",
             "data": serializer.data,
-            "counts": counts
+            "counts": counts,
+            "counts_by_status": counts_by_status
             }, status=status.HTTP_200_OK)
 
 all_employee_communication_list_api_view = AllEmployeeCommunicationListAPIView.as_view()
