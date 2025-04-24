@@ -48,7 +48,24 @@ class AdminMonthlyCompletedTask(admin.ModelAdmin):
 
 admin.site.register(MonthlyCompletedTask, AdminMonthlyCompletedTask)
 
+class WorkVolumeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'work_category', 'work_type', 'plan', 'fact']
+    list_display_links = ['work_category', 'work_type', 'plan', 'fact']
 
-admin.site.register(WorkVolume)
-admin.site.register(WorkCategory)
-admin.site.register(MonthlyWorkVolume)
+admin.site.register(WorkVolume, WorkVolumeAdmin)
+
+
+class WorkCategoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'object', 'title']
+    list_display_links = ['object', 'title']
+    search_fields = ['title']
+
+admin.site.register(WorkCategory, WorkCategoryAdmin)
+
+
+class MonthlyWorkVolumeAdmin(admin.ModelAdmin):
+    list_display = ['id', 'work_category', 'work_type', 'plan', 'fact', 'date']
+    list_display_links = ['work_category', 'work_type']
+    search_fields = ['plan']
+
+admin.site.register(MonthlyWorkVolume, MonthlyWorkVolumeAdmin)
