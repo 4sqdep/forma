@@ -6,7 +6,7 @@ from main.apps.object_passport.models.object import Object
 
 
 class WorkType(BaseModel):
-    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
+    object = models.ForeignKey(Object, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
     measurement = models.ForeignKey(Measurement, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -21,7 +21,7 @@ class WorkType(BaseModel):
 
 
 class WorkCategory(BaseModel):
-    object = models.ForeignKey(Object, on_delete=models.SET_NULL, null=True, blank=True)
+    object = models.ForeignKey(Object, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
@@ -35,8 +35,8 @@ class WorkCategory(BaseModel):
 
 
 class WorkVolume(BaseModel):
-    work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True)
+    work_category = models.ForeignKey(WorkCategory, on_delete=models.CASCADE, null=True, blank=True)
+    work_type = models.ForeignKey(WorkType, on_delete=models.CASCADE, null=True, blank=True)
     plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
@@ -48,8 +48,9 @@ class WorkVolume(BaseModel):
 
 
 class MonthlyWorkVolume(BaseModel):
-    work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
-    work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True)
+    # work_category = models.ForeignKey(WorkCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    # work_type = models.ForeignKey(WorkType, on_delete=models.SET_NULL, null=True, blank=True)
+    work_volume = models.ForeignKey(WorkVolume, on_delete=models.CASCADE, null=True, blank=True)
     plan = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     fact = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
     date = models.DateField()
@@ -59,7 +60,15 @@ class MonthlyWorkVolume(BaseModel):
         verbose_name = "Monthly Work Volume"
         verbose_name_plural = "Monthly Work Volumes"
         constraints = [
-            models.UniqueConstraint(fields=['work_category', 'work_type', 'date'], name='unique_monthly_work_volume')
+            models.UniqueConstraint(fields=['work_volume', 'date'], name='unique_monthly_work_volume')
         ]
 
+    
+    @property
+    def work_category(self):
+        return self.work_volume.work_category if self.work_volume else None 
+    
+    @property
+    def work_type(self):
+        return self.work_volume.work_type if self.work_volume else None
     

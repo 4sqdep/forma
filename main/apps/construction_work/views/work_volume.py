@@ -296,16 +296,16 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         work_category = self.kwargs.get('work_category')
-        work_type = self.request.query_params.get('work_type')
+        work_volume = self.request.query_params.get('work_volume')
 
         if work_category:
-            queryset = queryset.filter(work_category=work_category, work_type=work_type)
+            queryset = queryset.filter(work_volume__work_category=work_category, work_volume=work_volume)
 
         summary_data = queryset.values(
-            'work_category_id',
-            'work_category__title',
-            'work_type_id',
-            'work_type__title'
+            'work_volume__work_category_id',
+            'work_volume__work_category__title',
+            'work_volume__work_type_id',
+            'work_volume__work_type__title'
         ).annotate(
             total_plan=(Sum('plan')),
             total_fact=(Sum('fact'))

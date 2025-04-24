@@ -3,7 +3,7 @@ from main.apps.construction_work.models.file import ConstructionInstallationFile
 from main.apps.construction_work.models.fund import ConstructionInstallationProject, MonthlyCompletedTask
 from main.apps.construction_work.models.section import ConstructionInstallationSection
 from main.apps.construction_work.models.statistics import ConstructionInstallationStatistics
-from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkCategory, WorkVolume
+from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkCategory, WorkType, WorkVolume
 
 
 
@@ -52,6 +52,8 @@ class WorkVolumeAdmin(admin.ModelAdmin):
     list_display = ['id', 'work_category', 'work_type', 'plan', 'fact']
     list_display_links = ['work_category', 'work_type', 'plan', 'fact']
 
+admin.site.register(WorkType)
+admin.site.register(WorkCategory)
 admin.site.register(WorkVolume, WorkVolumeAdmin)
 
 

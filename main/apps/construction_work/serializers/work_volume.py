@@ -18,6 +18,8 @@ class WorkTypeCreateSerializer(serializers.ModelSerializer):
             'measurement'
         )
 
+
+
 class BaseWorkTypeSerializer(serializers.ModelSerializer):
     measurement = MeasurementSerializer()
     class Meta:
@@ -28,6 +30,7 @@ class BaseWorkTypeSerializer(serializers.ModelSerializer):
             'title',
             'measurement',
         )
+
 
 
 class WorkTypeSerializer(serializers.ModelSerializer):
@@ -49,12 +52,12 @@ class WorkTypeSerializer(serializers.ModelSerializer):
     
     def get_plan(self, obj):
         work_volume_plan = WorkVolume.objects.filter(work_type=obj).aggregate(Sum('plan'))['plan__sum'] or 0
-        monthly_work_volume_plan = MonthlyWorkVolume.objects.filter(work_type=obj).aggregate(Sum('plan'))['plan__sum'] or 0
+        monthly_work_volume_plan = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('plan'))['plan__sum'] or 0
         return float(work_volume_plan) + float(monthly_work_volume_plan)
     
     def get_fact(self, obj):
         work_volume_fact = WorkVolume.objects.filter(work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
-        monthly_work_volume_fact = MonthlyWorkVolume.objects.filter(work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
+        monthly_work_volume_fact = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
         return float(work_volume_fact) + float(monthly_work_volume_fact)
 
     def get_remain_percent(self, obj):
@@ -125,8 +128,9 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
         model = MonthlyWorkVolume
         fields = (
             'id',
-            'work_category',
-            'work_type',
+            # 'work_category',
+            # 'work_type',
+            'work_volume',
             'plan',
             'fact',
             'date'
@@ -149,14 +153,15 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
         work_volume.plan += plan
         work_volume.fact += fact
         work_volume.save()
-
         return monthly_volume
 
 
 
 class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
-    work_category = WorkCategorySerializer()
-    work_type = WorkTypeSerializer()
+    # work_category = WorkCategorySerializer()
+    # work_type = WorkTypeSerializer()
+    work_category = serializers.CharField(source='work_category.title')
+    work_type = serializers.CharField(source='work_type.title')
     remained_percent = serializers.SerializerMethodField()
 
     class Meta:
@@ -165,6 +170,7 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'id',
             'work_category',
             'work_type',
+            'work_volume',
             'plan',
             'fact',
             'date',
