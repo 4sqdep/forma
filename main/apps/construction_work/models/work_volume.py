@@ -64,3 +64,11 @@ class MonthlyWorkVolume(BaseModel):
         ]
 
     
+    @property
+    def work_category(self):
+        return self.work_volume.work_category if self.work_volume else None 
+    
+    @property
+    def work_type(self):
+        return self.work_volume.work_type if self.work_volume else None
+    

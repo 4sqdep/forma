@@ -160,7 +160,8 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
 class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     # work_category = WorkCategorySerializer()
     # work_type = WorkTypeSerializer()
-    work_category = serializers.CharField(source='work_volume.work_category.title')
+    work_category = serializers.CharField(source='work_category.title')
+    work_type = serializers.CharField(source='work_type.title')
     remained_percent = serializers.SerializerMethodField()
 
     class Meta:
@@ -168,7 +169,7 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'work_category',
-            # 'work_type',
+            'work_type',
             'work_volume',
             'plan',
             'fact',
