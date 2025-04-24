@@ -293,6 +293,7 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
             openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
         ]
     )
+    
     def get(self, request, *args, **kwargs):
         queryset = self.get_queryset()
         work_category = self.kwargs.get('work_category')
