@@ -53,7 +53,6 @@ class WorkVolumeAdmin(admin.ModelAdmin):
     list_display_links = ['work_category', 'work_type', 'plan', 'fact']
 
 admin.site.register(WorkType)
-admin.site.register(WorkCategory)
 admin.site.register(WorkVolume, WorkVolumeAdmin)
 
 
