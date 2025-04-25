@@ -89,6 +89,8 @@ class WorkTypeSerializer(serializers.ModelSerializer):
 class WorkCategorySerializer(serializers.ModelSerializer):
     currency = serializers.CharField(source='object.currency.title', required=False)
     completed_percent = serializers.SerializerMethodField(required=False)
+    remained_amount = serializers.SerializerMethodField(required=False)
+    
     class Meta:
         model = WorkCategory
         fields = (
@@ -98,8 +100,12 @@ class WorkCategorySerializer(serializers.ModelSerializer):
             'plan_amount',
             'fact_amount',
             'currency',
+            'remained_amount',
             'completed_percent'
         )
+    
+    def get_remained_amount(self, obj):
+        return calculate_remained(obj.plan_amount, obj.fact_amount)
     
     def get_completed_percent(self, obj):
         return calculate_percentage(obj.fact_amount, obj.plan_amount)
