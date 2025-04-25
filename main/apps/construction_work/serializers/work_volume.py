@@ -39,9 +39,6 @@ class WorkTypeSerializer(serializers.ModelSerializer):
     completed_percent = serializers.SerializerMethodField()
     remained_volume = serializers.SerializerMethodField()
     measurement = MeasurementSerializer()
-    # plan_amount = serializers.SerializerMethodField()
-    # fact_amount = serializers.SerializerMethodField()
-    # remained_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkType
@@ -53,10 +50,7 @@ class WorkTypeSerializer(serializers.ModelSerializer):
             'plan',
             'fact',
             'remained_volume',
-            'completed_percent',
-            # 'plan_amount',
-            # 'fact_amount',
-            # 'remained_amount'
+            'completed_percent'
         )
     
     def get_plan(self, obj):
@@ -81,12 +75,6 @@ class WorkTypeSerializer(serializers.ModelSerializer):
             return 0.0
         completed_percent = (fact / plan) * 100
         return round(completed_percent, 2)
-    
-    # def get_plan_amount(self, obj):
-    #     return WorkCategory.objects.aggregate(total=Sum('plan_amount'))['total'] or 0
-    
-    # def get_fact_amount(self, obj):
-    #     return WorkCategory.objects.aggregate(total=Sum('fact_amount'))['total'] or 0
 
 
 

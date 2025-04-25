@@ -31,48 +31,31 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
             openapi.Parameter('search', openapi.IN_QUERY, description='Search by contractor', type=openapi.TYPE_STRING)
         ]
     )
-    def get(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        object = self.kwargs.get('object')
 
-        if object:
-            queryset = queryset.filter(object=object)
-        
+    def _calculate_totals(self, object):
+        queryset = self.get_queryset().filter(object=object)
         serializer = self.get_serializer(queryset, many=True)
-        data = serializer.data 
-        total_plan = sum(item.get('plan') for item in data)
-        total_fact = sum(item.get('fact') for item in data)
-        total_remained_volume = total_plan - total_fact
-        total_completed_percent = total_fact / total_plan * 100 if total_plan else 0
+        data = serializer.data
 
-        total_plan_amount = WorkCategory.objects.filter(object=object).aggregate(total=Sum('plan_amount'))['total'] or 0
-        total_fact_amount = WorkCategory.objects.filter(object=object).aggregate(total=Sum('fact_amount'))['total'] or 0
+        # total_plan = sum(item.get('plan') or 0 for item in data)
+        # total_fact = sum(item.get('fact') or 0 for item in data)
+
+        # total_remained_volume = total_plan - total_fact
+        # total_completed_percent = (total_fact / total_plan * 100) if total_plan else 0
+
+        category_totals = WorkCategory.objects.filter(object=object).aggregate(
+            total_plan_amount=Sum('plan_amount') or 0,
+            total_fact_amount=Sum('fact_amount') or 0
+        )
+
+        total_plan_amount = category_totals['total_plan_amount'] or 0
+        total_fact_amount = category_totals['total_fact_amount'] or 0
         total_remained_amount = total_plan_amount - total_fact_amount
-        total_completed_amount_percent = total_fact_amount / total_plan_amount * 100 if total_plan_amount else 0
-        currency = queryset.first().object.currency.title
+        total_completed_amount_percent = (total_fact_amount / total_plan_amount * 100) if total_plan_amount else 0
 
-        paginator = CustomPagination() if request.query_params.get('p') else None
-        if paginator:
-            page = paginator.paginate_queryset(queryset, request)
-            serializer = self.get_serializer(page, many=True)
-            response = paginator.get_paginated_response(serializer.data)
-            response.data["status_code"] = status.HTTP_200_OK
-            response.data["data"] = response.data.pop("results", [])
-            # response.data["total_plan"] = total_plan
-            # response.data["total_fact"] = total_fact
-            # response.data['total_remained_volume'] = total_remained_volume
-            # response.data["total_completed_percent"] = round(total_completed_percent, 2)
-            response.data['total_plan_amount'] = total_plan_amount
-            response.data['total_fact_amount'] = total_fact_amount
-            response.data['total_remained_amount'] = total_remained_amount
-            response.data['total_completed_amount_percent'] = total_completed_amount_percent,
-            response.data['currency'] = currency
-            return response
+        currency = queryset.first().object.currency.title if queryset.exists() else ""
 
-        return Response({
-            'message': "Work Type ro'yxati",
-            'status_code': status.HTTP_200_OK,
-            "data": serializer.data,
+        return {
             # "total_plan": total_plan,
             # "total_fact": total_fact,
             # "total_remained_volume": total_remained_volume,
@@ -81,8 +64,44 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
             "total_fact_amount": total_fact_amount,
             "total_remained_amount": total_remained_amount,
             "total_completed_amount_percent": round(total_completed_amount_percent, 2),
-            "currency": currency
+            "currency": currency,
+            "data": data
+        }
+
+
+    def get(self, request, *args, **kwargs):
+        object = self.kwargs.get('object')
+        totals = self._calculate_totals(object)
+
+        queryset = self.get_queryset()
+        paginator = CustomPagination() if request.query_params.get('p') else None
+
+        if paginator:
+            page = paginator.paginate_queryset(queryset.filter(object=object), request)
+            serializer = self.get_serializer(page, many=True)
+            response = paginator.get_paginated_response(serializer.data)
+            response.data.update({
+                "status_code": status.HTTP_200_OK,
+                "data": response.data.pop("results", []),
+                "total_plan_amount": totals["total_plan_amount"],
+                "total_fact_amount": totals["total_fact_amount"],
+                "total_remained_amount": totals["total_remained_amount"],
+                "total_completed_amount_percent": totals["total_completed_amount_percent"],
+                "currency": totals["currency"]
+            })
+            return response
+
+        return Response({
+            "message": "Work Type ro'yxati",
+            "status_code": status.HTTP_200_OK,
+            "data": totals["data"],
+            "total_plan_amount": totals["total_plan_amount"],
+            "total_fact_amount": totals["total_fact_amount"],
+            "total_remained_amount": totals["total_remained_amount"],
+            "total_completed_amount_percent": totals["total_completed_amount_percent"],
+            "currency": totals["currency"]
         }, status=status.HTTP_200_OK)
+
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
