@@ -52,7 +52,6 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
         total_fact_amount = category_totals['total_fact_amount'] or 0
         total_remained_amount = total_plan_amount - total_fact_amount
         total_completed_amount_percent = (total_fact_amount / total_plan_amount * 100) if total_plan_amount else 0
-
         currency = queryset.first().object.currency.title if queryset.exists() else ""
 
         return {
