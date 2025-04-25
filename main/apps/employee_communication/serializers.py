@@ -1,12 +1,17 @@
 from rest_framework import serializers
-from main.apps.account.models.user import User
 from main.apps.account.serializers.user import UserAllSerializer
-from main.apps.employee_communication.models import EmployeeCommunication, EmployeeCommunicationRecipient, FileMessage, TextMessage
+from main.apps.employee_communication.models import (
+    EmployeeCommunication, 
+    EmployeeCommunicationRecipient, 
+    FileMessage, 
+    TextMessage
+)
 from main.apps.object_passport.models.object import Object
 from django.db.models import Count
-from main.apps.object_passport.models.object import Object
 from collections import OrderedDict
 from main.apps.object_passport.serializers.object import ObjectTitleSerializer
+
+
 
 
 

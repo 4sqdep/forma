@@ -39,6 +39,9 @@ class WorkTypeSerializer(serializers.ModelSerializer):
     completed_percent = serializers.SerializerMethodField()
     remained_volume = serializers.SerializerMethodField()
     measurement = MeasurementSerializer()
+    # plan_amount = serializers.SerializerMethodField()
+    # fact_amount = serializers.SerializerMethodField()
+    # remained_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = WorkType
@@ -50,7 +53,10 @@ class WorkTypeSerializer(serializers.ModelSerializer):
             'plan',
             'fact',
             'remained_volume',
-            'completed_percent'
+            'completed_percent',
+            # 'plan_amount',
+            # 'fact_amount',
+            # 'remained_amount'
         )
     
     def get_plan(self, obj):
@@ -62,15 +68,6 @@ class WorkTypeSerializer(serializers.ModelSerializer):
         work_volume_fact = WorkVolume.objects.filter(work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
         monthly_work_volume_fact = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
         return float(work_volume_fact) + float(monthly_work_volume_fact)
-
-    # def get_completed_percent(self, obj):
-    #     plan = self.get_plan(obj)
-    #     fact = self.get_fact(obj)
-    #     if plan == 0:
-    #         return 0
-    #     remain = plan - fact
-    #     remain_percent = (remain / plan) * 100
-    #     return round(remain_percent, 2)
 
     def get_remained_volume(self, obj):
         plan = self.get_plan(obj)
@@ -84,18 +81,26 @@ class WorkTypeSerializer(serializers.ModelSerializer):
             return 0.0
         completed_percent = (fact / plan) * 100
         return round(completed_percent, 2)
-
     
-        
+    # def get_plan_amount(self, obj):
+    #     return WorkCategory.objects.aggregate(total=Sum('plan_amount'))['total'] or 0
+    
+    # def get_fact_amount(self, obj):
+    #     return WorkCategory.objects.aggregate(total=Sum('fact_amount'))['total'] or 0
+
 
 
 class WorkCategorySerializer(serializers.ModelSerializer):
+    currency = serializers.CharField(source='object.currency.title', required=False)
     class Meta:
         model = WorkCategory
         fields = (
             'id',
             'object',
-            'title'
+            'title',
+            'plan_amount',
+            'fact_amount',
+            'currency'
         )
 
 

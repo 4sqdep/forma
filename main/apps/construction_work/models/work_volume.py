@@ -23,6 +23,8 @@ class WorkType(BaseModel):
 class WorkCategory(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.CASCADE, null=True, blank=True)
     title = models.CharField(max_length=255, null=True, blank=True)
+    plan_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
+    fact_amount = models.DecimalField(max_digits=32, decimal_places=2, default='0.00')
 
     def __str__(self):
         return self.title
