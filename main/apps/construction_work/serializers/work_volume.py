@@ -10,6 +10,8 @@ from main.apps.common.serializers import MeasurementSerializer
 
 
 
+
+
 def calculate_percentage(fact, plan):
     if not plan:
         return 0.0
@@ -86,6 +88,7 @@ class WorkTypeSerializer(serializers.ModelSerializer):
 
 class WorkCategorySerializer(serializers.ModelSerializer):
     currency = serializers.CharField(source='object.currency.title', required=False)
+    completed_percent = serializers.SerializerMethodField(required=False)
     class Meta:
         model = WorkCategory
         fields = (
@@ -94,8 +97,12 @@ class WorkCategorySerializer(serializers.ModelSerializer):
             'title',
             'plan_amount',
             'fact_amount',
-            'currency'
+            'currency',
+            'completed_percent'
         )
+    
+    def get_completed_percent(self, obj):
+        return calculate_percentage(obj.fact_amount, obj.plan_amount)
 
 
 
