@@ -189,6 +189,7 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     work_type = serializers.CharField(source='work_type.title')
     remained_volume = serializers.SerializerMethodField()
     completed_percent = serializers.SerializerMethodField()
+    measurement = serializers.CharField(source='work_volume.work_type.measurement.title')
 
     class Meta:
         model = MonthlyWorkVolume
@@ -197,6 +198,7 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'work_category',
             'work_type',
             'work_volume',
+            'measurement',
             'plan',
             'fact',
             'date',
