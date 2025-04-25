@@ -49,6 +49,7 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
         total_fact_amount = WorkCategory.objects.filter(object=object).aggregate(total=Sum('fact_amount'))['total'] or 0
         total_remained_amount = total_plan_amount - total_fact_amount
         total_completed_amount_percent = total_fact_amount / total_plan_amount * 100 if total_plan_amount else 0
+        currency = queryset.first().object.currency.title
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
@@ -57,28 +58,30 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
             response = paginator.get_paginated_response(serializer.data)
             response.data["status_code"] = status.HTTP_200_OK
             response.data["data"] = response.data.pop("results", [])
-            response.data["total_plan"] = total_plan
-            response.data["total_fact"] = total_fact
-            response.data['total_remained_volume'] = total_remained_volume
-            response.data["total_completed_percent"] = round(total_completed_percent, 2)
+            # response.data["total_plan"] = total_plan
+            # response.data["total_fact"] = total_fact
+            # response.data['total_remained_volume'] = total_remained_volume
+            # response.data["total_completed_percent"] = round(total_completed_percent, 2)
             response.data['total_plan_amount'] = total_plan_amount
             response.data['total_fact_amount'] = total_fact_amount
             response.data['total_remained_amount'] = total_remained_amount
-            response.data['total_completed_amount_percent'] = total_completed_amount_percent
+            response.data['total_completed_amount_percent'] = total_completed_amount_percent,
+            response.data['currency'] = currency
             return response
 
         return Response({
             'message': "Work Type ro'yxati",
             'status_code': status.HTTP_200_OK,
             "data": serializer.data,
-            "total_plan": total_plan,
-            "total_fact": total_fact,
-            "total_remained_volume": total_remained_volume,
-            "total_completed_percent": round(total_completed_percent, 2),
+            # "total_plan": total_plan,
+            # "total_fact": total_fact,
+            # "total_remained_volume": total_remained_volume,
+            # "total_completed_percent": round(total_completed_percent, 2),
             "total_plan_amount": total_plan_amount,
             "total_fact_amount": total_fact_amount,
             "total_remained_amount": total_remained_amount,
-            "total_completed_amount_percent": round(total_completed_amount_percent, 2)
+            "total_completed_amount_percent": round(total_completed_amount_percent, 2),
+            "currency": currency
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
