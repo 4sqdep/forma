@@ -1,10 +1,23 @@
 from rest_framework import serializers
-from main.apps.common.serializers import MeasurementSerializer
-from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkCategory, WorkType, WorkVolume
 from django.db.models import Sum
+from main.apps.construction_work.models.work_volume import (
+    MonthlyWorkVolume, 
+    WorkCategory, 
+    WorkType, 
+    WorkVolume
+)
+from main.apps.common.serializers import MeasurementSerializer
 
 
 
+def calculate_percentage(fact, plan):
+    if not plan:
+        return 0.0
+    return round((fact / plan) * 100, 2)
+
+
+def calculate_remained(plan, fact):
+    return plan - fact
 
 
 
@@ -64,17 +77,10 @@ class WorkTypeSerializer(serializers.ModelSerializer):
         return float(work_volume_fact) + float(monthly_work_volume_fact)
 
     def get_remained_volume(self, obj):
-        plan = self.get_plan(obj)
-        fact = self.get_fact(obj)
-        return plan - fact
+        return calculate_remained(self.get_plan(obj), self.get_fact(obj))
     
     def get_completed_percent(self, obj):
-        plan = self.get_plan(obj)
-        fact = self.get_fact(obj)
-        if plan is None or plan == 0:
-            return 0.0
-        completed_percent = (fact / plan) * 100
-        return round(completed_percent, 2)
+        return calculate_percentage(self.get_fact(obj), self.get_plan(obj))
 
 
 
@@ -123,20 +129,13 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
             'remained_volume',
             'completed_percent'
         )
+
+    def get_remained_volume(self, obj):
+        return calculate_remained(obj.plan, obj.fact)
     
     def get_completed_percent(self, obj):
-        plan = obj.plan
-        fact = obj.fact
-        if plan is None or plan == 0:
-            return 0.0
-        completed_percent = fact / plan * 100
-        return round(completed_percent, 2)
+        return calculate_percentage(obj.fact, obj.fact)
     
-    def get_remained_volume(self, obj):
-        plan = obj.plan
-        fact = obj.fact
-        return plan - fact
-
 
 
 class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
@@ -192,16 +191,9 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
             'completed_percent'
         )
     
-    def get_completed_percent(self, obj):
-        plan = obj.plan
-        fact = obj.fact
-        if plan is None or plan == 0:
-            return 0.0
-        completed_percent = fact / plan * 100
-        return round(completed_percent, 2)
-    
     def get_remained_volume(self, obj):
-        plan = obj.plan
-        fact = obj.fact
-        return plan - fact
+        return calculate_remained(obj.plan, obj.fact)
+
+    def get_completed_percent(self, obj):
+        return calculate_percentage(obj.fact, obj.plan)
 
