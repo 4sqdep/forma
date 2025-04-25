@@ -53,7 +53,7 @@ urlpatterns = [
     ),
     path(
         'search/',
-        views.search_contract_section_api_view,
+        views.search_contract_section_api_view ,
         name='search'
     )
 ]
