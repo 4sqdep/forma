@@ -5,8 +5,10 @@ from rest_framework_simplejwt import authentication
 from rest_framework import generics, status, permissions 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from main.apps.project_document.filters.project_section import ProjectSectionFilter
 from main.apps.project_document.models.project_section import ProjectSection
 from main.apps.project_document.serializers import project_section as project_section_serializer
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 
@@ -32,6 +34,8 @@ project_section_create_api_view = ProjectSectionCreateAPIView.as_view()
 
 
 class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView):
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProjectSectionFilter
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -43,7 +47,6 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
     def get_queryset(self):
         project_document_type = self.kwargs.get("project_document_type") 
         queryset = ProjectSection.objects.all()
-        print(project_document_type)
 
         if project_document_type:
             queryset = queryset.filter(project_document_type=project_document_type)
@@ -56,7 +59,7 @@ class ProjectSectionListAPIView(BaseProjectSectionAPIView, generics.ListAPIView)
         return None
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.filter_queryset(self.get_queryset())
         paginator_class = self.get_pagination_class()
 
         if paginator_class:

@@ -13,6 +13,8 @@ class ProjectDocumentFileFilter(django_filters.FilterSet):
     project_section = django_filters.NumberFilter(field_name='project_section')
     start_date = django_filters.DateFilter(field_name='calendar', lookup_expr='gte')
     end_date = django_filters.DateFilter(field_name='calendar', lookup_expr='lte')
+    new = django_filters.BooleanFilter(method='order_by_newest')
+    old = django_filters.BooleanFilter(method='order_by_oldest')
 
     class Meta:
         model = ProjectDocumentFile
@@ -24,4 +26,14 @@ class ProjectDocumentFileFilter(django_filters.FilterSet):
             Q(name__icontains=value) |
             Q(file_code__icontains=value)
         )
+    
+    def order_by_newest(self, queryset, name, value):
+        if value:
+            return queryset.order_by('-created_at')
+        return queryset
+
+    def order_by_oldest(self, queryset, name, value):
+        if value:
+            return queryset.order_by('created_at')
+        return queryset
 
