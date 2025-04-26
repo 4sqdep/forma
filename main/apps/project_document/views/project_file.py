@@ -15,12 +15,12 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 class BaseProjectDocumentFileAPIView(generics.GenericAPIView):
     queryset = ProjectDocumentFile.objects.all()
-    serializer_class = document_serializer.FileSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
 class ProjectDocumentFileCreateAPIView(BaseProjectDocumentFileAPIView, generics.CreateAPIView):
+    serializer_class = document_serializer.FileCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -34,6 +34,7 @@ project_document_file_create_api_view = ProjectDocumentFileCreateAPIView.as_view
 
 
 class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.ListAPIView):
+    serializer_class = document_serializer.FileSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = ProjectDocumentFileFilter
 
@@ -81,6 +82,7 @@ project_document_file_list_api_view = ProjectDocumentFileListAPIView.as_view()
 
 
 class ProjectDocumentFileDetailAPIView(BaseProjectDocumentFileAPIView, generics.RetrieveAPIView):
+    serializer_class = document_serializer.FileSerializer
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -92,6 +94,7 @@ project_document_file_detail_api_view = ProjectDocumentFileDetailAPIView.as_view
 
 
 class ProjectDocumentFileUpdateAPIView(BaseProjectDocumentFileAPIView, generics.UpdateAPIView):
+    serializer_class = document_serializer.FileCreateSerializer
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
@@ -107,6 +110,7 @@ project_document_file_update_api_view = ProjectDocumentFileUpdateAPIView.as_view
 
 
 class ProjectDocumentFileDeleteAPIView(BaseProjectDocumentFileAPIView, generics.DestroyAPIView):
+    serializer_class = document_serializer.FileSerializer
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
