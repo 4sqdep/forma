@@ -72,3 +72,10 @@ class MonthlyWorkVolume(BaseModel):
     def work_type(self):
         return self.work_volume.work_type if self.work_volume else None
     
+
+    def delete(self, *args, **kwargs):
+        if self.work_volume:
+            self.work_volume.plan -= self.plan 
+            self.work_volume.fact -= self.fact
+            self.work_volume.save()
+        super().delete(*args, **kwargs)
