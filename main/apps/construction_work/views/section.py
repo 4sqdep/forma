@@ -1,7 +1,6 @@
 from rest_framework import generics, status, permissions 
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
-from django.utils.dateparse import parse_date
 from main.apps.construction_work.filters.section import ConstructionInstallationSectionFilter
 from main.apps.construction_work.models.section import ConstructionInstallationSection
 from ..serializers import section as section_serializer
