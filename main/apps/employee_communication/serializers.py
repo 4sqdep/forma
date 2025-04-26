@@ -10,8 +10,6 @@ from main.apps.object_passport.models.object import Object
 from django.db.models import Count
 from collections import OrderedDict
 from main.apps.object_passport.serializers.object import ObjectTitleSerializer
-from urllib.parse import unquote
-
 
 
 
@@ -60,7 +58,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     sender = UserAllSerializer()
     is_read = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    # file = serializers.SerializerMethodField()
+    file = serializers.SerializerMethodField()
     
     class Meta:
         model = EmployeeCommunication 
@@ -89,8 +87,10 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             is_read=True
         ).exists()
     
-    # def get_file(self, obj):
-    #     return unquote(obj.file.name.split("/")[-1])
+    def get_file(self, obj):
+        from urllib.parse import unquote
+        file = unquote(obj.file_url.split("/")[-1])
+        return file.replace(" ", "_")
 
 
 
