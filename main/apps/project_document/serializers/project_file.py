@@ -26,7 +26,7 @@ class FileCreateSerializer(serializers.ModelSerializer):
 
 class FileSerializer(serializers.ModelSerializer):
     calendar = serializers.DateField(format="%d-%m-%Y",  input_formats=["%Y-%m-%d"], required=False)
-    file = serializers.SerializerMethodField()
+    # file = serializers.SerializerMethodField()
 
     class Meta:
         model = ProjectDocumentFile
@@ -41,15 +41,12 @@ class FileSerializer(serializers.ModelSerializer):
             'file'
         )
     
-    def get_file(self, obj):
-        request = self.context.get('request')
+    # def get_file(self, obj):
+    #     from urllib.parse import unquote
         
-        if obj.file and hasattr(obj.file, 'url'):
-            file_url = obj.file.url  # example: /media/document_files/yourfile.pdf
-            if request is not None:
-                # Full absolute URL
-                return request.build_absolute_uri(file_url)
-            else:
-                # fallback if request is not available
-                return file_url
-        return None
+    #     if obj.file:
+    #         file_url = obj.file.url
+    #         filename_encoded = file_url.split("/")[-1]
+    #         filename = unquote(filename_encoded)
+    #         return filename.replace(" ", "_")
+    #     return None

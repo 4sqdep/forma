@@ -35,7 +35,7 @@ class ObjectSerializer(serializers.ModelSerializer):
     currency_slug = serializers.CharField(source='currency.slug_title', read_only=True)
     start_date = serializers.DateField(format="%d-%m-%Y", read_only=True)
     end_date = serializers.DateField(format="%d-%m-%Y", read_only=True)
-    object_file = serializers.SerializerMethodField()
+    # object_file = serializers.SerializerMethodField()
 
     class Meta:
         model = Object
@@ -64,15 +64,15 @@ class ObjectSerializer(serializers.ModelSerializer):
             'end_date',
         )
     
-    def get_object_file(self, obj):
-        from urllib.parse import unquote
+    # def get_object_file(self, obj):
+    #     from urllib.parse import unquote
         
-        if obj.object_file:
-            file_url = obj.object_file.url
-            filename_encoded = file_url.split("/")[-1]
-            filename = unquote(filename_encoded)
-            return filename.replace(" ", "_")
-        return None
+    #     if obj.object_file:
+    #         file_url = obj.object_file.url
+    #         filename_encoded = file_url.split("/")[-1]
+    #         filename = unquote(filename_encoded)
+    #         return filename.replace(" ", "_")
+    #     return None
 
 
 
