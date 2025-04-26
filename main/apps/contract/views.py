@@ -9,6 +9,8 @@ from drf_yasg import openapi
 from main.apps.contract.models import ContractSection, ContractFile
 from main.apps.contract.serializers import ContractSectionSerializer, ContractSectionFileSerializer
 from rest_framework.views import APIView
+from main.apps.contract.filters import ContractFileFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
 
 
@@ -257,22 +259,16 @@ class ContractFilesDelete(generics.DestroyAPIView):
 delete_contract_file_api_view = ContractFilesDelete.as_view()
 
 
-class SearchContractAPIView(APIView):
-    def get(self, request):
-        queryset = ContractFile.objects.all()
-        search_query = request.query_params.get('file', None)
-        section_id = request.query_params.get('3', None)
-        if search_query:
-            queryset = queryset.filter(
-                Q(title__icontains=search_query) |
-                Q(date__contains=search_query) |
-                Q(file_code__contains=search_query)
-            )
+class SearchContractAPIView(generics.ListAPIView):
+    queryset = ContractFile.objects.all()
+    serializer_class = ContractSectionFileSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ContractFileFilter
 
-        if section_id:
-            queryset = queryset.filter(section_id=section_id)
-        serializer = ContractSectionFileSerializer(queryset, many=True)
-        return Response({'message': "Siz izlagan malumot", 'data': serializer.data}, status=status.HTTP_200_OK)
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return Response({'message': "Siz izlagan ma'lumot", 'data': response.data}, status=status.HTTP_200_OK)
 
 search_contract_section_api_view = SearchContractAPIView.as_view()
+
 
