@@ -165,6 +165,7 @@ class MonthlyWorkVolumeCreateSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         monthly_volume = MonthlyWorkVolume.objects.create(**validated_data)
+
         work_volume = validated_data.get('work_volume')
         plan = validated_data.get('plan', 0)
         fact = validated_data.get('fact', 0)
@@ -182,6 +183,7 @@ class MonthlyWorkVolumeSerializer(serializers.ModelSerializer):
     remained_volume = serializers.SerializerMethodField()
     completed_percent = serializers.SerializerMethodField()
     measurement = serializers.CharField(source='work_volume.work_type.measurement.title')
+    date = serializers.DateField(format="%d-%m-%Y")
 
     class Meta:
         model = MonthlyWorkVolume
