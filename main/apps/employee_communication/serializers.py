@@ -14,6 +14,8 @@ from main.apps.object_passport.serializers.object import ObjectTitleSerializer
 
 
 
+
+
 class BaseEmployeeCommunicationSerialize(serializers.ModelSerializer):
     class Meta:
         model = EmployeeCommunication
@@ -58,7 +60,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     sender = UserAllSerializer()
     is_read = serializers.SerializerMethodField()
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
-    file = serializers.SerializerMethodField()
+    # file = serializers.SerializerMethodField()
     
     class Meta:
         model = EmployeeCommunication 
@@ -87,15 +89,15 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
             is_read=True
         ).exists()
     
-    def get_file(self, obj):
-        from urllib.parse import unquote
+    # def get_file(self, obj):
+    #     from urllib.parse import unquote
         
-        if obj.file:
-            file_url = obj.file.url
-            filename_encoded = file_url.split("/")[-1]
-            filename = unquote(filename_encoded)
-            return filename.replace(" ", "_")
-        return None
+    #     if obj.file:
+    #         file_url = obj.file.url
+    #         filename_encoded = file_url.split("/")[-1]
+    #         filename = unquote(filename_encoded)
+    #         return filename.replace(" ", "_")
+    #     return None
 
 
 
