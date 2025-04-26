@@ -36,13 +36,6 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
         queryset = self.get_queryset().filter(object=object)
         serializer = self.get_serializer(queryset, many=True)
         data = serializer.data
-
-        # total_plan = sum(item.get('plan') or 0 for item in data)
-        # total_fact = sum(item.get('fact') or 0 for item in data)
-
-        # total_remained_volume = total_plan - total_fact
-        # total_completed_percent = (total_fact / total_plan * 100) if total_plan else 0
-
         category_totals = WorkCategory.objects.filter(object=object).aggregate(
             total_plan_amount=Sum('plan_amount') or 0,
             total_fact_amount=Sum('fact_amount') or 0
@@ -55,10 +48,6 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
         currency = queryset.first().object.currency.title if queryset.exists() else ""
 
         return {
-            # "total_plan": total_plan,
-            # "total_fact": total_fact,
-            # "total_remained_volume": total_remained_volume,
-            # "total_completed_percent": round(total_completed_percent, 2),
             "total_plan_amount": total_plan_amount,
             "total_fact_amount": total_fact_amount,
             "total_remained_amount": total_remained_amount,
