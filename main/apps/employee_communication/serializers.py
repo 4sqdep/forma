@@ -124,8 +124,8 @@ class FileMessageSerializer(serializers.ModelSerializer):
     created_at = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     sender = UserAllSerializer()
     file_size = serializers.SerializerMethodField()
-    file = serializers.SerializerMethodField()
-    
+    # file = serializers.SerializerMethodField()
+
     class Meta:
         model = FileMessage
         fields = (
@@ -149,15 +149,15 @@ class FileMessageSerializer(serializers.ModelSerializer):
                 return f"{size / (1024 ** 3):.2f} GB"
         return None
     
-    def get_file(self, obj):
-        from urllib.parse import unquote
+    # def get_file(self, obj):
+    #     from urllib.parse import unquote
         
-        if obj.file:
-            file_url = obj.file.url
-            filename_encoded = file_url.split("/")[-1]
-            filename = unquote(filename_encoded)
-            return filename.replace(" ", "_")
-        return None
+    #     if obj.file:
+    #         file_url = obj.file.url
+    #         filename_encoded = file_url.split("/")[-1]
+    #         filename = unquote(filename_encoded)
+    #         return filename.replace(" ", "_")
+    #     return None
 
         
 
