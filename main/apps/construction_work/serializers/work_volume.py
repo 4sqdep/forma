@@ -14,8 +14,8 @@ from main.apps.common.serializers import MeasurementSerializer
 
 def calculate_percentage(fact, plan):
     if not plan:
-        return 0.0
-    return round((fact / plan) * 100, 2)
+        return 0
+    return int(round((fact / plan) * 100, 2))
 
 
 def calculate_remained(plan, fact):
