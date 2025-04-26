@@ -89,7 +89,7 @@ class EmployeeCommunicationSerializer(serializers.ModelSerializer):
     
     def get_file(self, obj):
         from urllib.parse import unquote
-        file = unquote(obj.file_url.split("/")[-1])
+        file = unquote(obj.file.split("/")[-1])
         return file.replace(" ", "_")
 
 
