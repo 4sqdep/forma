@@ -51,7 +51,7 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
             "total_plan_amount": total_plan_amount,
             "total_fact_amount": total_fact_amount,
             "total_remained_amount": total_remained_amount,
-            "total_completed_amount_percent": round(total_completed_amount_percent, 2),
+            "total_completed_amount_percent": int(round(total_completed_amount_percent, 2)),
             "currency": currency,
             "data": data
         }
@@ -232,9 +232,6 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
         total_completed_percent = total_fact / total_plan * 100 if total_plan else 0
         total_remained_volume = total_plan - total_fact
 
-        plan = WorkVolume.objects.all().aggregate(Sum('plan'))['plan__sum']
-        completed_volume = WorkVolume.objects.all().aggregate(Sum('fact'))['fact__sum']
-        
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
             page = paginator.paginate_queryset(queryset, request)
@@ -244,7 +241,7 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             response.data["data"] = response.data.pop("results", [])
             response.data['total_plan'] = total_plan
             response.data['total_fact'] = total_fact
-            response.data['total_completed_percent'] = round(total_completed_percent, 2)
+            response.data['total_completed_percent'] = int(round(total_completed_percent, 2))
             response.data['total_remained_volume'] = total_remained_volume
             return response
 
@@ -255,7 +252,7 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
             "data": serializer.data,
             "total_plan": total_plan,
             "total_fact": total_fact,
-            "total_completed_percent": round(total_completed_percent, 2),
+            "total_completed_percent": int(round(total_completed_percent, 2)),
             "total_remained_volume": total_remained_volume
         }, status=status.HTTP_200_OK)
 
@@ -338,7 +335,7 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
         for item in summary_data:
             plan = item['total_plan'] or 0
             fact = item['total_fact'] or 0
-            item['completed_percent'] = round((fact / plan * 100), 2) if plan else 0
+            item['completed_percent'] = int(round((fact / plan * 100), 2)) if plan else 0
 
         paginator = CustomPagination() if request.query_params.get('p') else None
         if paginator:
