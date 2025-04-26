@@ -147,7 +147,7 @@ class WorkVolumeSerializer(serializers.ModelSerializer):
         return calculate_remained(obj.plan, obj.fact)
     
     def get_completed_percent(self, obj):
-        return calculate_percentage(obj.fact, obj.fact)
+        return calculate_percentage(obj.fact, obj.plan)
     
 
 
