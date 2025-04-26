@@ -47,7 +47,7 @@ class ContractSectionListAPIView(generics.ListAPIView):
     )
     def get_queryset(self):
         contract_section = self.kwargs.get("contract_section")
-        queryset = ContractSection.objects.select_related('object').all()
+        queryset = ContractSection.objects.select_related('object').all().order_by('id')
         if contract_section:
             queryset = queryset.filter(object=contract_section)
         return queryset
@@ -261,7 +261,7 @@ class SearchContractAPIView(APIView):
     def get(self, request):
         queryset = ContractFile.objects.all()
         search_query = request.query_params.get('file', None)
-        section_id = request.query_params.get('section_id', None)
+        section_id = request.query_params.get('3', None)
         if search_query:
             queryset = queryset.filter(
                 Q(title__icontains=search_query) |
