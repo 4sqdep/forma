@@ -70,12 +70,10 @@ class WorkTypeSerializer(serializers.ModelSerializer):
     
     def get_plan(self, obj):
         work_volume_plan = WorkVolume.objects.filter(work_type=obj).aggregate(Sum('plan'))['plan__sum'] or 0
-        # monthly_work_volume_plan = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('plan'))['plan__sum'] or 0
         return float(work_volume_plan) 
     
     def get_fact(self, obj):
         work_volume_fact = WorkVolume.objects.filter(work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
-        # monthly_work_volume_fact = MonthlyWorkVolume.objects.filter(work_volume__work_type=obj).aggregate(Sum('fact'))['fact__sum'] or 0
         return float(work_volume_fact)
 
     def get_remained_volume(self, obj):
