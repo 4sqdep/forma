@@ -1,4 +1,5 @@
 import django_filters
+from main.apps.account.models.user import User
 from main.apps.employee_communication.models import EmployeeCommunication
 from main.apps.object_passport.models.object import Object
 
@@ -8,6 +9,7 @@ from main.apps.object_passport.models.object import Object
 class EmployeeCommunicationFilter(django_filters.FilterSet):
     section_type = django_filters.CharFilter(field_name='section_type', lookup_expr='iexact')
     obj = django_filters.ModelChoiceFilter(queryset=Object.objects.all(), field_name='obj')
+    employee = django_filters.ModelChoiceFilter(queryset=User.objects.all(), field_name='employee')
     status = django_filters.CharFilter(field_name='status', lookup_expr='iexact')
     search = django_filters.CharFilter(method='filter_by_search')
     start_date = django_filters.DateFilter(field_name='created_at', lookup_expr='date__gte')
@@ -18,6 +20,7 @@ class EmployeeCommunicationFilter(django_filters.FilterSet):
     class Meta:
         model = EmployeeCommunication
         fields = (
+            'employee',
             'status', 
             'section_type', 
             'start_date', 
