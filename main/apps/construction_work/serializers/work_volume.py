@@ -6,7 +6,7 @@ from main.apps.construction_work.models.work_volume import (
     WorkType, 
     WorkVolume
 )
-from main.apps.common.serializers import MeasurementSerializer
+from main.apps.common.serializers import CurrencySerializer, MeasurementSerializer
 
 
 
@@ -85,7 +85,6 @@ class WorkTypeSerializer(serializers.ModelSerializer):
 
 
 class WorkCategorySerializer(serializers.ModelSerializer):
-    currency = serializers.CharField(source='object.currency.title', required=False)
     completed_percent = serializers.SerializerMethodField(required=False)
     remained_amount = serializers.SerializerMethodField(required=False)
     
@@ -107,6 +106,14 @@ class WorkCategorySerializer(serializers.ModelSerializer):
     
     def get_completed_percent(self, obj):
         return calculate_percentage(obj.fact_amount, obj.plan_amount)
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if instance.currency:
+            representation['currency'] = CurrencySerializer(instance.currency).data 
+        else:
+            representation['currency'] = None
+        return representation    
 
 
 
