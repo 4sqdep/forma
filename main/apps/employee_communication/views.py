@@ -78,6 +78,7 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
             ).filter(
             Q(employee=self.request.user) | Q(sender=self.request.user)
         ).distinct()
+
     
     def get_pagination_class(self):
         p = self.request.query_params.get('p')
@@ -87,19 +88,18 @@ class EmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, generic
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        paginator_class = self.get_pagination_class()
+        paginator_class = self.get_pagination_class()   
+
+        today = now().date()
+        queryset.filter(
+            deadline=today
+        ).exclude(
+            status=ProblemStatus.INCOMPLETE
+        ).update(
+            status=ProblemStatus.INCOMPLETE
+        )
 
         counts = {
-            "all": queryset.count(),
-            "new": queryset.filter(status=ProblemStatus.NEW).count(),
-            "done": queryset.filter(status=ProblemStatus.DONE).count(),
-            "in_confirmation": queryset.filter(status=ProblemStatus.IN_CORFIRMATION).count(),
-            "in_progress": queryset.filter(status=ProblemStatus.IN_PROGRESS).count(),
-            "incomplete": queryset.filter(status=ProblemStatus.INCOMPLETE).count(),
-            "completed_late": queryset.filter(status=ProblemStatus.COMPLETED_LATE).count(),
-        }
-
-        counts_by_status = {
             "all": queryset.count(),
             "new": queryset.filter(status=ProblemStatus.NEW).count(),
             "done": queryset.filter(status=ProblemStatus.DONE).count(),
