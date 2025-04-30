@@ -131,6 +131,7 @@ class HydroStationCreateUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
+    
 
 
 class HydroStationSerializer(serializers.ModelSerializer):
@@ -143,6 +144,8 @@ class HydroStationSerializer(serializers.ModelSerializer):
     latest_delivery_date = serializers.SerializerMethodField()
     total_ges_amount = serializers.SerializerMethodField()
     currency_slug = serializers.CharField(source='currency.slug_title')
+    file_name = serializers.SerializerMethodField()
+
     class Meta:
         model = HydroStation 
         fields = (
@@ -154,6 +157,7 @@ class HydroStationSerializer(serializers.ModelSerializer):
             'currency',
             'currency_slug',
             'file',
+            'file_name',
             'prepayment_from_own_fund',
             'prepayment_from_foreign_credit_account',
             'additional_prepayment',
@@ -205,6 +209,16 @@ class HydroStationSerializer(serializers.ModelSerializer):
             for data in obj.financial_resource_data:
                 total += Decimal(data.get('percent_or_amount', "0"))
         return float(total)
+
+    def get_file_name(self, obj):
+        from urllib.parse import unquote
+        
+        if obj.file:
+            file_url = obj.file.url
+            filename_encoded = file_url.split("/")[-1]
+            filename = unquote(filename_encoded)
+            return filename.replace(" ", "_")
+        return None
     
 
 

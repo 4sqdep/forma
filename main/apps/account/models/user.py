@@ -56,7 +56,7 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
         verbose_name_plural = _("users")
 
     @property
-    def get_full_name(self):
+    def full_name(self):
         """
         Return the first_name plus the last_name, with a space in between.
         """
