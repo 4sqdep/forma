@@ -1,6 +1,5 @@
 import django_filters
 from django.db.models import Q
-
 from main.apps.project_document.models.project_section import ProjectSection
 
 

@@ -28,9 +28,8 @@ urlpatterns = [
         views.delete_contract_section_api_view,
         name='delete'
     ),
-##################################
-    #File urls
-##################################
+
+    # File urls
     path(
         'file/create/',
         views.create_contract_file_api_view,

@@ -7,6 +7,8 @@ from main.apps.object_passport.models.object import Object
 from django.db.models import Sum, Count
 
 
+
+
 class ObjectCategorySerializer(serializers.ModelSerializer):
     category_count = serializers.IntegerField(read_only=True)
     has_data = serializers.BooleanField(read_only=True)

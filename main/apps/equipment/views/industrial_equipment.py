@@ -11,6 +11,7 @@ from django.db.models import Sum, Q
 
 
 
+
 class EquipmentCategoryCreateAPIView(generics.CreateAPIView):
     queryset = EquipmentCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentCategoryCreateSerializer
