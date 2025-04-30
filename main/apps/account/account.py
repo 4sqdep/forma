@@ -10,18 +10,4 @@ urlpatterns = [
             namespace="account",
         ),
     ),
-    # path(
-    #     "department/",
-    #     include(
-    #         ("main.apps.dashboard.urls.department", "main.apps.dashboard.urls.department"),
-    #         namespace="department",
-    #     ),
-    # ),
-    # path(
-    #     "position/",
-    #     include(
-    #         ("main.apps.dashboard.urls.position", "main.apps.dashboard.urls.position"),
-    #         namespace="position",
-    #     ),
-    # ),
 ]

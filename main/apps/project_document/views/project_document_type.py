@@ -74,7 +74,7 @@ class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.Li
         queryset = queryset.annotate(
             custom_order=Case(
                 *[When(name=name, then=Value(i)) for i, name in enumerate(priority_names)],
-                default=Value(100),  # qolganlar keyin
+                default=Value(100),  
                 output_field=IntegerField()
             )
         ).order_by("custom_order", "id")

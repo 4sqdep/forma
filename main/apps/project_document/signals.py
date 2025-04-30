@@ -4,6 +4,8 @@ from main.apps.object_passport.models.object import Object
 from main.apps.project_document.models.project_document_type import ProjectDocumentType
 
 
+
+
 @receiver(post_save, sender=Object)
 def create_default_document_types(sender, instance, created, **kwargs):
     if created:

@@ -3,6 +3,8 @@ from main.apps.common.models import Currency, Measurement
 
 
 
+
+
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency 

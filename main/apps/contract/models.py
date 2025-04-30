@@ -6,6 +6,14 @@ from main.apps.object_passport.models.object import Object
 
 
 
+def upload_contract_files(instance, filename):
+    ext = os.path.splitext(filename)[1]
+    original_name = os.path.splitext(filename)[0]
+    timestamp = now().strftime("%Y_%m_%d")
+    return f"contract_file/{original_name}_{timestamp}{ext}"
+
+
+
 class ContractSection(BaseModel):
     object = models.ForeignKey(Object, on_delete=models.SET_NULL, verbose_name="Obyekt", null=True, blank=True)
     title = models.CharField(max_length=1000, blank=True, null=True, verbose_name="Nomi")
@@ -18,12 +26,6 @@ class ContractSection(BaseModel):
         verbose_name = "Contract Section"
         verbose_name_plural = "Contract Sections"
 
-
-def upload_contract_files(instance, filename):
-    ext = os.path.splitext(filename)[1]
-    original_name = os.path.splitext(filename)[0]
-    timestamp = now().strftime("%Y_%m_%d")
-    return f"contract_file/{original_name}_{timestamp}{ext}"
 
 
 class ContractFile(BaseModel):

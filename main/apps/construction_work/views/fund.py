@@ -6,7 +6,6 @@ from ..serializers import fund as project_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.response import Response
-
 from ..calculations import(
     constructions_total_cost, 
     get_total_difference, 

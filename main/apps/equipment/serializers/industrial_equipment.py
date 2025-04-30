@@ -4,6 +4,7 @@ from main.apps.equipment.models.industrial_equipment import EquipmentSubCategory
 
 
 
+
 class EquipmentCategoryCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EquipmentCategory 

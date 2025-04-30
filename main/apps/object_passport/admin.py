@@ -11,7 +11,6 @@ admin.site.register(Object, ObjectAdmin)
 
 
 class GalleryAdmin(admin.ModelAdmin):
-    # ...
     list_display = ('id', 'object', 'file', 'name')
 
 admin.site.register(Gallery, GalleryAdmin)

@@ -5,6 +5,8 @@ from main.apps.project_document.models.project_file import ProjectDocumentFile
 from main.apps.project_document.models.project_fund import ConstructionTask, MonthlyExpense
 
 
+
+
 class ProjectSectionAdmin(admin.ModelAdmin):
     list_display = ['id', 'project_document_type', 'name']
     list_display_links = ['project_document_type', 'name']

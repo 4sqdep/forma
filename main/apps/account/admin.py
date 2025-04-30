@@ -32,15 +32,6 @@ class DepartmentAdmin(admin.ModelAdmin):
 admin.site.register(Department, DepartmentAdmin)
 
 
-# class PermissionAdmin(admin.ModelAdmin):
-#     list_display = ['id', 'user', 'position', 'can_get', 'can_post', 'can_patch', 'can_put', 'can_delete', 'created_at']
-#     list_display_links = ['id', 'position', 'can_get']
-#     search_fields = ['position']
-
-
-# admin.site.register(Permission, PermissionAdmin)
-
-
 class UserProfileAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'department', 'position', 'created_at']
     list_display_links = ['id', 'user', 'department', 'position']

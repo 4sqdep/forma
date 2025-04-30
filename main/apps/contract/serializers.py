@@ -5,8 +5,6 @@ from main.apps.contract.models import ContractSection, ContractFile
 
 
 
-
-
 class ContractSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContractSection
