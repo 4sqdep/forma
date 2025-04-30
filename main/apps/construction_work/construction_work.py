@@ -3,6 +3,7 @@ from django.urls import include, path
 app_name = "construction_work"
 
 
+
 urlpatterns = [
     path(
         "file/",

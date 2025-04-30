@@ -35,6 +35,7 @@ class ContractSectionCreateAPIView(generics.CreateAPIView):
 create_contract_api_view = ContractSectionCreateAPIView.as_view()
 
 
+
 class ContractSectionListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = ContractSectionSerializer
@@ -81,6 +82,7 @@ class ContractSectionListAPIView(generics.ListAPIView):
 list_contract_section_api_view = ContractSectionListAPIView.as_view()
 
 
+
 class ContractSectionsRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = ContractSectionSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -98,6 +100,7 @@ class ContractSectionsRetrieveAPIView(generics.RetrieveAPIView):
         }, status=status.HTTP_200_OK)
 
 detail_contract_section_api_view = ContractSectionsRetrieveAPIView.as_view()
+
 
 
 class ContractSectionUpdateAPIView(generics.UpdateAPIView):
@@ -143,10 +146,6 @@ class ContractSectionDelete(generics.DestroyAPIView):
 delete_contract_section_api_view = ContractSectionDelete.as_view()
 
 
-###############################
-# File  CRUD
-###############################
-
 
 class ContractFileCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -168,6 +167,7 @@ class ContractFileCreateAPIView(generics.CreateAPIView):
         }, status=status.HTTP_400_BAD_REQUEST)
 
 create_contract_file_api_view = ContractFileCreateAPIView.as_view()
+
 
 
 class ContractFileListAPIView(generics.ListAPIView):
@@ -215,6 +215,7 @@ class ContractFileListAPIView(generics.ListAPIView):
 list_contract_file_api_view = ContractFileListAPIView.as_view()
 
 
+
 class ContractFileUpdateAPIView(generics.UpdateAPIView):
     serializer_class = ContractSectionFileSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -243,6 +244,7 @@ class ContractFileUpdateAPIView(generics.UpdateAPIView):
 update_contract_file_api_view = ContractFileUpdateAPIView.as_view()
 
 
+
 class ContractFilesDelete(generics.DestroyAPIView):
     serializer_class = ContractSectionFileSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -255,6 +257,7 @@ class ContractFilesDelete(generics.DestroyAPIView):
         return Response({"message": "File successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 
 delete_contract_file_api_view = ContractFilesDelete.as_view()
+
 
 
 class SearchContractAPIView(APIView):

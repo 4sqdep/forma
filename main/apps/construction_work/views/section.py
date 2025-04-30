@@ -11,6 +11,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Case, When, Value, IntegerField
 
 
+
+
 class ConstructionInstallationSectionAPIView:
     queryset = ConstructionInstallationSection.objects.all()
     serializer_class = section_serializer.ConstructionInstallationSectionSerializer
@@ -48,7 +50,7 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
         queryset = queryset.annotate(
             custom_order=Case(
                 *[When(title=title, then=Value(i)) for i, title in enumerate(priority_titles)],
-                default=Value(100),  # qolganlar keyin
+                default=Value(100), 
                 output_field=IntegerField()
             )
         ).order_by("custom_order", "id")

@@ -106,7 +106,6 @@ class ObjectGalleryDeleteAPIView(APIView):
                 'status_code': status.HTTP_400_BAD_REQUEST
             }, status=status.HTTP_400_BAD_REQUEST)
         objects = Gallery.objects.filter(id__in=object_ids)
-        print("=======================", object_ids)
         if not objects.exists():
             return Response({
                 'message': "Ob'ektlar topilmadi",

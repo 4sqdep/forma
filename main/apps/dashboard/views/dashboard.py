@@ -93,6 +93,7 @@ class ObjectSubCategoryAPIView(APIView):
 object_subcategory_api_view = ObjectSubCategoryAPIView.as_view()
 
 
+
 class ObjectSubCategoryListAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
