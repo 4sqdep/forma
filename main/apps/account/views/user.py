@@ -13,6 +13,10 @@ from rest_framework_simplejwt.exceptions import InvalidToken, TokenError
 from main.apps.common.pagination import CustomPagination
 from rest_framework import generics
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+
 
 
 class RegisterUser(APIView):
@@ -127,8 +131,7 @@ class UserProfileAPIView(APIView):
 
 user_profile_api_view = UserProfileAPIView.as_view()
 
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
+
 
 class AllUsersListAPIView(generics.ListAPIView):
     queryset = User.objects.filter(is_superuser=False)

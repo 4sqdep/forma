@@ -1,5 +1,5 @@
+import os
 from django.db import models
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import PermissionsMixin
 from main.apps.account.manager import UserManager
@@ -7,7 +7,6 @@ from main.apps.account.models.department import Department
 from main.apps.account.models.position import Position
 from main.apps.common.models import BaseMeta, BaseModel
 from django.utils.translation import gettext_lazy as _
-import os
 from django.utils.timezone import now
 
 
@@ -81,22 +80,3 @@ class UserProfile(BaseModel):
         verbose_name = "Profil"
         verbose_name_plural = "Profillar"
 
-
-
-# class Permission(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.SET_NULL, blank=True, null=True,
-#                                 related_name="user_permission", verbose_name="Foydalanuvchi", )
-#     position = models.OneToOneField(Position, on_delete=models.SET_NULL, related_name='permission',
-#                                     null=True, blank=True, verbose_name="Lavozim")
-#     can_get = models.BooleanField(default=False, verbose_name="GET")
-#     can_post = models.BooleanField(default=False, verbose_name="POST")
-#     can_patch = models.BooleanField(default=False, verbose_name="PATCH")
-#     can_put = models.BooleanField(default=False, verbose_name="PUT")
-#     can_delete = models.BooleanField(default=False, verbose_name="DELETE")
-#     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Kiritilgan vaqti")
-#     def __str__(self):
-#         return f"Ruxsatnomalar uchun -{self.user} -- {self.position.name}"
-
-#     class Meta:
-#         verbose_name = "Ruxsat"
-#         verbose_name_plural = "Ruxsatnomalar"
