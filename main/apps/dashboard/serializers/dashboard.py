@@ -73,7 +73,7 @@ class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
             # Ushbu subkategoriya ichidagi barcha obyektlarni olish
             related_objects = (
                 Object.objects.filter(object_subcategory_id=subcategory_id).values(
-                'id', 'title', 'total_price', 'currency__title', 'object_power'
+                'id', 'title', 'total_price', 'currency__title', 'object_power', 'annual_electricity_production'
             ))
 
             result.append({
@@ -86,6 +86,7 @@ class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
                         "object_id": obj_data['id'],
                         "object_title": obj_data['title'],
                         "object_object_power": obj_data['object_power'],
+                        "object_annual_electricity_production": obj_data['annual_electricity_production'],
                         "object_currency": obj_data['currency__title'],
                         "object_price": obj_data['total_price'] or 0
                     }
@@ -96,7 +97,7 @@ class ObjectCategoryStatisticsSerializer(serializers.ModelSerializer):
         return result
 
     def get_total_category_count(self, obj):
-        return Object.objects.filter(object_category=obj).values('object_subcategory').distinct().count()
+        return Object.objects.filter(object_category=obj).count()
 
     def get_total_subcategory_count(self, obj):
         return Object.objects.filter(object_category=obj).values('object_subcategory').distinct().count()
