@@ -15,7 +15,7 @@ def upload_document_files(instance, filename):
 
 
 
-class       ProjectDocumentFile(BaseModel):
+class ProjectDocumentFile(BaseModel):
     project_document_type = models.ForeignKey(ProjectDocumentType, on_delete=models.SET_NULL, verbose_name="Project Document type", blank=True, null=True)
     project_section = models.ForeignKey(ProjectSection, on_delete=models.SET_NULL, verbose_name="Project Section", blank=True, null=True)
     name = models.CharField(max_length=1000, blank=True, null=True)
