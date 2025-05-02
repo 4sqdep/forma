@@ -9,17 +9,17 @@ class ObjectFilter(django_filters.FilterSet):
     search = django_filters.CharFilter(method='filter_by_search')
     start_date = django_filters.DateFilter(field_name='start_date', lookup_expr='gte')  
     end_date = django_filters.DateFilter(field_name='end_date', lookup_expr='lte')
-    
     new = django_filters.BooleanFilter(method='order_by_newest') 
     old = django_filters.BooleanFilter(method='order_by_oldest')
     expensive = django_filters.BooleanFilter(method='order_by_expensive')
     cheap = django_filters.BooleanFilter(method='order_by_cheap')
     high_energy = django_filters.BooleanFilter(method='order_by_high_energy')
     low_energy = django_filters.BooleanFilter(method='order_by_low_energy')
+    status_type = django_filters.CharFilter(field_name='status_type', lookup_expr='iexact')
 
     class Meta:
         model = Object
-        fields = ['start_date', 'end_date']
+        fields = ['status_type', 'start_date', 'end_date']
 
     def filter_by_search(self, queryset, name, value):
         return queryset.filter(Q(title__icontains=value))

@@ -64,6 +64,7 @@ class ObjectSerializer(serializers.ModelSerializer):
             'longitude',
             'start_date',
             'end_date',
+            'status_type'
         )
     
     def get_file_name(self, obj):

@@ -13,6 +13,8 @@ from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.views import APIView
 
+from main.apps.role.models import Role
+
 
 
 
@@ -24,6 +26,50 @@ class BaseObjectAPIView(generics.GenericAPIView):
 
 class ObjectCreateAPIView(BaseObjectAPIView, generics.CreateAPIView):
     serializer_class = object_serializer.ObjectCreateUpdateSerializer
+
+    # def create(self, request, *args, **kwargs):
+    #     user = request.user
+    #     try:
+    #         role = Role.objects.get(employee=user)
+    #         if not role.can_create:
+    #             return Response(
+    #                 {
+    #                     "status_code": status.HTTP_403_FORBIDDEN,
+    #                     "message": "You do not have permission to create objects.",
+    #                 },
+    #                 status=status.HTTP_403_FORBIDDEN
+    #             )
+    #     except Role.DoesNotExist:
+    #         return Response(
+    #             {
+    #                 "status_code": status.HTTP_403_FORBIDDEN,
+    #                 "message": "You do not have a role assigned.",
+    #             },
+    #             status=status.HTTP_403_FORBIDDENd
+    #         )
+
+    #     serializer = self.get_serializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(
+    #             {
+    #                 "status_code": status.HTTP_201_CREATED,
+    #                 "message": "Object created successfully",
+    #                 "data": serializer.data
+    #             },
+    #             status=status.HTTP_201_CREATED
+    #         )
+
+    #     return Response(
+    #         {
+    #             "status_code": status.HTTP_400_BAD_REQUEST,
+    #             "message": "Failed to create Object",
+    #             "errors": serializer.errors
+    #         },
+    #         status=status.HTTP_400_BAD_REQUEST
+    #     )
+
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
