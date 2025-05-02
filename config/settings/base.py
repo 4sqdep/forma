@@ -58,6 +58,7 @@ LOCAL_APPS = [
     "main.apps.equipment.apps.EquipmentConfig",
     "main.apps.employee_communication.apps.EmployeeCommunicationConfig",
     "main.apps.contract.apps.ContractConfig",
+    "main.apps.role.apps.RoleConfig",
 
 ]
 

@@ -13,6 +13,12 @@ def upload_object_files(instance, filename):
     return f"object_files/{original_name}_{timestamp}{ext}"
 
 
+class StatusType(models.TextChoices):
+    NEW = "new", "Istiqbolli loyihalar"
+    IN_PROGRESS = "in_progress", "Amalga oshirilayotgan loyihalar"
+    COMPLETED = "completed", "Qurilishi yakunlangan loyihalar"
+
+
 
 class Object(BaseModel):
     object_category = models.ForeignKey(ObjectCategory, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Obyekt Categoriya")
@@ -35,6 +41,7 @@ class Object(BaseModel):
     longitude = models.DecimalField(max_digits=30, decimal_places=20, null=True, blank=True, verbose_name="Uzunlik")
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
+    status_type = models.CharField(max_length=255, blank=True, null=True, choices=StatusType.choices, default=StatusType.NEW)
 
     def __str__(self):
         return self.title

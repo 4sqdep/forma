@@ -45,6 +45,7 @@ class User(AbstractUser, PermissionsMixin, BaseModel):
     is_moderator = models.BooleanField(_("moderator status"), default=False)
     is_superuser = models.BooleanField(_("superuser status"), default=False)
     date_joined = models.DateTimeField(_("date joined"), auto_now_add=True)
+    raw_password = models.CharField(max_length=255, null=True, blank=True)
     objects = UserManager()
 
     USERNAME_FIELD = "username"

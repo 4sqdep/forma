@@ -1,8 +1,8 @@
-from typing import Dict, Any
 from main.apps.account.models.user import User
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+from main.apps.role.models import Role
 
 
 
@@ -14,6 +14,16 @@ class Registerserializer(serializers.ModelSerializer):
             'username', 
             'password'
         )
+    
+    def create(self, validated_data):
+        raw_password = validated_data['password']
+        user = User(username=validated_data['username'])
+        user.set_password(raw_password)
+        user.raw_password = raw_password
+        user.save()
+
+        Role.objects.create(employee=user)
+        return user
 
 
 
@@ -85,5 +95,6 @@ class UserAllSerializer(serializers.ModelSerializer):
             'image',
             'full_name',
             'is_active',
-            'is_superuser'
+            'is_superuser',
+            'raw_password'
         )

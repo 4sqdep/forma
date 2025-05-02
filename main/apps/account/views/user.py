@@ -31,9 +31,6 @@ class RegisterUser(APIView):
             )
 
         user = serializer.save()
-        user.set_password(serializer.validated_data['password'])
-        user.save()
-
         return Response(
             status=status.HTTP_201_CREATED,
             data={"message": "Foydalanuvchi muvaffaqiyatli ro‘yxatdan o‘tkazildi!", "username": user.username}
