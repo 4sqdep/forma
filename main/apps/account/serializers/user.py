@@ -12,7 +12,9 @@ class Registerserializer(serializers.ModelSerializer):
         model = User
         fields = (
             'username', 
-            'password'
+            'password',
+            'first_name',
+            'last_name',
         )
     
     def create(self, validated_data):
