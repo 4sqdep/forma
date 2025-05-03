@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.construction_work.models.work_volume import MonthlyWorkVolume, WorkCategory, WorkType, WorkVolume
+from main.apps.role.permissions import RolePermissionMixin
 from ..serializers import work_volume as work_volume_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -18,7 +19,9 @@ class BaseWorkTypeAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView):
+class WorkTypeListCreateAPIView(RolePermissionMixin, BaseWorkTypeAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'work_type'
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -96,6 +99,10 @@ class WorkTypeListCreateAPIView(BaseWorkTypeAPIView, generics.ListCreateAPIView)
 
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -109,7 +116,9 @@ work_type_list_create_api_view = WorkTypeListCreateAPIView.as_view()
 
 
 
-class WorkTypeRetrieveUpdateDeleteAPIView(BaseWorkTypeAPIView, generics.RetrieveUpdateDestroyAPIView):
+class WorkTypeRetrieveUpdateDeleteAPIView(RolePermissionMixin, BaseWorkTypeAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'work_type'
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -117,15 +126,28 @@ class WorkTypeRetrieveUpdateDeleteAPIView(BaseWorkTypeAPIView, generics.Retrieve
         return work_volume_serializer.WorkTypeSerializer
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+            
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Work Type updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
         self.perform_destroy(instance)
         return Response({"message": "Work Type deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -140,7 +162,9 @@ class BaseWorkCategoryAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class WorkCategoryListCreateAPIView(BaseWorkCategoryAPIView, generics.ListCreateAPIView):
+class WorkCategoryListCreateAPIView(RolePermissionMixin, BaseWorkCategoryAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'work_category'
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -172,6 +196,10 @@ class WorkCategoryListCreateAPIView(BaseWorkCategoryAPIView, generics.ListCreate
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -185,18 +213,34 @@ work_category_list_create_api_view = WorkCategoryListCreateAPIView.as_view()
 
 
 
-class WorkCategoryRetrieveUpdateDeleteAPIView(BaseWorkCategoryAPIView, generics.RetrieveUpdateDestroyAPIView):
+class WorkCategoryRetrieveUpdateDeleteAPIView(RolePermissionMixin, BaseWorkCategoryAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'work_category'
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Work Category updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Work Category deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -210,7 +254,9 @@ class BaseWorkVolumeAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIView):
+class WorkVolumeListCreateAPIView(RolePermissionMixin, BaseWorkVolumeAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'work_volume'
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -261,6 +307,10 @@ class WorkVolumeListCreateAPIView(BaseWorkVolumeAPIView, generics.ListCreateAPIV
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -274,7 +324,9 @@ work_volume_list_create_api_view = WorkVolumeListCreateAPIView.as_view()
 
 
 
-class WorkVolumeRetrieveUpdateDeleteAPIView(BaseWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+class WorkVolumeRetrieveUpdateDeleteAPIView(RolePermissionMixin, BaseWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'work_volume'
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -282,15 +334,29 @@ class WorkVolumeRetrieveUpdateDeleteAPIView(BaseWorkVolumeAPIView, generics.Retr
         return work_volume_serializer.WorkVolumeSerializer
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.work_category.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Work volume updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.work_category.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Work volume deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -304,7 +370,9 @@ class BaseMonthlyWorkVolumeAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.ListCreateAPIView):
+class MonthlyWorkVolumeListCreateAPIView(RolePermissionMixin, BaseMonthlyWorkVolumeAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'monthly_work_volume'
     
     def get_serializer_class(self):
         if self.request.method == 'POST':
@@ -361,6 +429,10 @@ class MonthlyWorkVolumeListCreateAPIView(BaseMonthlyWorkVolumeAPIView, generics.
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -374,7 +446,9 @@ monthly_work_volume_list_create_api_view = MonthlyWorkVolumeListCreateAPIView.as
 
 
 
-class MonthlyWorkVolumeRetrieveUpdateDeleteAPIView(BaseMonthlyWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+class MonthlyWorkVolumeRetrieveUpdateDeleteAPIView(RolePermissionMixin, BaseMonthlyWorkVolumeAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'monthly_work_volume'
 
     def get_serializer_class(self):
         if self.request.method in ['PUT', 'PATCH']:
@@ -382,15 +456,29 @@ class MonthlyWorkVolumeRetrieveUpdateDeleteAPIView(BaseMonthlyWorkVolumeAPIView,
         return work_volume_serializer.MonthlyWorkVolumeSerializer
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.work_volume.work_category.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Monthly Work volume updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.work_volume.work_category.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Monthly Work volume deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 

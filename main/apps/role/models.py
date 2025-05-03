@@ -14,7 +14,7 @@ class Role(BaseModel):
     )
     object = models.ManyToManyField(Object, verbose_name="Related Object", null=True, blank=True)
     has_construction_work = models.BooleanField(default=False)
-    has_project_file = models.BooleanField(default=False)
+    has_project_document = models.BooleanField(default=False)
     has_equipment = models.BooleanField(default=False)
     has_contract = models.BooleanField(default=False)
     can_create = models.BooleanField(default=False)

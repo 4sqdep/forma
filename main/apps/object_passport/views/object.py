@@ -11,9 +11,10 @@ from main.apps.object_passport.serializers import object as object_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.views import APIView
-
 from main.apps.role.models import Role
+from main.apps.role.permissions import RolePermissionMixin
+
+
 
 
 
@@ -24,71 +25,27 @@ class BaseObjectAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ObjectCreateAPIView(BaseObjectAPIView, generics.CreateAPIView):
+class ObjectCreateAPIView(RolePermissionMixin, BaseObjectAPIView, generics.CreateAPIView):
     serializer_class = object_serializer.ObjectCreateUpdateSerializer
-
-    # def create(self, request, *args, **kwargs):
-    #     user = request.user
-    #     try:
-    #         role = Role.objects.get(employee=user)
-    #         if not role.can_create:
-    #             return Response(
-    #                 {
-    #                     "status_code": status.HTTP_403_FORBIDDEN,
-    #                     "message": "You do not have permission to create objects.",
-    #                 },
-    #                 status=status.HTTP_403_FORBIDDEN
-    #             )
-    #     except Role.DoesNotExist:
-    #         return Response(
-    #             {
-    #                 "status_code": status.HTTP_403_FORBIDDEN,
-    #                 "message": "You do not have a role assigned.",
-    #             },
-    #             status=status.HTTP_403_FORBIDDENd
-    #         )
-
-    #     serializer = self.get_serializer(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(
-    #             {
-    #                 "status_code": status.HTTP_201_CREATED,
-    #                 "message": "Object created successfully",
-    #                 "data": serializer.data
-    #             },
-    #             status=status.HTTP_201_CREATED
-    #         )
-
-    #     return Response(
-    #         {
-    #             "status_code": status.HTTP_400_BAD_REQUEST,
-    #             "message": "Failed to create Object",
-    #             "errors": serializer.errors
-    #         },
-    #         status=status.HTTP_400_BAD_REQUEST
-    #     )
-
-
+    required_permission = 'can_create'
 
     def create(self, request, *args, **kwargs):
+        has_permission, result = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response(
+                {"status_code": status.HTTP_403_FORBIDDEN, "message": result},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {
-                    "status_code": status.HTTP_201_CREATED,
-                    "message": "Object created successfully",
-                    "data": serializer.data
-                },
+                {"status_code": status.HTTP_201_CREATED, "message": "Object created successfully", "data": serializer.data},
                 status=status.HTTP_201_CREATED
             )
         return Response(
-            {
-                "status_code": status.HTTP_400_BAD_REQUEST,
-                "message": "Failed to create Object",
-                "errors": serializer.errors
-            },
+            {"status_code": status.HTTP_400_BAD_REQUEST, "message": "Failed to create Object", "errors": serializer.errors},
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -153,49 +110,56 @@ object_detail_api_view = ObjectDetailAPIView.as_view()
 
 
 
-class ObjectUpdateAPIView(BaseObjectAPIView, generics.UpdateAPIView):
+class ObjectUpdateAPIView(RolePermissionMixin, BaseObjectAPIView, generics.UpdateAPIView):
     serializer_class = object_serializer.ObjectCreateUpdateSerializer
+    required_permission = 'can_update'
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        has_permission, result = self.has_permission_for_object(request.user, instance)
+        if not has_permission:
+            return Response(
+                {"status_code": status.HTTP_403_FORBIDDEN, "message": result},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        partial = kwargs.pop('partial', False)
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {
-                    "status_code": status.HTTP_200_OK,
-                    "message": "Object updated successfully",
-                    "data": serializer.data
-                },
+                {"status_code": status.HTTP_200_OK, "message": "Object updated successfully", "data": serializer.data},
                 status=status.HTTP_200_OK
             )
         return Response(
-                {
-                    "status_code": status.HTTP_400_BAD_REQUEST,
-                    "message": "Failed to update Object",
-                    "errors": serializer.errors,
-                },
-                status=status.HTTP_400_BAD_REQUEST
-            )
+            {"status_code": status.HTTP_400_BAD_REQUEST, "message": "Failed to update Object", "errors": serializer.errors},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 object_update_api_view = ObjectUpdateAPIView.as_view()
 
 
 
-class ObjectDeleteAPIView(BaseObjectAPIView, generics.DestroyAPIView):
+class ObjectDeleteAPIView(RolePermissionMixin, BaseObjectAPIView, generics.DestroyAPIView):
     serializer_class = object_serializer.ObjectSerializer
+    required_permission = 'can_delete'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        has_permission, result = self.has_permission_for_object(request.user, instance)
+        if not has_permission:
+            return Response(
+                {"status_code": status.HTTP_403_FORBIDDEN, "message": result},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         self.perform_destroy(instance)
         return Response(
-            {
-                "status_code": status.HTTP_204_NO_CONTENT,
-                "message": "Object deleted successfully"
-            },
+            {"status_code": status.HTTP_204_NO_CONTENT, "message": "Object deleted successfully"},
             status=status.HTTP_204_NO_CONTENT
         )
+
 
 object_delete_api_view = ObjectDeleteAPIView.as_view()
 

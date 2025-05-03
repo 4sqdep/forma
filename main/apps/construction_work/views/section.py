@@ -3,6 +3,7 @@ from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.construction_work.filters.section import ConstructionInstallationSectionFilter
 from main.apps.construction_work.models.section import ConstructionInstallationSection
+from main.apps.role.permissions import RolePermissionMixin
 from ..serializers import section as section_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -20,9 +21,11 @@ class ConstructionInstallationSectionAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
+class ConstructionInstallationSectionListCreateAPIView(RolePermissionMixin, ConstructionInstallationSectionAPIView, generics.ListCreateAPIView):
     filter_backends = [DjangoFilterBackend]
     filterset_class = ConstructionInstallationSectionFilter
+    required_permission = 'can_create'
+    object_type = 'construction_installation_section'
     
     @swagger_auto_schema(
         manual_parameters=[
@@ -76,6 +79,9 @@ class ConstructionInstallationSectionListCreateAPIView(ConstructionInstallationS
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -89,18 +95,34 @@ construction_installation_section_list_create_api_view = ConstructionInstallatio
 
 
 
-class ConstructionInstallationSectionRetrieveUpdateDeleteAPIView(ConstructionInstallationSectionAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ConstructionInstallationSectionRetrieveUpdateDeleteAPIView(RolePermissionMixin, ConstructionInstallationSectionAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'construction_installation_section'
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "ConstructionInstallationSection updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+
         self.perform_destroy(instance)
         return Response({"message": "ConstructionInstallationSection deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
