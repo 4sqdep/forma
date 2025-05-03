@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.construction_work.models.statistics import ConstructionInstallationStatistics
+from main.apps.role.permissions import RolePermissionMixin
 from ..serializers import statistics as statistics_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -18,7 +19,9 @@ class ConstructionInstallationStatisticsAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallationStatisticsAPIView, generics.ListCreateAPIView):
+class ConstructionInstallationStatisticsListCreateAPIView(RolePermissionMixin, ConstructionInstallationStatisticsAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'construction_installation_statistics'
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -50,6 +53,10 @@ class ConstructionInstallationStatisticsListCreateAPIView(ConstructionInstallati
         }, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -63,18 +70,34 @@ construction_installation_statistics_list_create_api_view = ConstructionInstalla
 
 
 
-class ConstructionInstallationStatisticsRetrieveUpdateDeleteAPIView(ConstructionInstallationStatisticsAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ConstructionInstallationStatisticsRetrieveUpdateDeleteAPIView(RolePermissionMixin, ConstructionInstallationStatisticsAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'construction_installation_statistics'
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Construction Installation Statistics updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Construction Installation Statistics deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 

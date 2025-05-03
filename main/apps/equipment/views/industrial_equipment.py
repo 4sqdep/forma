@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.equipment.models.industrial_equipment import EquipmentStatus, EquipmentSubCategory, IndustrialAsset, EquipmentCategory
+from main.apps.role.permissions import RolePermissionMixin
 from ..serializers import industrial_equipment as industrial_equipment_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -12,13 +13,20 @@ from django.db.models import Sum, Q
 
 
 
-class EquipmentCategoryCreateAPIView(generics.CreateAPIView):
+
+class EquipmentCategoryCreateAPIView(RolePermissionMixin, generics.CreateAPIView):
     queryset = EquipmentCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentCategoryCreateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_create'
+    object_type = 'contract_section'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -113,15 +121,23 @@ class EquipmentCategoryDetailAPIView(generics.RetrieveAPIView):
 equipment_category_detail_api_view = EquipmentCategoryDetailAPIView.as_view()
 
 
-class EquipmentCategoryUpdateAPIView(generics.UpdateAPIView):
+class EquipmentCategoryUpdateAPIView(RolePermissionMixin, generics.UpdateAPIView):
     queryset = EquipmentCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentCategoryCreateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_update'
+    object_type = 'equipment_category'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        object_instance = instance.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -141,14 +157,22 @@ equipment_category_update_api_view = EquipmentCategoryUpdateAPIView.as_view()
 
 
 
-class EquipmentCategoryDeleteAPIView(generics.DestroyAPIView):
+class EquipmentCategoryDeleteAPIView(RolePermissionMixin, generics.DestroyAPIView):
     queryset = EquipmentCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentCategoryListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_delete'
+    object_type = 'equipment_category'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+
         self.perform_destroy(instance)
         return Response({"message": "Industrial Equipment", "status_code": status.HTTP_204_NO_CONTENT})
 
@@ -156,13 +180,19 @@ equipment_category_delete_api_view = EquipmentCategoryDeleteAPIView.as_view()
 
 
 
-class EquipmentSubCategoryCreateAPIView(generics.CreateAPIView):
+class EquipmentSubCategoryCreateAPIView(RolePermissionMixin, generics.CreateAPIView):
     queryset = EquipmentSubCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentSubCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_create'
+    object_type = 'equipment_subcategory'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -251,15 +281,23 @@ class EquipmentSubCategoryDetailAPIView(generics.RetrieveAPIView):
 equipment_subcategory_detail_api_view = EquipmentSubCategoryDetailAPIView.as_view()
 
 
-class EquipmentSubCategoryUpdateAPIView(generics.UpdateAPIView):
+class EquipmentSubCategoryUpdateAPIView(RolePermissionMixin, generics.UpdateAPIView):
     queryset = EquipmentSubCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentSubCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_update'
+    object_type = 'equipment_subcategory'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        object_instance = instance.equipment_category.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -274,15 +312,23 @@ equipment_subcategory_update_api_view = EquipmentSubCategoryUpdateAPIView.as_vie
 
 
 
-class EquipmentSubCategoryDeleteAPIView(generics.DestroyAPIView):
+class EquipmentSubCategoryDeleteAPIView(RolePermissionMixin, generics.DestroyAPIView):
     queryset = EquipmentSubCategory.objects.all()
     serializer_class = industrial_equipment_serializer.EquipmentSubCategorySerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_delete'
+    object_type = 'equipment_subcategory'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         equipment_cateogry = instance.equipment_category
+        object_instance = instance.equipment_category.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         if equipment_cateogry and EquipmentSubCategory.objects.filter(equipment_cateogry=equipment_cateogry).exists():
             equipment_cateogry.has_subcategories = False
@@ -293,13 +339,19 @@ equipment_subcategory_delete_api_view = EquipmentSubCategoryDeleteAPIView.as_vie
 
 
 
-class IndustrialAssetCreateAPIView(generics.CreateAPIView):
+class IndustrialAssetCreateAPIView(RolePermissionMixin, generics.CreateAPIView):
     queryset = IndustrialAsset.objects.all()
     serializer_class = industrial_equipment_serializer.IndustrialAssetCreateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_create'
+    object_type = 'industrial_asset'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -402,15 +454,23 @@ industrial_asset_detail_api_view = IndustrialAssetDetailAPIView.as_view()
 
 
 
-class IndustrialAssetUpdateAPIView(generics.UpdateAPIView):
+class IndustrialAssetUpdateAPIView(RolePermissionMixin, generics.UpdateAPIView):
     queryset = IndustrialAsset.objects.all()
     serializer_class = industrial_equipment_serializer.IndustrialAssetCreateSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_update'
+    object_type = 'industrial_asset'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        object_instance = instance.equipment_category.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -425,14 +485,19 @@ industrial_asset_update_api_view = IndustrialAssetUpdateAPIView.as_view()
 
 
 
-class IndustrialAssetDeleteAPIView(generics.DestroyAPIView):
+class IndustrialAssetDeleteAPIView(RolePermissionMixin, generics.DestroyAPIView):
     queryset = IndustrialAsset.objects.all()
     serializer_class = industrial_equipment_serializer.IndustrialAssetListSerializer
     authentication_classes = [authentication.JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    required_permission = 'can_delete'
+    object_type = 'industrial_asset'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.equipment_category.hydro_station.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
         self.perform_destroy(instance)
         return Response({"message": "Industrial Asset"}, status=status.HTTP_204_NO_CONTENT)
 

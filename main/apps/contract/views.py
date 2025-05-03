@@ -12,15 +12,25 @@ from rest_framework.views import APIView
 from main.apps.contract.filters import ContractFileFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from main.apps.role.permissions import RolePermissionMixin
 
 
 
 
-class ContractSectionCreateAPIView(generics.CreateAPIView):
+
+
+class ContractSectionCreateAPIView(RolePermissionMixin, generics.CreateAPIView): 
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = ContractSectionSerializer
+    required_permission = 'can_create'
+    object_type = 'contract_section'
 
-    def create(self, request):
-        serializer = ContractSectionSerializer(data=request.data)
+    def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -33,6 +43,7 @@ class ContractSectionCreateAPIView(generics.CreateAPIView):
             'status_code': status.HTTP_400_BAD_REQUEST,
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
 
 create_contract_api_view = ContractSectionCreateAPIView.as_view()
 
@@ -105,7 +116,9 @@ detail_contract_section_api_view = ContractSectionsRetrieveAPIView.as_view()
 
 
 
-class ContractSectionUpdateAPIView(generics.UpdateAPIView):
+class ContractSectionUpdateAPIView(RolePermissionMixin, generics.UpdateAPIView):
+    required_permission = 'can_update'
+    object_type = 'contract_section'
     serializer_class = ContractSectionSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -113,8 +126,14 @@ class ContractSectionUpdateAPIView(generics.UpdateAPIView):
         return ContractSection.objects.select_related("object").all()
 
     def update(self, request, *args, **kwargs):
-        partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+
+        partial = kwargs.pop("partial", False)
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -133,27 +152,59 @@ update_contract_section_api_view = ContractSectionUpdateAPIView.as_view()
 
 
 
-class ContractSectionDelete(generics.DestroyAPIView):
+class ContractSectionDelete(RolePermissionMixin, generics.DestroyAPIView):
+    required_permission = 'can_delete'
+    object_type = 'contract_section'
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return ContractSection.objects.select_related("object").all()
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+
         self.perform_destroy(instance)
-        return Response({"message": "Contract Section successfully deleted",
-                         "status_code": status.HTTP_204_NO_CONTENT
-                         }, status=status.HTTP_204_NO_CONTENT)
+        return Response({
+            "message": "Contract Section successfully deleted",
+            "status_code": status.HTTP_204_NO_CONTENT
+        }, status=status.HTTP_204_NO_CONTENT)
+
 
 delete_contract_section_api_view = ContractSectionDelete.as_view()
 
 
 
-class ContractFileCreateAPIView(generics.CreateAPIView):
+class ContractFileCreateAPIView(RolePermissionMixin, generics.CreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'contract_file'
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
 
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
+        section_id = request.data.get("section")
+        if not section_id:
+            return Response({
+                "message": "Section ID is required to create a Contract File.",
+                "status_code": status.HTTP_400_BAD_REQUEST
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            section = ContractSection.objects.select_related("object").get(id=section_id)
+        except ContractSection.DoesNotExist:
+            return Response({
+                "message": "Contract Section not found.",
+                "status_code": status.HTTP_404_NOT_FOUND
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+
         serializer = ContractSectionFileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -162,6 +213,7 @@ class ContractFileCreateAPIView(generics.CreateAPIView):
                 'status_code': status.HTTP_201_CREATED,
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
+
         return Response({
             'message': "Error creating Contract File",
             'status_code': status.HTTP_400_BAD_REQUEST,
@@ -218,7 +270,9 @@ list_contract_file_api_view = ContractFileListAPIView.as_view()
 
 
 
-class ContractFileUpdateAPIView(generics.UpdateAPIView):
+class ContractFileUpdateAPIView(RolePermissionMixin, generics.UpdateAPIView):
+    required_permission = 'can_update'
+    object_type = 'contract_file'
     serializer_class = ContractSectionFileSerializer
     permission_classes = [permissions.IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser]
@@ -229,6 +283,12 @@ class ContractFileUpdateAPIView(generics.UpdateAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -247,14 +307,22 @@ update_contract_file_api_view = ContractFileUpdateAPIView.as_view()
 
 
 
-class ContractFilesDelete(generics.DestroyAPIView):
+class ContractFilesDelete(RolePermissionMixin, generics.DestroyAPIView):
+    required_permission = 'can_delete'
+    object_type = 'contract_file'
     serializer_class = ContractSectionFileSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return ContractFile.objects.select_related("section").all()
+    
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.section.object
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "File successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 

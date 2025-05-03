@@ -2,6 +2,7 @@ from rest_framework import generics, status, permissions
 from rest_framework_simplejwt import authentication
 from main.apps.common.pagination import CustomPagination
 from main.apps.construction_work.models.fund import ConstructionInstallationProject, MonthlyCompletedTask
+from main.apps.role.permissions import RolePermissionMixin
 from ..serializers import fund as project_serializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -27,7 +28,9 @@ class ConstructionInstallationProjectAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationProjectAPIView, generics.ListCreateAPIView):
+class ConstructionInstallationProjectListCreateAPIView(RolePermissionMixin, ConstructionInstallationProjectAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'construction_installation_project'
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -55,6 +58,10 @@ class ConstructionInstallationProjectListCreateAPIView(ConstructionInstallationP
         return Response({"data": serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -68,18 +75,34 @@ construction_installation_project_list_create_api_view = ConstructionInstallatio
 
 
 
-class ConstructionInstallationProjectRetrieveUpdateDeleteAPIView(ConstructionInstallationProjectAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ConstructionInstallationProjectRetrieveUpdateDeleteAPIView(RolePermissionMixin, ConstructionInstallationProjectAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None 
+    object_type = 'construction_installation_project'
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.section.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Construction Installation Project updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.section.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Construction Installation Project deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
@@ -94,7 +117,9 @@ class MonthlyCompletedTaskAPIView:
     permission_classes = [permissions.IsAuthenticated]
 
 
-class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generics.ListCreateAPIView):
+class MonthlyCompletedTaskListCreateAPIView(RolePermissionMixin, MonthlyCompletedTaskAPIView, generics.ListCreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'monthly_completed_task'
     
     @swagger_auto_schema(
         manual_parameters=[
@@ -173,6 +198,9 @@ class MonthlyCompletedTaskListCreateAPIView(MonthlyCompletedTaskAPIView, generic
         )
 
     def post(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -187,18 +215,34 @@ monthly_completed_task_list_create_api_view = MonthlyCompletedTaskListCreateAPIV
 
 
 
-class MonthlyCompletedTaskRetrieveUpdateDeleteAPIView(MonthlyCompletedTaskAPIView, generics.RetrieveUpdateDestroyAPIView):
+class MonthlyCompletedTaskRetrieveUpdateDeleteAPIView(RolePermissionMixin, MonthlyCompletedTaskAPIView, generics.RetrieveUpdateDestroyAPIView):
+    required_permission = None
+    object_type = 'monthly_completed_task'
 
     def update(self, request, *args, **kwargs):
+        self.required_permission = 'can_update'
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.construction_installation_project.section.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"message": "Monthly Completed Task updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
 
     def destroy(self, request, *args, **kwargs):
+        self.required_permission = 'can_delete'
         instance = self.get_object()
+        object_instance = instance.construction_installation_project.section.object
+
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({'detail': message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "Monthly Completed Task deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
