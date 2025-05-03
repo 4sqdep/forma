@@ -22,6 +22,7 @@ class ObjectCreateUpdateSerializer(serializers.ModelSerializer):
             'object_power',
             'annual_electricity_production',
             'pressure',
+            'code',
             'water_consumption',
             'object_file',
             'useful_work_coefficient',
