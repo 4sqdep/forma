@@ -39,6 +39,7 @@ class Object(BaseModel):
     useful_work_coefficient = models.FloatField(max_length=30, null=True, blank=True, verbose_name="Foydali ish koeffitsiyenti")
     latitude = models.DecimalField(max_digits=30, decimal_places=20, null=True, blank=True, verbose_name="Kenglik")
     longitude = models.DecimalField(max_digits=30, decimal_places=20, null=True, blank=True, verbose_name="Uzunlik")
+    code = models.CharField(max_length=15, blank=True, null=True, verbose_name="Obyekt kodi")
     start_date = models.DateField(null=True, blank=True, verbose_name="Qurilish boshlangan vaqti")
     end_date = models.DateField(null=True, blank=True, verbose_name="Qurilish tuganlangan vaqti")
     status_type = models.CharField(max_length=255, blank=True, null=True, choices=StatusType.choices, default=StatusType.NEW)
