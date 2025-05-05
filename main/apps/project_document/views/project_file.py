@@ -108,7 +108,7 @@ class ProjectDocumentFileUpdateAPIView(RolePermissionMixin, BaseProjectDocumentF
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
-        object_instance = instance.object
+        object_instance = instance.project_document_type.object
         
         has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
         if not has_permission:
@@ -131,7 +131,7 @@ class ProjectDocumentFileDeleteAPIView(RolePermissionMixin, BaseProjectDocumentF
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        object_instance = instance.object
+        object_instance = instance.project_document_type.object
         
         has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
         if not has_permission:
