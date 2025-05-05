@@ -68,7 +68,7 @@ class ProjectDocumentTypeListAPIView(BaseProjectDocumentTypeAPIView, generics.Li
         priority_names = [
             "Birlamchi hujjatlar",
             "Loyiha-smeta hujjatlari",
-            "Yig'ma jadvat",
+            "Yig'ma jadval",
             "Kerakli ma'lumotlar",
         ]
         queryset = queryset.annotate(
