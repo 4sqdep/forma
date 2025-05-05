@@ -11,6 +11,8 @@ from main.apps.project_document.serializers import project_document_type as docu
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Case, When, Value, IntegerField
 
+from main.apps.role.permissions import RolePermissionMixin
+
 
 
 
@@ -25,10 +27,16 @@ class BaseProjectDocumentTypeAPIView(generics.GenericAPIView):
         return serializer_class(*args, **kwargs)
 
 
-class ProjectDocumentTypeCreateAPIView(BaseProjectDocumentTypeAPIView, generics.CreateAPIView):
+class ProjectDocumentTypeCreateAPIView(RolePermissionMixin, BaseProjectDocumentTypeAPIView, generics.CreateAPIView):
     serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer
+    required_permission = 'can_create'
+    object_type = 'project_document_type'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save(created_by=request.user)
@@ -109,7 +117,6 @@ project_document_type_list_api_view = ProjectDocumentTypeListAPIView.as_view()
 class ProjectDocumentTypeDetailAPIView(BaseProjectDocumentTypeAPIView, generics.RetrieveAPIView):
     serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
 
-
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
@@ -119,12 +126,20 @@ project_document_type_detail_api_view = ProjectDocumentTypeDetailAPIView.as_view
 
 
 
-class ProjectDocumentTypeUpdateAPIView(BaseProjectDocumentTypeAPIView, generics.UpdateAPIView):
+class ProjectDocumentTypeUpdateAPIView(RolePermissionMixin, BaseProjectDocumentTypeAPIView, generics.UpdateAPIView):
     serializer_class = document_type_serializer.ProjectDocumentTypeCreateSerializer
+    required_permission = 'can_update'
+    object_type = 'project_document_type'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -138,11 +153,19 @@ project_document_type_update_api_view = ProjectDocumentTypeUpdateAPIView.as_view
 
 
 
-class ProjectDocumentTypeDeleteAPIView(BaseProjectDocumentTypeAPIView, generics.DestroyAPIView):
+class ProjectDocumentTypeDeleteAPIView(RolePermissionMixin, BaseProjectDocumentTypeAPIView, generics.DestroyAPIView):
     serializer_class = document_type_serializer.ProjectDocumentTypeSerializer
+    required_permission = 'can_delete'
+    object_type = 'project_document_type'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response(
             {"message": "Hujjat muvaffaqiyatli o'chirildi", "status_code": status.HTTP_204_NO_CONTENT},

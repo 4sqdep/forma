@@ -10,6 +10,7 @@ from main.apps.role.models import Role
 class RoleSerializer(serializers.ModelSerializer):
     employee = serializers.CharField(source='employee.full_name')
     object = ObjectSerializer(many=True)
+    
     class Meta:
         model = Role 
         fields = (

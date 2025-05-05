@@ -8,7 +8,6 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.contract.models import ContractSection, ContractFile
 from main.apps.contract.serializers import ContractSectionSerializer, ContractSectionFileSerializer
-from rest_framework.views import APIView
 from main.apps.contract.filters import ContractFileFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q

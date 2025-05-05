@@ -17,6 +17,8 @@ from django.db.models import Sum, Value as V
 from django.db.models.functions import Coalesce
 from rest_framework.response import Response
 
+from main.apps.role.permissions import RolePermissionMixin
+
 
 
 
@@ -28,9 +30,15 @@ class BaseConstructionTaskAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ConstructionTaskCreateAPIView(BaseConstructionTaskAPIView, generics.CreateAPIView):
+class ConstructionTaskCreateAPIView(RolePermissionMixin, BaseConstructionTaskAPIView, generics.CreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'project_document_type'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -85,6 +93,7 @@ class ConstructionTaskListAPIView(BaseConstructionTaskAPIView, generics.ListAPIV
 construction_task_list_api_view = ConstructionTaskListAPIView.as_view()
 
 
+
 class ConstructionTaskDetailAPIView(BaseConstructionTaskAPIView, generics.RetrieveAPIView):
 
     def retrieve(self, request, *args, **kwargs):
@@ -96,11 +105,19 @@ construction_task_detail_api_view = ConstructionTaskDetailAPIView.as_view()
 
 
 
-class ConstructionTaskUpdateAPIView(BaseConstructionTaskAPIView, generics.UpdateAPIView):
+class ConstructionTaskUpdateAPIView(RolePermissionMixin, BaseConstructionTaskAPIView, generics.UpdateAPIView):
+    required_permission = 'can_update'
+    object_type = 'project_document_type'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        object_instance = instance.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -110,14 +127,24 @@ class ConstructionTaskUpdateAPIView(BaseConstructionTaskAPIView, generics.Update
 construction_task_update_api_view = ConstructionTaskUpdateAPIView.as_view()
 
 
-class ConstructionTaskDeleteAPIView(BaseConstructionTaskAPIView, generics.DestroyAPIView):
+
+class ConstructionTaskDeleteAPIView(RolePermissionMixin, BaseConstructionTaskAPIView, generics.DestroyAPIView):
+    required_permission = 'can_delete'
+    object_type = 'project_document_type'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response(data={"message": "Construction Task deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
 construction_task_delete_api_view = ConstructionTaskDeleteAPIView.as_view()
+
 
 
 class BaseMonthlyExpenseAPIView(generics.GenericAPIView):
@@ -131,10 +158,16 @@ class BaseMonthlyExpenseAPIView(generics.GenericAPIView):
 
 
 
-class MonthlyExpenseCreateAPIView(BaseMonthlyExpenseAPIView, generics.CreateAPIView):
+class MonthlyExpenseCreateAPIView(RolePermissionMixin, BaseMonthlyExpenseAPIView, generics.CreateAPIView):
     serializer_class = construction_task_serializer.MonthlyExpenseCreateSerializer
+    required_permission = 'can_create'
+    object_type = 'project_document_type'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -142,6 +175,7 @@ class MonthlyExpenseCreateAPIView(BaseMonthlyExpenseAPIView, generics.CreateAPIV
         return Response(data={"message": "Failed to create Monthly Expense", "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 monthly_expense_create_api_view = MonthlyExpenseCreateAPIView.as_view()
+
 
 
 class MonthlyExpenseListAPIView(BaseMonthlyExpenseAPIView, generics.ListAPIView):
@@ -241,12 +275,20 @@ monthly_expense_detail_api_view = MonthlyExpenseDetailAPIView.as_view()
 
 
 
-class MonthlyExpenseUpdateAPIView(BaseMonthlyExpenseAPIView, generics.UpdateAPIView):
+class MonthlyExpenseUpdateAPIView(RolePermissionMixin, BaseMonthlyExpenseAPIView, generics.UpdateAPIView):
     serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    required_permission = 'can_update'
+    object_type = 'project_document_type'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+        object_instance = instance.construction_task.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -256,11 +298,20 @@ class MonthlyExpenseUpdateAPIView(BaseMonthlyExpenseAPIView, generics.UpdateAPIV
 monthly_expense_update_api_view = MonthlyExpenseUpdateAPIView.as_view()
 
 
-class MonthlyExpenseDeleteAPIView(BaseMonthlyExpenseAPIView, generics.DestroyAPIView):
+
+class MonthlyExpenseDeleteAPIView(RolePermissionMixin, BaseMonthlyExpenseAPIView, generics.DestroyAPIView):
     serializer_class = construction_task_serializer.MonthlyExpenseListSerializer
+    required_permission = 'can_delete'
+    object_type = 'project_document_type'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.construction_task.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response(data={"message": "Monthly Expense deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 

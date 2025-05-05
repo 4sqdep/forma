@@ -9,6 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.project_document.models.project_file import ProjectDocumentFile
 from django_filters.rest_framework import DjangoFilterBackend
+from main.apps.role.permissions import RolePermissionMixin
 
 
 
@@ -19,10 +20,16 @@ class BaseProjectDocumentFileAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ProjectDocumentFileCreateAPIView(BaseProjectDocumentFileAPIView, generics.CreateAPIView):
+class ProjectDocumentFileCreateAPIView(RolePermissionMixin, BaseProjectDocumentFileAPIView, generics.CreateAPIView):
     serializer_class = document_serializer.FileCreateSerializer
+    required_permission = 'can_create'
+    object_type = 'project_document_type'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -93,12 +100,20 @@ project_document_file_detail_api_view = ProjectDocumentFileDetailAPIView.as_view
 
 
 
-class ProjectDocumentFileUpdateAPIView(BaseProjectDocumentFileAPIView, generics.UpdateAPIView):
+class ProjectDocumentFileUpdateAPIView(RolePermissionMixin, BaseProjectDocumentFileAPIView, generics.UpdateAPIView):
     serializer_class = document_serializer.FileCreateSerializer
+    required_permission = 'can_update'
+    object_type = 'project_document_type'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -109,11 +124,19 @@ project_document_file_update_api_view = ProjectDocumentFileUpdateAPIView.as_view
 
 
 
-class ProjectDocumentFileDeleteAPIView(BaseProjectDocumentFileAPIView, generics.DestroyAPIView):
+class ProjectDocumentFileDeleteAPIView(RolePermissionMixin, BaseProjectDocumentFileAPIView, generics.DestroyAPIView):
     serializer_class = document_serializer.FileSerializer
+    required_permission = 'can_delete'
+    object_type = 'project_document_type'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "File successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 
