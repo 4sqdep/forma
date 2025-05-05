@@ -26,7 +26,7 @@ class FileCreateSerializer(serializers.ModelSerializer):
 class FileSerializer(serializers.ModelSerializer):
     calendar = serializers.DateField(format="%d-%m-%Y",  input_formats=["%Y-%m-%d"], required=False)
     file_name = serializers.SerializerMethodField()
-
+    code  = serializers.CharField(source='project_document_type.object.code')
     class Meta:
         model = ProjectDocumentFile
         fields = (
@@ -38,7 +38,8 @@ class FileSerializer(serializers.ModelSerializer):
             'calendar',
             'file_code',
             'file',
-            'file_name'
+            'file_name',
+            'code',
         )
     
     def get_file_name(self, obj):

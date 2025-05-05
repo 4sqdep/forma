@@ -8,6 +8,7 @@ from main.apps.construction_work.models.file import ConstructionInstallationFile
 class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
     date = serializers.DateField(format="%d-%m-%Y",  input_formats=["%Y-%m-%d"], required=False)
     file_name = serializers.SerializerMethodField(required=False)
+    code = serializers.CharField(source='section.object.code')
 
     class Meta:
         model = ConstructionInstallationFile
@@ -18,7 +19,8 @@ class ConstructionInstallationFileSerializer(serializers.ModelSerializer):
             "date", 
             "file_code", 
             "file", 
-            'file_name'
+            'file_name',
+            'code'
         )
     
     def get_file_name(self, obj):

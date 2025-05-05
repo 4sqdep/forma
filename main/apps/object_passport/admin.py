@@ -6,6 +6,8 @@ from main.apps.object_passport.models.object_gallery import Gallery
 
 class ObjectAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'code')
+    list_display_links = ['id', 'title', 'code']
+    search_fields = ['title', 'code']
 
 admin.site.register(Object, ObjectAdmin)
 
