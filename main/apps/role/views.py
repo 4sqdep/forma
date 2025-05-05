@@ -5,14 +5,14 @@ from rest_framework import generics, status, permissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.role.models import Role
-from main.apps.role.serializers import RoleSerializer
+from main.apps.role import serializers as role_serializer
 
 
 
 
 class RoleListAPIView(generics.ListAPIView):
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = RoleSerializer
+    serializer_class = role_serializer.RoleListSerializer
 
     @swagger_auto_schema(
         manual_parameters=[
@@ -43,7 +43,7 @@ class RoleListAPIView(generics.ListAPIView):
             response_data.data['data'] = response_data.data.pop("results", [])
             return Response({'data': response_data.data, 'status_code': status.HTTP_200_OK},
                             status=status.HTTP_200_OK)
-        serializer = RoleSerializer(queryset, many=True)
+        serializer = role_serializer.RoleListSerializer(queryset, many=True)
         return Response({
             'message': 'Role List successfully',
             'status_code': status.HTTP_200_OK,
@@ -55,7 +55,7 @@ role_list_api_view = RoleListAPIView.as_view()
 
 
 class RoleRetrieveAPIView(generics.RetrieveAPIView):
-    serializer_class = RoleSerializer
+    serializer_class = role_serializer.RoleListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -75,7 +75,7 @@ role_detail_api_view = RoleRetrieveAPIView.as_view()
 
 
 class RoleUpdateAPIView(generics.UpdateAPIView):
-    serializer_class = RoleSerializer
+    serializer_class = role_serializer.RoleUpdateSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
@@ -102,11 +102,13 @@ role_update_api_view = RoleUpdateAPIView.as_view()
 
 
 
-class RoleDelete(generics.DestroyAPIView):
+class RoleDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = role_serializer.RoleListSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         return Role.objects.all()
+    
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         self.perform_destroy(instance)
@@ -114,5 +116,5 @@ class RoleDelete(generics.DestroyAPIView):
                          "status_code": status.HTTP_204_NO_CONTENT
                          }, status=status.HTTP_204_NO_CONTENT)
 
-role_delete_api_view = RoleDelete.as_view()
+role_delete_api_view = RoleDeleteAPIView.as_view()
 
