@@ -12,7 +12,7 @@ def create_default_document_types(sender, instance, created, **kwargs):
         default_docs = [
             {"name": "Birlamchi hujjatlar", "is_forma": False, "is_section": False, "is_file": True},
             {"name": "Loyiha-smeta hujjatlari", "is_forma": False, "is_section": True, "is_file": False},
-            {"name": "Yig'ma jadvat", "is_forma": True, "is_section": False, "is_file": False},
+            {"name": "Yig'ma jadval", "is_forma": True, "is_section": False, "is_file": False},
             {"name": "Kerakli ma'lumotlar", "is_forma": False, "is_section": True, "is_file": False}
         ]
 

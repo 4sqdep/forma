@@ -15,10 +15,19 @@ class ContractSectionSerializer(serializers.ModelSerializer):
 class ContractSectionFileSerializer(serializers.ModelSerializer):
     date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     file_name = serializers.SerializerMethodField()
+    code = serializers.CharField(source='section.object.code')
 
     class Meta:
         model = ContractFile
-        fields = ['id', 'section', 'title', 'date', 'file_code', 'file', 'file_name']
+        fields = ['id',
+                  'section',
+                  'title',
+                  'date',
+                  'file_code',
+                  'file',
+                  'file_name',
+                  'code'
+                  ]
 
     
     def get_file_name(self, obj):
