@@ -8,6 +8,7 @@ from main.apps.employee_communication.models import (
     TextMessage, 
     EmployeeCommunicationRecipient
 )
+from main.apps.role.permissions import RolePermissionMixin
 from . import serializers as employee_serializers
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -28,16 +29,24 @@ from operator import attrgetter
 
 
 
+
+
 class BaseEmployeeCommunicationAPIView(generics.GenericAPIView):
     queryset = EmployeeCommunication.objects.select_related("sender").prefetch_related("employee")
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
 
-class EmployeeCommunicationCreateAPIView(BaseEmployeeCommunicationAPIView, generics.CreateAPIView):
+class EmployeeCommunicationCreateAPIView(RolePermissionMixin, BaseEmployeeCommunicationAPIView, generics.CreateAPIView):
     serializer_class = employee_serializers.EmployeeCommunicationCreateSerializer
+    required_permission = 'can_create'
+    object_type = 'employee_communication'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
             serializer.save(sender=self.request.user)
