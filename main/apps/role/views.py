@@ -6,12 +6,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from main.apps.role.models import Role
 from main.apps.role import serializers as role_serializer
+from main.apps.role.permissions import IsSuperUser
 
 
 
 
 class RoleListAPIView(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
     serializer_class = role_serializer.RoleListSerializer
 
     @swagger_auto_schema(
@@ -56,7 +57,7 @@ role_list_api_view = RoleListAPIView.as_view()
 
 class RoleRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = role_serializer.RoleListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get_queryset(self):
         return Role.objects.all()
@@ -76,7 +77,7 @@ role_detail_api_view = RoleRetrieveAPIView.as_view()
 
 class RoleUpdateAPIView(generics.UpdateAPIView):
     serializer_class = role_serializer.RoleUpdateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get_queryset(self):
         return Role.objects.all()
@@ -104,7 +105,7 @@ role_update_api_view = RoleUpdateAPIView.as_view()
 
 class RoleDeleteAPIView(generics.DestroyAPIView):
     serializer_class = role_serializer.RoleListSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def get_queryset(self):
         return Role.objects.all()

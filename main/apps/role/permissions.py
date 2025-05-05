@@ -1,4 +1,7 @@
 from .models import Role
+from rest_framework import permissions
+
+
 
 
 
@@ -40,6 +43,10 @@ class RolePermissionMixin:
         'monthly_expense'
     }
 
+    employee_communication_related_type = {
+        'employee_communication',
+    }
+
     def has_permission_for_object(self, user, instance=None):
         try:
             role = Role.objects.get(employee=user)
@@ -67,6 +74,14 @@ class RolePermissionMixin:
 
         if instance and instance not in role.object.all():
             return False, f"You are not allowed to {self.required_permission.replace('can_', '')} this object."
-
+        
+        elif self.object_type in self.employee_communication_related_type:
+            if not role.has_employee_communication:
+                return False, "You do not have access to create employee communication."
         return True, role
 
+
+
+class IsSuperUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated and request.user.is_superuser

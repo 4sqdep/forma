@@ -17,6 +17,7 @@ class Role(BaseModel):
     has_project_document = models.BooleanField(default=False)
     has_equipment = models.BooleanField(default=False)
     has_contract = models.BooleanField(default=False)
+    has_employee_communication = models.BooleanField(default=False)
     can_create = models.BooleanField(default=False)
     can_update = models.BooleanField(default=False)
     can_delete = models.BooleanField(default=False)

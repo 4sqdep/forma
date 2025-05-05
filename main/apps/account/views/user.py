@@ -15,12 +15,14 @@ from rest_framework import generics
 from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from main.apps.role.permissions import IsSuperUser
+
 
 
 
 
 class RegisterUser(APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
 
     def post(self, request):
         serializer = Registerserializer(data=request.data)
@@ -131,9 +133,8 @@ user_profile_api_view = UserProfileAPIView.as_view()
 
 
 class AllUsersListAPIView(generics.ListAPIView):
-    queryset = User.objects.filter(is_superuser=False)
     serializer_class = UserAllSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
     pagination_class = CustomPagination
 
     @swagger_auto_schema(
@@ -147,7 +148,7 @@ class AllUsersListAPIView(generics.ListAPIView):
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        queryset = User.objects.all()
+        queryset = User.objects.filter(is_superuser=False)
         return queryset
     
     def get_pagination_class(self):
