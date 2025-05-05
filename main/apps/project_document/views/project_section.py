@@ -9,6 +9,7 @@ from main.apps.project_document.filters.project_section import ProjectSectionFil
 from main.apps.project_document.models.project_section import ProjectSection
 from main.apps.project_document.serializers import project_section as project_section_serializer
 from django_filters.rest_framework import DjangoFilterBackend
+from main.apps.role.permissions import RolePermissionMixin
 
 
 
@@ -20,9 +21,15 @@ class BaseProjectSectionAPIView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class ProjectSectionCreateAPIView(BaseProjectSectionAPIView, generics.CreateAPIView):
+class ProjectSectionCreateAPIView(RolePermissionMixin, BaseProjectSectionAPIView, generics.CreateAPIView):
+    required_permission = 'can_create'
+    object_type = 'project_document_type'
 
     def create(self, request, *args, **kwargs):
+        has_permission, message = self.has_permission_for_object(request.user)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = project_section_serializer.ProjectSectionSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -89,11 +96,19 @@ project_section_detail_api_view = ProjectSectionDetailAPIView.as_view()
 
 
 
-class ProjectSectionUpdateAPIView(BaseProjectSectionAPIView, generics.UpdateAPIView):
+class ProjectSectionUpdateAPIView(RolePermissionMixin, BaseProjectSectionAPIView, generics.UpdateAPIView):
+    required_permission = 'can_update'
+    object_type = 'project_document_type'
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop("partial", False)
         instance = self.get_object()
+        object_instance = instance.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         if serializer.is_valid():
             serializer.save()
@@ -104,10 +119,18 @@ project_section_update_api_view = ProjectSectionUpdateAPIView.as_view()
 
 
 
-class ProjectSectionDeleteAPIView(BaseProjectSectionAPIView, generics.DestroyAPIView):
+class ProjectSectionDeleteAPIView(RolePermissionMixin, BaseProjectSectionAPIView, generics.DestroyAPIView):
+    required_permission = 'can_delete'
+    object_type = 'project_document_type'
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        object_instance = instance.project_document_type.object
+        
+        has_permission, message = self.has_permission_for_object(request.user, instance=object_instance)
+        if not has_permission:
+            return Response({"detail": message}, status=status.HTTP_403_FORBIDDEN)
+        
         self.perform_destroy(instance)
         return Response({"message": "ProjectSection successfully deleted", "status_code": status.HTTP_204_NO_CONTENT}, status=status.HTTP_204_NO_CONTENT)
 
