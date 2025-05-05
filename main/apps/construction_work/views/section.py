@@ -47,7 +47,7 @@ class ConstructionInstallationSectionListCreateAPIView(RolePermissionMixin, Cons
         priority_titles = [
             "Bajarilgan ishlar dalolatnoma F-3 F-2",
             "Ijro hujjatlari",
-            "Yig'ma jadvat",
+            "Yig'ma jadval",
             "Kerakli ma'lumotlar",
         ]
         queryset = queryset.annotate(

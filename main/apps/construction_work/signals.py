@@ -11,7 +11,7 @@ def create_default_document_types(sender, instance, created, **kwargs):
         default_docs = [
             {"title": "Bajarilgan ishlar dalolatnoma F-3 F-2", "is_forma": False, "is_file": True},
             {"title": "Ijro hujjatlari", "is_forma": False, "is_file": True},
-            {"title": "Yig'ma jadvat", "is_forma": True, "is_file": False},
+            {"title": "Yig'ma jadval", "is_forma": True, "is_file": False},
             {"title": "Kerakli ma'lumotlar", "is_forma": False, "is_file": True}
         ]
 
