@@ -19,7 +19,7 @@ class Registerserializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         raw_password = validated_data['password']
-        user = User(username=validated_data['username'])
+        user = User(**validated_data)
         user.set_password(raw_password)
         user.raw_password = raw_password
         user.save()
