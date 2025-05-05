@@ -26,4 +26,9 @@ urlpatterns = [
         user.all_user_api_view, 
         name='user-all-list'
     ),
+    path(
+        '<int:pk>/delete/',
+        user.user_delete_api_view,
+        name='delete'
+    )
 ]
