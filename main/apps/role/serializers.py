@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from main.apps.object_passport.serializers.object import ObjectSerializer
 from main.apps.role.models import Role
 
 
@@ -7,6 +8,8 @@ from main.apps.role.models import Role
 
 
 class RoleSerializer(serializers.ModelSerializer):
+    employee = serializers.CharField(source='employee.full_name')
+    object = ObjectSerializer(many=True)
     class Meta:
         model = Role 
         fields = (
