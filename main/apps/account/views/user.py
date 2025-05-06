@@ -134,7 +134,7 @@ user_profile_api_view = UserProfileAPIView.as_view()
 
 class AllUsersListAPIView(generics.ListAPIView):
     serializer_class = UserAllSerializer
-    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
+    permission_classes = [permissions.IsAuthenticated]
     pagination_class = CustomPagination
 
     @swagger_auto_schema(
@@ -174,3 +174,21 @@ class AllUsersListAPIView(generics.ListAPIView):
         return Response({"data":serializer.data}, status=status.HTTP_200_OK)
 
 all_user_api_view = AllUsersListAPIView.as_view()
+
+
+class UserDelete(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    permission_classes = [permissions.IsAuthenticated, IsSuperUser]
+    lookup_field = 'pk'
+
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        username = user.username
+        self.perform_destroy(user)
+        return Response(
+            {"message": f"Foydalanuvchi '{username}' muvaffaqiyatli o‘chirildi."},
+            status=status.HTTP_200_OK
+        )
+
+
+user_delete_api_view = UserDelete.as_view()
