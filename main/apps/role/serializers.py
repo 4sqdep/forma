@@ -27,7 +27,7 @@ class RoleListSerializer(serializers.ModelSerializer):
             'can_delete'
         )
     
-    def get_employee_full_name(self, obj):
+    def get_employee(self, obj):
         if obj.employee:
             return obj.employee.full_name
         return None
