@@ -15,19 +15,20 @@ class ContractSectionSerializer(serializers.ModelSerializer):
 class ContractSectionFileSerializer(serializers.ModelSerializer):
     date = serializers.DateField(format="%d-%m-%Y", input_formats=["%Y-%m-%d"], required=False)
     file_name = serializers.SerializerMethodField()
-    code = serializers.CharField(source='section.object.code')
+    code = serializers.SerializerMethodField()
 
     class Meta:
         model = ContractFile
-        fields = ['id',
-                  'section',
-                  'title',
-                  'date',
-                  'file_code',
-                  'file',
-                  'file_name',
-                  'code'
-                  ]
+        fields = (
+            'id',
+            'section',
+            'title',
+            'date',
+            'file_code',
+            'file',
+            'file_name',
+            'code'
+        )
 
     
     def get_file_name(self, obj):
@@ -39,3 +40,9 @@ class ContractSectionFileSerializer(serializers.ModelSerializer):
             filename = unquote(filename_encoded)
             return filename.replace(" ", "_")
         return None
+
+    def get_code(self, obj):
+        try:
+            return obj.section.object.code
+        except AttributeError:
+            return None
