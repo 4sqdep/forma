@@ -8,7 +8,6 @@ from main.apps.role.models import Role
 
 
 class RoleListSerializer(serializers.ModelSerializer):
-    # employee = serializers.CharField(source='employee.full_name')
     employee = serializers.SerializerMethodField()
     object = ObjectSerializer(many=True)
     
@@ -22,6 +21,7 @@ class RoleListSerializer(serializers.ModelSerializer):
             'has_project_document',
             'has_equipment',
             'has_contract',
+            'has_employee_communication',
             'can_create',
             'can_update',
             'can_delete'
@@ -45,6 +45,7 @@ class RoleUpdateSerializer(serializers.ModelSerializer):
             'has_project_document',
             'has_equipment',
             'has_contract',
+            'has_employee_communication',
             'can_create',
             'can_update',
             'can_delete'

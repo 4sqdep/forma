@@ -45,6 +45,8 @@ class LoginSerializer(TokenObtainPairSerializer):
 
         token['id'] = user.id
         token['is_download'] = user.is_download
+        token['is_superuser'] = user.is_superuser
+
         if permission:
             token['permissions'] = {
                 'can_get': permission.can_get,
@@ -65,6 +67,7 @@ class LoginSerializer(TokenObtainPairSerializer):
         refresh['user_agent'] = user_agent
         data['refresh'] = str(refresh)
         data['access'] = str(refresh.access_token)
+        data['is_superuser'] = self.user.is_superuser
         return data
 
 
