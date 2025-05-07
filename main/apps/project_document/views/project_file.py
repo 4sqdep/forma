@@ -55,7 +55,7 @@ class ProjectDocumentFileListAPIView(BaseProjectDocumentFileAPIView, generics.Li
 
     def get_queryset(self):
         document_id = self.kwargs.get("document")
-        queryset = ProjectDocumentFile.objects.all()
+        queryset = ProjectDocumentFile.objects.all().order_by('id')
 
         if document_id:
             queryset = queryset.filter(project_document_type=document_id)
