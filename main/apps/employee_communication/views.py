@@ -264,8 +264,10 @@ class AllEmployeeCommunicationListAPIView(BaseEmployeeCommunicationAPIView, gene
         return self.list(request, *args, **kwargs)
     
     def get_queryset(self):
-        return EmployeeCommunication.objects.all().distinct()
-
+        queryset = super().get_queryset()
+        return queryset.filter(
+            Q(employee=self.request.user) | Q(sender=self.request.user)
+        ).distinct()
         
     
     def get_pagination_class(self):
