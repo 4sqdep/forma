@@ -111,9 +111,14 @@ class UserProfileAPIView(APIView):
     def put(self, request, pk=None):
         try:
             profile = User.objects.get(id=pk)
+            password = request.data.get('password', None)
             serializer = UserProfileSerializer(profile, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
+                if password:
+                    profile.set_password(password)
+                    profile.raw_password = password
+                    profile.save()
                 return Response(
                     status=status.HTTP_200_OK,
                     data={"message": "Profil yangilandi!", "data": serializer.data}
